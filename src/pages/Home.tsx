@@ -1,9 +1,19 @@
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { StudyJourney } from '../components/StudyJourney'
 import { HowItWorks } from '../components/HowItWorks'
 import { Resources } from '../components/Resources'
 import { SignUpCallout } from '../components/SignUpCallout'
 
 export function Home() {
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.hash === '#como-funciona' || location.hash === '#recursos') {
+      document.getElementById(location.hash.slice(1))?.scrollIntoView()
+    }
+  }, [location])
+
   return <>
     <section className="hero" id="inicio">
       <div className="hero-copy">

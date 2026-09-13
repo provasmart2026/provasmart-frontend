@@ -1,15 +1,5 @@
-import { Header } from './components/Header'
-import { Footer } from './components/Footer'
-import { Home } from './pages/Home'
+import { AppRoutes } from './routes/AppRoutes'
 
 export function App() {
-  return (
-    <div className="app-shell">
-      <Header />
-      <main>
-        <Home />
-      </main>
-      <Footer />
-    </div>
-  )
+  return <AppRoutes />
 }
