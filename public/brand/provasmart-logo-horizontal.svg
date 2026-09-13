@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 500" role="img" aria-label="Logo Provasmart horizontal">
+  <g transform="translate(32 26) scale(.875)">
+    <path fill="#B695C0" d="M246 72c-31-35-91-14-92 34-42-16-82 25-65 66-42 11-54 67-20 94-29 35-4 88 42 85 3 47 59 69 91 35 14 13 29 20 44 22V72Z"/>
+    <path fill="#FFF9F6" d="M266 85h64c57 0 102 46 102 102v137c0 57-45 103-102 103h-64V85Z"/>
+    <path d="M226 138h-34c-25 0-25 39-50 39h-24M226 232h-46c-23 0-24 38-48 38H99M226 326h-35c-22 0-23 39-47 39h-20" fill="none" stroke="#FFF9F6" stroke-width="22" stroke-linecap="round"/>
+    <circle cx="227" cy="138" r="31" fill="#FF8A00" stroke="#FFF9F6" stroke-width="13"/><circle cx="226" cy="232" r="31" fill="#F72585" stroke="#FFF9F6" stroke-width="13"/><circle cx="226" cy="326" r="31" fill="#B695C0" stroke="#FFF9F6" stroke-width="13"/>
+    <circle cx="323" cy="151" r="34" fill="none" stroke="#B695C0" stroke-width="16"/><circle cx="323" cy="256" r="43" fill="#F72585"/><path d="m300 256 15 15 31-34" fill="none" stroke="#FFF9F6" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/><circle cx="323" cy="361" r="34" fill="none" stroke="#B695C0" stroke-width="16"/><path d="M382 151h26M382 256h26M382 361h26" stroke-linecap="round" stroke-width="16" fill="none" stroke="#FF8A00"/>
+  </g>
+  <text x="500" y="326" font-family="Arial Rounded MT Bold, Nunito, Arial, sans-serif" font-size="240" font-weight="700" letter-spacing="-10"><tspan fill="#332B36">Prova</tspan><tspan fill="#B695C0">smart</tspan></text>
+</svg>

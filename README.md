@@ -1,22 +1,31 @@
-# ProvaSmart — Frontend
+# ProvaSmart — frontend
 
-Interface web do **ProvaSmart**, uma plataforma de apoio à preparação para o Exame Nacional do Ensino Médio (ENEM). O frontend permitirá que estudantes realizem simulados, consultem resultados e acompanhem sua evolução por área e assunto.
+Interface web do ProvaSmart, criada com React, TypeScript e Vite para apoiar a preparação para o ENEM com simulados, acompanhamento de desempenho e gestão de conteúdo.
 
-> O projeto está em fase inicial. As tecnologias, funcionalidades e estruturas descritas abaixo representam a solução planejada e serão atualizadas conforme a implementação evoluir.
+## visão geral
 
-## Sobre o ProvaSmart
+O frontend do ProvaSmart foi pensado para apresentar a experiência do estudante de forma clara e responsiva, conectando-se à API do backend para consultar questões, áreas de conhecimento, disciplinas, assuntos e simulados.
 
-O ProvaSmart foi idealizado para organizar a prática de questões e tornar o desempenho do estudante mais fácil de compreender. Com base nas tentativas registradas, a plataforma deverá destacar dificuldades e apoiar a priorização dos estudos.
+A solução atual já inclui a estrutura inicial da interface, os componentes visuais da landing page, o cliente HTTP e a configuração para integração local com a API em `http://localhost:8080`.
 
-A primeira versão será dedicada ao ENEM e não terá como objetivo oferecer aulas, apostilas ou videoaulas próprias, nem atender vestibulares, concursos públicos ou outras modalidades de prova.
+## o que já está pronto
 
-## Funcionalidades previstas
+- página inicial baseada no protótipo do projeto;
+- navegação visual com cabeçalho, jornada de estudos, como funciona, recursos, chamada para cadastro e rodapé;
+- identidade visual com os logos e ícones do projeto;
+- layout responsivo para telas menores;
+- cliente HTTP com axios;
+- proxy local para a API em `http://localhost:8080`;
+- teste de renderização da página e teste do cliente da API;
+- comandos de build e testes configurados.
 
-### Para estudantes
+## funcionalidades previstas
+
+### para estudantes
 
 - cadastro e autenticação;
 - preenchimento de endereço com apoio da API ViaCEP;
-- realização de questões das quatro áreas de conhecimento do ENEM;
+- realização de questões das quatro áreas do ENEM;
 - realização e finalização de simulados;
 - visualização da correção automática;
 - consulta ao histórico de tentativas e resultados;
@@ -25,26 +34,13 @@ A primeira versão será dedicada ao ENEM e não terá como objetivo oferecer au
 - prática direcionada aos conteúdos com maior dificuldade;
 - consulta a um plano de estudos personalizado.
 
-### Para administradores
+### para administradores
 
 - acesso restrito por perfil;
 - cadastro, consulta, alteração e exclusão de questões;
 - gerenciamento das informações necessárias à geração de simulados.
 
-## Tecnologias planejadas
-
-- React;
-- JavaScript;
-- HTML5;
-- CSS3;
-- API REST com dados em JSON;
-- ViaCEP para consulta de endereço;
-- Git e GitHub;
-- Vercel como opção prevista de hospedagem do frontend.
-
-As bibliotecas complementares, o gerenciador de pacotes e a ferramenta de build serão registrados após a criação efetiva da aplicação.
-
-## Arquitetura e integrações
+## arquitetura e integrações
 
 ```text
 Aluno / Administrador
@@ -57,74 +53,89 @@ Aplicação React ──────────► ViaCEP
 API Spring Boot ─────────► PostgreSQL
 ```
 
-O frontend será responsável pela apresentação das telas, validações de interface, responsividade e comunicação com os serviços externos. A API do ProvaSmart concentrará autenticação, autorização, regras de negócio e persistência dos dados.
+O frontend é responsável pela apresentação das telas, validações de interface, responsividade e comunicação com serviços externos. O backend concentra autenticação, autorização, regras de negócio e persistência dos dados.
 
-## Telas previstas
+## requisitos
 
-- cadastro e login;
-- página inicial do estudante;
-- seleção e realização de simulado;
-- resultado e revisão de respostas;
-- histórico de tentativas;
-- dashboard de desempenho;
-- prática direcionada;
-- plano de estudos;
-- painel administrativo de questões.
+- node.js 20 ou superior;
+- npm;
+- backend do ProvaSmart executando separadamente para testar dados reais.
 
-## Requisitos de interface
+## como executar
 
-A aplicação deverá:
-
-- funcionar em computadores, tablets e dispositivos móveis;
-- apresentar informações de forma clara e organizada;
-- oferecer navegação consistente e boa usabilidade;
-- considerar práticas de acessibilidade;
-- informar erros de validação e falhas de integração de maneira compreensível;
-- proteger rotas conforme o perfil autenticado.
-
-## Como executar
-
-O código da aplicação ainda não foi adicionado ao repositório. Quando o projeto React for criado, esta seção deverá ser atualizada com informações confirmadas pelos arquivos versionados:
-
-1. versão necessária do Node.js;
-2. gerenciador de pacotes adotado;
-3. instalação das dependências;
-4. variáveis de ambiente;
-5. comandos de desenvolvimento, testes e build.
-
-Por enquanto, o repositório pode ser clonado com:
+instale as dependências:
 
 ```bash
-git clone https://github.com/weblyne/provasmart-frontend.git
-cd provasmart-frontend
+npm install
 ```
 
-## Configuração
+inicie o frontend:
 
-A URL definitiva da API será configurada por variável de ambiente. O nome abaixo é apenas a convenção inicial e deverá ser ajustado à ferramenta de build escolhida:
-
-```dotenv
-VITE_API_URL=http://localhost:8080
+```bash
+npm run dev
 ```
 
-Nenhuma credencial ou segredo deve ser armazenado no frontend ou versionado no Git.
+o Vite abre a aplicação em `http://localhost:5173`.
 
-## Integração com ViaCEP
+por padrão, o axios usa `/api` como endereço base. durante o desenvolvimento, o Vite encaminha esse caminho para `http://localhost:8080` e remove o prefixo `/api` antes de enviar a requisição. para trocar o endereço, copie `.env.example` para `.env` e ajuste `VITE_API_URL`.
 
-Durante o cadastro, a interface deverá validar o formato do CEP, consultar o serviço ViaCEP e preencher ou validar informações como cidade e estado. Também deverá tratar CEPs inexistentes, respostas inválidas e indisponibilidade do serviço.
+## testes e build
 
-## Protótipo
+```bash
+npm run test:run
+npm run build
+```
+
+`npm run test` mantém o Vitest em modo de observação.
+
+## integração com o backend
+
+o backend fica no repositório [provasmart-backend](https://github.com/provasmart2026/provasmart-backend) e não é alterado por este projeto.
+
+na branch `develop`, a API disponibiliza recursos para:
+
+- áreas do ENEM: `GET /exam-areas`;
+- disciplinas: `GET /disciplines/exam-area/{examArea}`;
+- assuntos: `GET /subjects/discipline/{disciplineId}` e `POST /subjects/discipline/{disciplineId}`;
+- banco de questões: `POST /questions`, `GET /questions`, `GET /questions/active`, `GET /questions/{id}`, `PUT /questions/{id}`, `PATCH /questions/{id}/activate` e `PATCH /questions/{id}/deactivate`;
+- simulados: `POST /simulations/student/{studentId}`, `GET /simulations/{simulationId}`, `PUT /simulations/{simulationId}/questions/{simulationQuestionId}/answer` e `PATCH /simulations/{simulationId}/finish`.
+
+o backend usa Java 25, Spring Boot e PostgreSQL. as variáveis de banco esperadas são `DB_URL`, `DB_USERNAME` e `DB_PASSWORD`.
+
+## o que ainda falta no frontend
+
+- telas e rotas de login, cadastro e autenticação;
+- dashboard do estudante;
+- fluxo completo de criação, execução e finalização de simulados;
+- tela de questões com filtros e paginação;
+- correção, resultados e desempenho por área do ENEM;
+- histórico de simulados e plano de estudos;
+- área administrativa para gerenciar questões;
+- ligar cada tela aos endpoints correspondentes;
+- estados de carregamento, erro e sessão expirada;
+- testes de integração com o backend em execução.
+
+o cliente axios já está configurado, mas a interface ainda não consome todos os endpoints. o primeiro recurso preparado no código é a consulta de questões ativas.
+
+## estrutura principal
+
+```text
+public/       logos e ícones usados pela interface
+src/api/      cliente axios e chamadas da api
+src/components/ componentes visuais da página inicial
+src/pages/    páginas da aplicação
+src/styles.css estilos globais e identidade visual
+```
+
+## protótipo
 
 - [Design do ProvaSmart no Figma](https://www.figma.com/design/GmUPMt8JXVWeKDm0zqlvUV/ProvaSmart?node-id=9-2)
 
-## Repositório relacionado
+## repositório relacionado
 
-- [Backend do ProvaSmart](https://github.com/weblyne/provasmart-backend)
+- [Backend do ProvaSmart](https://github.com/provasmart2026/provasmart-backend)
 
-## Equipe
+## status
 
-Projeto Final de Curso do Bacharelado em Sistemas de Informação da Universidade de Mogi das Cruzes (UMC), desenvolvido por Alyne Rodrigues de Campos e Gustavo Gonçalves Baião.
+🚧 em desenvolvimento.
 
-## Status
-
-🚧 Em desenvolvimento.
