@@ -18,6 +18,11 @@ A solução atual já inclui a estrutura inicial da interface, os componentes vi
 - proxy local para a API em `http://localhost:8080`;
 - teste de renderização da página e teste do cliente da API;
 - comandos de build e testes configurados.
+- painel administrativo em `/admin/questions`, com tabela e paginação;
+- criação e edição de questões usando o mesmo formulário;
+- seleção dependente de área, disciplina e assunto, com criação de assunto;
+- ativação e desativação de questões e atualização da listagem;
+- testes de integração da interface com respostas HTTP simuladas.
 
 ## funcionalidades previstas
 
@@ -57,7 +62,7 @@ O frontend é responsável pela apresentação das telas, validações de interf
 
 ## requisitos
 
-- node.js 20 ou superior;
+- Node.js `^20.19.0` ou `>=22.12.0`, conforme a versão instalada do Vite;
 - npm;
 - backend do ProvaSmart executando separadamente para testar dados reais.
 
@@ -107,25 +112,36 @@ o backend usa Java 25, Spring Boot e PostgreSQL. as variáveis de banco esperada
 - telas e rotas de login, cadastro e autenticação;
 - dashboard do estudante;
 - fluxo completo de criação, execução e finalização de simulados;
-- tela de questões com filtros e paginação;
+- filtros na listagem de questões;
 - correção, resultados e desempenho por área do ENEM;
 - histórico de simulados e plano de estudos;
-- área administrativa para gerenciar questões;
+- autenticação e autorização da área administrativa;
 - ligar cada tela aos endpoints correspondentes;
-- estados de carregamento, erro e sessão expirada;
-- isso são funcionalidades futuras, focar na entrega do dia 14;
+- tratamento de sessão expirada quando a autenticação for implementada.
 
-o cliente axios já tá configurado, mas a interface ainda não consome todos os endpoints. o primeiro recurso preparado no código é a consulta de questões ativas.
+O fluxo administrativo de questões já consome os endpoints de questões, áreas, disciplinas e assuntos. Os estados de carregamento, erro e nova tentativa estão implementados nesse fluxo. As demais integrações serão adicionadas junto às respectivas telas.
 
 ## estrutura principal
 
 ```text
 public/       logos e ícones usados pela interface
 src/api/      cliente axios e chamadas da api
-src/components/ componentes visuais da página inicial
-src/pages/    páginas da aplicação
+src/components/ componentes visuais da Home, layout compartilhado e formulário/tabela de questões
+src/pages/    páginas da aplicação e hooks específicos de cada fluxo
+src/routes/   configuração de navegação
+src/types/    contratos de dados e tipos da interface separados por responsabilidade
+src/constants/ valores compartilhados do fluxo de questões
+src/utils/    funções puras compartilhadas
 src/styles.css estilos globais e identidade visual
 ```
+
+As páginas coordenam estado, carregamento e navegação. `QuestionForm` e `QuestionSubjectFields` recebem dados e callbacks e não fazem requisições HTTP. `useQuestionSubjects` coordena o catálogo dependente usando as APIs separadas por recurso; o cliente Axios é único.
+
+Na edição, a resposta da questão contém `subjectId`, sem os IDs da área e da disciplina. Por isso, o frontend localiza o assunto nos catálogos disponíveis. Essa busca pode exigir várias consultas; não há cache global para evitar dados desatualizados. Apenas o `subjectId` vincula a questão ao catálogo no envio para o backend.
+
+O fluxo exige cinco alternativas (A–E), exatamente uma correta e os campos obrigatórios. Trocar a área limpa disciplina e assunto; trocar a disciplina limpa o assunto. Selecionar um assunto existente bloqueia o cadastro de outro, e digitar um novo nome bloqueia a seleção existente.
+
+Use `npm ci` para reproduzir as versões do `package-lock.json`. O build também verifica tipos, variáveis e parâmetros não utilizados. Os testes usam HTTP simulado e não substituem a validação de integração com o backend em execução.
 
 ## protótipo
 

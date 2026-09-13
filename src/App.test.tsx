@@ -1,8 +1,12 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { App } from './App'
 
 describe('App', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    window.history.replaceState(null, '', '/')
+  })
   it('exibe a mensagem principal e o CTA da Home', () => {
     render(<App />)
     expect(screen.getByRole('heading', { name: /cada questão conta/i })).toBeInTheDocument()
@@ -32,5 +36,27 @@ describe('App', () => {
     expect(screen.getByText('Banco de questões')).toBeInTheDocument()
     expect(screen.getByText('Metas semanais')).toBeInTheDocument()
     expect(screen.getByText('Progresso contínuo')).toBeInTheDocument()
+    expect(screen.getByText('Banco de questões').closest('article')?.querySelector('img'))
+      .toHaveAttribute('src', '/icons/questoes.svg')
+  })
+
+  it.each(['Como funciona', 'Recursos'])('o rodapé navega para a seção %s saindo do painel', async (name) => {
+    // The empty creation form needs only the area catalog; no real backend request is made.
+    const {api} = await import('./api/client')
+    vi.spyOn(api, 'request').mockResolvedValue({data: []} as never)
+    const scroll = vi.fn()
+    const original = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scroll
+    try {
+      window.history.replaceState(null, '', '/admin/questions/new')
+      render(<App />)
+      fireEvent.click(within(screen.getByRole('contentinfo')).getByRole('link', {name}))
+      const hash = name === 'Recursos' ? '#recursos' : '#como-funciona'
+      await waitFor(() => expect(scroll).toHaveBeenCalled())
+      expect(window.location.pathname + window.location.hash).toBe('/' + hash)
+      expect(scroll.mock.instances.at(-1)).toBe(document.getElementById(hash.slice(1)))
+    } finally {
+      Element.prototype.scrollIntoView = original
+    }
   })
 })
