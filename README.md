@@ -102,7 +102,7 @@ na branch `develop`, a API disponibiliza recursos para:
 
 o backend usa Java 25, Spring Boot e PostgreSQL. as variáveis de banco esperadas são `DB_URL`, `DB_USERNAME` e `DB_PASSWORD`.
 
-## o que ainda falta no frontend
+## o que ainda falta no front
 
 - telas e rotas de login, cadastro e autenticação;
 - dashboard do estudante;
@@ -113,9 +113,9 @@ o backend usa Java 25, Spring Boot e PostgreSQL. as variáveis de banco esperada
 - área administrativa para gerenciar questões;
 - ligar cada tela aos endpoints correspondentes;
 - estados de carregamento, erro e sessão expirada;
-- testes de integração com o backend em execução.
+- isso são funcionalidades futuras, focar na entrega do dia 14;
 
-o cliente axios já está configurado, mas a interface ainda não consome todos os endpoints. o primeiro recurso preparado no código é a consulta de questões ativas.
+o cliente axios já tá configurado, mas a interface ainda não consome todos os endpoints. o primeiro recurso preparado no código é a consulta de questões ativas.
 
 ## estrutura principal
 
