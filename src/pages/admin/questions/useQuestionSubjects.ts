@@ -42,7 +42,6 @@ export function useQuestionSubjects(initialSubjectId: string | null, selectedSub
             if (version !== request.current) return
             setAreas(availableAreas)
             if (!initialSubjectId) return
-            // The question contains only subjectId. Resolve its parents without changing the API contract.
             for (const candidateArea of availableAreas) {
                 let availableDisciplines: Discipline[]
                 try {

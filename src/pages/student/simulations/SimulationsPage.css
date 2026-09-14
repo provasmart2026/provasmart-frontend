@@ -1,0 +1,75 @@
+.student-simulations {
+  max-width: 1440px;
+  min-height: 65vh;
+  margin: 0 auto;
+  padding: 64px clamp(20px, 8vw, 120px);
+}
+
+.simulation-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  margin-top: 28px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: white;
+  overflow-wrap: anywhere;
+}
+
+.simulation-panel .supporting-copy { line-height: 1.67; }
+.simulation-panel [role="alert"] { margin: 0; color: var(--rose-600); }
+
+.student-simulations button {
+  border: 0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.student-simulations button:disabled {
+  background: var(--rose-600);
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 560px) {
+  .simulation-panel { padding: 16px; }
+}
+
+.simulation-execution { max-width: 1120px; }
+.simulation-execution .simulation-panel { align-items: stretch; }
+.simulation-progress, .simulation-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.simulation-question { min-width: 0; margin: 0; padding: 0; border: 0; }
+.simulation-statement { width: 100%; padding: 0; font-size: 18px; line-height: 1.8; white-space: pre-wrap; }
+.simulation-alternatives { display: grid; gap: 12px; margin-top: 24px; }
+.simulation-alternative {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  cursor: pointer;
+}
+.simulation-alternative input { flex-shrink: 0; accent-color: var(--rose-600); }
+.simulation-alternative.is-selected { background: var(--rose-50); border-color: var(--rose-600); }
+.simulation-alternative:hover:not(.is-selected) { border-color: var(--violet-600); }
+.simulation-alternative:has(input:focus-visible) { outline: 3px solid var(--violet-600); outline-offset: 3px; }
+.simulation-question:disabled .simulation-alternative { cursor: wait; }
+.simulation-letter { color: var(--rose-600); font-weight: 800; }
+.simulation-save-status { min-height: 22px; }
+.simulation-secondary-button { min-height: 50px; padding: 14px 24px; border-radius: 12px; background: var(--violet-100); color: var(--mauve-700); }
+.simulation-secondary-button:focus-visible { outline: 3px solid var(--violet-600); outline-offset: 3px; }
+.student-simulations .simulation-secondary-button:disabled { background: var(--violet-100); }

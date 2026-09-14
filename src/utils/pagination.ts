@@ -1,4 +1,3 @@
-// Receives the backend's zero-based index and returns one-based page labels.
 export function getPaginationItems(currentPage: number, totalPages: number): (number | '...')[] {
     if (totalPages <= 0) return []
     if (totalPages <= 7) return Array.from({length: totalPages}, (_, index) => index + 1)
