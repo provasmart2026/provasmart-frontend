@@ -102,7 +102,7 @@ export function QuestionsPage() {
                                 )}
                             </div>
                             <span className="questions-pagination-status"
-                                role="status">Página {data.totalPages === 0 ? 0 : data.number + 1} de {data.totalPages}</span>
+                                  role="status">Página {data.totalPages === 0 ? 0 : data.number + 1} de {data.totalPages}</span>
                             <button type="button"
                                     disabled={changingStatus || data.last || data.number + 1 >= data.totalPages}
                                     onClick={() => setPage(data.number + 1)}>Próxima
