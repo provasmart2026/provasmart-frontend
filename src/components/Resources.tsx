@@ -34,7 +34,7 @@ const resources = [
 export function Resources() {
     return (
         <section className="resources" id="recursos">
-            <div className="section-heading">
+            <div className="section-heading centered">
                 <span className="eyebrow">Recursos</span>
                 <h2>Tudo que você precisa para evoluir</h2>
                 <p>Ferramentas que unem prática, análise e direção para uma preparação mais eficiente.</p>

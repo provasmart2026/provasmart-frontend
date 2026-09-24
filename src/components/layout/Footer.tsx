@@ -36,12 +36,6 @@ export function Footer() {
                         <a href="#contato">Contato</a>
                         <Link to="/politica-de-privacidade">Privacidade</Link>
                     </div>
-                    <div>
-                        <strong>Social</strong>
-                        <a href="#instagram">Instagram</a>
-                        <a href="#youtube">YouTube</a>
-                        <a href="#tiktok">TikTok</a>
-                    </div>
                 </div>
             </div>
             <div className="footer-bottom">
