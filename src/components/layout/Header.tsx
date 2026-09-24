@@ -14,8 +14,8 @@ export function Header() {
                 <Link to="/#recursos">Recursos</Link>
             </nav>
             <div className="account-actions">
-                <a className="header-action" href="#entrar">Entrar</a>
-                <a className="primary-button header-button" href="#criar-conta">Criar conta</a>
+                <Link className="header-action" to="/login">Entrar</Link>
+                <Link className="primary-button header-button" to="/cadastro">Criar conta</Link>
             </div>
         </header>
     )

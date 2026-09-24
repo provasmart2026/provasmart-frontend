@@ -1,6 +1,21 @@
-import {Link} from 'react-router-dom'
+import {Link, useLocation} from 'react-router-dom'
+
+const compactRoutes = ['/login', '/cadastro', '/termos-de-uso', '/politica-de-privacidade']
 
 export function Footer() {
+    const {pathname} = useLocation()
+
+    if (compactRoutes.includes(pathname)) {
+        return <footer className="compact-footer">
+            <span>© 2026 Provasmart. Cada questão conta.</span>
+            <nav aria-label="Links legais">
+                <span>Acessibilidade</span>
+                <Link to="/termos-de-uso">Termos de uso</Link>
+                <Link to="/politica-de-privacidade">Política de privacidade</Link>
+            </nav>
+        </footer>
+    }
+
     return (
         <footer className="site-footer">
             <div className="footer-top">
@@ -19,7 +34,7 @@ export function Footer() {
                         <strong>Suporte</strong>
                         <a href="#ajuda">Central de ajuda</a>
                         <a href="#contato">Contato</a>
-                        <a href="#privacidade">Privacidade</a>
+                        <Link to="/politica-de-privacidade">Privacidade</Link>
                     </div>
                     <div>
                         <strong>Social</strong>
@@ -31,7 +46,7 @@ export function Footer() {
             </div>
             <div className="footer-bottom">
                 <span>© 2026 Provasmart. Cada questão conta.</span>
-                <span>Acessibilidade&nbsp; • &nbsp;Termos de uso</span>
+                <span>Acessibilidade&nbsp; • &nbsp;<Link to="/termos-de-uso">Termos de uso</Link>&nbsp; • &nbsp;<Link to="/politica-de-privacidade">Política de privacidade</Link></span>
             </div>
         </footer>
     )

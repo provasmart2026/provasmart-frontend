@@ -6,6 +6,8 @@ import {Footer} from '../components/layout/Footer'
 import {Home} from '../pages/Home'
 import {SimulationStartPage} from '../pages/student/simulations/SimulationStartPage'
 import {SimulationPage} from '../pages/student/simulations/SimulationPage'
+import {LoginPage, RegisterPage} from '../pages/access/AccessPages'
+import {PrivacyPage, TermsPage} from '../pages/access/LegalPages'
 
 export function AppRoutes() {
     return (
@@ -15,6 +17,10 @@ export function AppRoutes() {
                 <main>
                     <Routes>
                         <Route path="/" element={<Home/>}/>
+                        <Route path="/login" element={<LoginPage/>}/>
+                        <Route path="/cadastro" element={<RegisterPage/>}/>
+                        <Route path="/termos-de-uso" element={<TermsPage/>}/>
+                        <Route path="/politica-de-privacidade" element={<PrivacyPage/>}/>
                         <Route path="/simulados" element={<SimulationStartPage/>}/>
                         <Route path="/simulados/:simulationId" element={<SimulationPage/>}/>
                         <Route path="/admin/questions" element={<QuestionsPage/>}/>

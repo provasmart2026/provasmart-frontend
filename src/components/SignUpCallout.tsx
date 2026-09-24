@@ -1,3 +1,5 @@
+import {Link} from 'react-router-dom'
+
 export function SignUpCallout() {
     return (
         <section className="signup-wrap" id="criar-conta">
@@ -7,7 +9,7 @@ export function SignUpCallout() {
                     <p>Abra espaço para uma preparação que cabe na sua rotina. Crie sua conta e comece pelo primeiro
                         simulado.</p>
                 </div>
-                <a className="primary-button" href="#cadastro">Criar minha conta</a>
+                <Link className="primary-button" to="/cadastro">Criar minha conta</Link>
             </div>
         </section>
     )
