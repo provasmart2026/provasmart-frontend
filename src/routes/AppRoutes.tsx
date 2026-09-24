@@ -6,7 +6,7 @@ import {Footer} from '../components/layout/Footer'
 import {Home} from '../pages/Home'
 import {SimulationStartPage} from '../pages/student/simulations/SimulationStartPage'
 import {SimulationPage} from '../pages/student/simulations/SimulationPage'
-import {LoginPage, RegisterPage} from '../pages/access/AccessPages'
+import {ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage, VerifyTwoFactorPage} from '../pages/access/AccessPages'
 import {PrivacyPage, TermsPage} from '../pages/access/LegalPages'
 
 export function AppRoutes() {
@@ -18,6 +18,9 @@ export function AppRoutes() {
                     <Routes>
                         <Route path="/" element={<Home/>}/>
                         <Route path="/login" element={<LoginPage/>}/>
+                        <Route path="/esqueci-minha-senha" element={<ForgotPasswordPage/>}/>
+                        <Route path="/redefinir-senha" element={<ResetPasswordPage/>}/>
+                        <Route path="/verificar-codigo" element={<VerifyTwoFactorPage/>}/>
                         <Route path="/cadastro" element={<RegisterPage/>}/>
                         <Route path="/termos-de-uso" element={<TermsPage/>}/>
                         <Route path="/politica-de-privacidade" element={<PrivacyPage/>}/>

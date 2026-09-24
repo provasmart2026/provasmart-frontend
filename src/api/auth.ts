@@ -7,14 +7,32 @@ export type LoginCredentials = {
 
 export type RegisterData = LoginCredentials & {
     name: string
+    acceptTerms: boolean
+    acceptPrivacyPolicy: boolean
 }
 
 export type UserRole = 'ADMIN' | 'ESTUDANTE'
 
-type LoginResponse = {
-    accessToken?: string
-    token?: string
-    role?: UserRole
+type MessageResponse = {
+    message: string
+}
+
+type TokenResponse = {
+    token: string
+}
+
+export type VerifyTwoFactorData = {
+    email: string
+    code: string
+}
+
+export type ForgotPasswordData = {
+    email: string
+}
+
+export type ResetPasswordData = ForgotPasswordData & {
+    code: string
+    newPassword: string
 }
 
 export const authChangedEvent = 'provasmart:auth'
@@ -22,10 +40,18 @@ const tokenKey = 'provasmart.token'
 const roleKey = 'provasmart.role'
 
 export function login(credentials: LoginCredentials) {
-    return apiRequest<LoginResponse>('/auth/login', {
+    return apiRequest<MessageResponse>('/auth/login', {
         method: 'POST',
         data: credentials,
     })
+}
+
+export function forgotPassword(data: ForgotPasswordData) {
+    return apiRequest<MessageResponse>('/auth/forgot-password', {method: 'POST', data})
+}
+
+export function resetPassword(data: ResetPasswordData) {
+    return apiRequest<MessageResponse>('/auth/reset-password', {method: 'POST', data})
 }
 
 export function register(data: RegisterData) {
@@ -35,8 +61,11 @@ export function register(data: RegisterData) {
     })
 }
 
-export function getToken(response: LoginResponse) {
-    return response.accessToken ?? response.token
+export function verifyTwoFactor(data: VerifyTwoFactorData) {
+    return apiRequest<TokenResponse>('/auth/verify-2fa', {
+        method: 'POST',
+        data,
+    })
 }
 
 function getTokenRole(token: string): UserRole | null {
@@ -51,12 +80,16 @@ function getTokenRole(token: string): UserRole | null {
     }
 }
 
-export function saveSession(response: LoginResponse, remember: boolean) {
-    const token = getToken(response)
-    if (!token) return false
+export function saveSession(response: TokenResponse, remember: boolean) {
+    const {token} = response
+    if (typeof token !== 'string' || !token.trim()) return false
 
     const storage = remember ? localStorage : sessionStorage
-    const role = response.role ?? getTokenRole(token)
+    const role = getTokenRole(token)
+    for (const previousStorage of [localStorage, sessionStorage]) {
+        previousStorage.removeItem(tokenKey)
+        previousStorage.removeItem(roleKey)
+    }
     storage.setItem(tokenKey, token)
     if (role) storage.setItem(roleKey, role)
     window.dispatchEvent(new Event(authChangedEvent))
