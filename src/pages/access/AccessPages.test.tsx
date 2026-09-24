@@ -7,7 +7,12 @@ import {PrivacyPage, TermsPage} from './LegalPages'
 const auth = vi.hoisted(() => ({
     login: vi.fn(),
     register: vi.fn(),
-    getToken: vi.fn((response: {token?: string}) => response.token),
+    saveSession: vi.fn((response: {token?: string}, remember: boolean) => {
+        if (!response.token) return false
+        const storage = remember ? localStorage : sessionStorage
+        storage.setItem('provasmart.token', response.token)
+        return true
+    }),
 }))
 
 vi.mock('../../api/auth', () => auth)

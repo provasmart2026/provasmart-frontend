@@ -19,6 +19,8 @@ describe('Fluxo inicial do simulado', () => {
 
     afterEach(() => {
         vi.restoreAllMocks()
+        localStorage.clear()
+        sessionStorage.clear()
         window.history.replaceState(null, '', '/')
     })
 
@@ -27,6 +29,8 @@ describe('Fluxo inicial do simulado', () => {
         const create = vi.spyOn(simulationsApi, 'create').mockReturnValue(
             new Promise<Simulation>((done) => { resolve = done }),
         )
+        localStorage.setItem('provasmart.token', 'token-de-teste')
+        localStorage.setItem('provasmart.role', 'ADMIN')
         render(<App/>)
         const header = within(screen.getByRole('banner'))
         const link = header.getByRole('link', {name: 'Simulados'})

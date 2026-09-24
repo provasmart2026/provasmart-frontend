@@ -1,6 +1,20 @@
+import {useEffect, useState} from 'react'
 import {Link} from 'react-router-dom'
+import {authChangedEvent, getSession} from '../../api/auth'
 
 export function Header() {
+    const [session, setSession] = useState(getSession)
+
+    useEffect(() => {
+        const updateSession = () => setSession(getSession())
+        window.addEventListener('storage', updateSession)
+        window.addEventListener(authChangedEvent, updateSession)
+        return () => {
+            window.removeEventListener('storage', updateSession)
+            window.removeEventListener(authChangedEvent, updateSession)
+        }
+    }, [])
+
     return (
         <header className="site-header">
             <Link className="brand" to="/" aria-label="ProvaSmart — página inicial">
@@ -8,8 +22,10 @@ export function Header() {
             </Link>
             <nav aria-label="Navegação principal">
                 <Link to="/">Início</Link>
-                <Link to="/admin/questions">Questões</Link>
-                <Link to="/simulados">Simulados</Link>
+                {session.authenticated && session.role === 'ADMIN'
+                    && <Link to="/admin/questions">Questões</Link>}
+                {session.authenticated && (session.role === 'ADMIN' || session.role === 'ESTUDANTE')
+                    && <Link to="/simulados">Simulados</Link>}
                 <Link to="/#como-funciona">Como funciona</Link>
                 <Link to="/#recursos">Recursos</Link>
             </nav>

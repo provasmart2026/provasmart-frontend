@@ -1,6 +1,6 @@
 import {type FormEvent, type ReactNode, useState} from 'react'
 import {Link, useNavigate, useSearchParams} from 'react-router-dom'
-import {getToken, login, register} from '../../api/auth'
+import {login, register, saveSession} from '../../api/auth'
 import {ApiError} from '../../api/client'
 import {StudyJourney} from '../../components/StudyJourney'
 import './access.css'
@@ -83,10 +83,7 @@ export function LoginPage() {
                 email: String(form.get('email')),
                 password: String(form.get('password')),
             })
-            const token = getToken(response)
-            if (!token) throw new Error('token ausente')
-            const storage = form.get('remember') ? localStorage : sessionStorage
-            storage.setItem('provasmart.token', token)
+            if (!saveSession(response, Boolean(form.get('remember')))) throw new Error('token ausente')
             navigate('/')
         } catch (requestError) {
             setError(message(requestError))
