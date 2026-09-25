@@ -70,6 +70,10 @@ async function fillForm() {
 
 describe('Administração de questões', () => {
     beforeEach(() => {
+        localStorage.clear()
+        sessionStorage.clear()
+        localStorage.setItem('provasmart.token', 'token-de-teste')
+        localStorage.setItem('provasmart.role', 'ADMIN')
         window.history.replaceState(null, '', '/')
         catalogRequest.mockReset().mockImplementation(async ({url}) => {
             if (url === '/exam-areas') return {data: ['LINGUAGENS', 'MATEMATICA']}
@@ -91,6 +95,8 @@ describe('Administração de questões', () => {
         })
     })
     afterEach(() => {
+        localStorage.clear()
+        sessionStorage.clear()
         vi.restoreAllMocks()
         window.history.replaceState(null, '', '/')
     })

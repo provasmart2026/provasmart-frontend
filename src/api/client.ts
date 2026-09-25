@@ -1,4 +1,5 @@
 import axios, {type AxiosRequestConfig} from 'axios'
+import {clearSession, getStoredToken, requestAuthRedirect} from '../auth/session'
 
 const API_URL = import.meta.env.VITE_API_URL ?? '/api'
 
@@ -10,9 +11,27 @@ export const api = axios.create({
 })
 
 api.interceptors.request.use(config => {
-    const token = localStorage.getItem('provasmart.token') ?? sessionStorage.getItem('provasmart.token')
+    const token = getStoredToken()
     if (token) config.headers.Authorization = `Bearer ${token}`
     return config
+})
+
+api.interceptors.response.use(response => response, error => {
+    if (axios.isAxiosError(error)) {
+        const token = getStoredToken()
+        const status = error.response?.status
+        // Ignore responses from requests sent before login or under an older session.
+        const authorization = error.config?.headers.get('Authorization')
+        if (token && authorization === `Bearer ${token}`) {
+            if (status === 401) {
+                clearSession()
+                requestAuthRedirect('/login')
+            } else if (status === 403) {
+                requestAuthRedirect('/')
+            }
+        }
+    }
+    return Promise.reject(error)
 })
 
 export class ApiError extends Error {

@@ -1,4 +1,6 @@
 import {apiRequest} from './client'
+import {authChangedEvent, clearSession, roleKey, tokenKey} from '../auth/session'
+export {authChangedEvent} from '../auth/session'
 
 export type LoginCredentials = {
     email: string
@@ -34,10 +36,6 @@ export type ResetPasswordData = ForgotPasswordData & {
     code: string
     newPassword: string
 }
-
-export const authChangedEvent = 'provasmart:auth'
-const tokenKey = 'provasmart.token'
-const roleKey = 'provasmart.role'
 
 export function login(credentials: LoginCredentials) {
     return apiRequest<MessageResponse>('/auth/login', {
@@ -86,14 +84,15 @@ export function saveSession(response: TokenResponse, remember: boolean) {
 
     const storage = remember ? localStorage : sessionStorage
     const role = getTokenRole(token)
-    for (const previousStorage of [localStorage, sessionStorage]) {
-        previousStorage.removeItem(tokenKey)
-        previousStorage.removeItem(roleKey)
-    }
+    clearSession({notify: false})
     storage.setItem(tokenKey, token)
     if (role) storage.setItem(roleKey, role)
     window.dispatchEvent(new Event(authChangedEvent))
     return true
+}
+
+export function logout() {
+    clearSession()
 }
 
 export function getSession() {

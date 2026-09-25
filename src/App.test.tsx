@@ -5,6 +5,8 @@ import { App } from './App'
 describe('App', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    localStorage.clear()
+    sessionStorage.clear()
     window.history.replaceState(null, '', '/')
   })
   it('exibe a mensagem principal e o CTA da Home', () => {
@@ -48,6 +50,8 @@ describe('App', () => {
     const original = Element.prototype.scrollIntoView
     Element.prototype.scrollIntoView = scroll
     try {
+      localStorage.setItem('provasmart.token', 'token-de-teste')
+      localStorage.setItem('provasmart.role', 'ADMIN')
       window.history.replaceState(null, '', '/admin/questions/new')
       render(<App />)
       fireEvent.click(within(screen.getByRole('contentinfo')).getByRole('link', {name}))
