@@ -524,11 +524,6 @@ a:focus-visible {
     min-height: auto;
   }
 
-  .signup-panel {
-    align-items: center;
-    flex-direction: column;
-  }
-
   .footer-top {
     flex-direction: column;
   }

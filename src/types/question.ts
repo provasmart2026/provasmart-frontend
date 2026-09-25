@@ -1,4 +1,4 @@
-export type Alternative = {
+type Alternative = {
     id: string
     letter: string
     text: string

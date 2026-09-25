@@ -1,6 +1,6 @@
 import {act, render, screen, within} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import {authChangedEvent, logout, type UserRole} from '../api/auth'
+import {authChangedEvent, clearSession, type UserRole} from '../auth/session'
 import {AppRoutes} from './AppRoutes'
 
 vi.mock('../pages/Home', () => ({Home: () => <div>Página inicial</div>}))
@@ -10,13 +10,11 @@ vi.mock('../pages/admin/questions/QuestionsPage', () => ({QuestionsPage: () => <
 vi.mock('../pages/admin/questions/QuestionFormPage', () => ({QuestionFormPage: () => <div>Formulário de questão</div>}))
 vi.mock('../pages/student/simulations/SimulationStartPage', () => ({SimulationStartPage: () => <div>Iniciar simulado</div>}))
 vi.mock('../pages/student/simulations/SimulationPage', () => ({SimulationPage: () => <div>Executar simulado</div>}))
-vi.mock('../pages/access/AccessPages', () => ({
-    LoginPage: () => <div>Página de login</div>,
-    RegisterPage: () => <div>Página de cadastro</div>,
-    VerifyTwoFactorPage: () => <div>Verificar código</div>,
-    ForgotPasswordPage: () => <div>Recuperar senha</div>,
-    ResetPasswordPage: () => <div>Redefinir senha</div>,
-}))
+vi.mock('../pages/access/LoginPage', () => ({LoginPage: () => <div>Página de login</div>}))
+vi.mock('../pages/access/RegisterPage', () => ({RegisterPage: () => <div>Página de cadastro</div>}))
+vi.mock('../pages/access/VerifyTwoFactorPage', () => ({VerifyTwoFactorPage: () => <div>Verificar código</div>}))
+vi.mock('../pages/access/ForgotPasswordPage', () => ({ForgotPasswordPage: () => <div>Recuperar senha</div>}))
+vi.mock('../pages/access/ResetPasswordPage', () => ({ResetPasswordPage: () => <div>Redefinir senha</div>}))
 vi.mock('../pages/access/LegalPages', () => ({
     TermsPage: () => <div>Termos de uso</div>,
     PrivacyPage: () => <div>Política de privacidade</div>,
@@ -128,7 +126,7 @@ describe('proteção das rotas', () => {
     it('redireciona após logout enquanto a rota está montada', () => {
         setSession('ESTUDANTE')
         openRoute('/simulados')
-        act(() => logout())
+        act(() => clearSession())
         expectPage('Página de login', '/login')
         expect(screen.queryByText('Iniciar simulado')).not.toBeInTheDocument()
     })

@@ -1,25 +1,15 @@
-import {useEffect, useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
-import {authChangedEvent, getSession, logout} from '../../api/auth'
+import {clearSession} from '../../auth/session'
+import {useSession} from '../../auth/useSession'
 
 export function Header() {
-    const [session, setSession] = useState(getSession)
+    const session = useSession()
     const navigate = useNavigate()
 
     function handleLogout() {
-        logout()
+        clearSession()
         navigate('/login')
     }
-
-    useEffect(() => {
-        const updateSession = () => setSession(getSession())
-        window.addEventListener('storage', updateSession)
-        window.addEventListener(authChangedEvent, updateSession)
-        return () => {
-            window.removeEventListener('storage', updateSession)
-            window.removeEventListener(authChangedEvent, updateSession)
-        }
-    }, [])
 
     return (
         <header className="site-header">
@@ -28,10 +18,10 @@ export function Header() {
             </Link>
             <nav aria-label="Navegação principal">
                 <Link to="/">Início</Link>
-                {session.authenticated && session.role === 'ADMIN'
-                    && <Link to="/admin/questions">Questões</Link>}
-                {session.authenticated && session.role === 'ADMIN'
-                    && <Link to="/admin/users">Usuários</Link>}
+                {session.authenticated && session.role === 'ADMIN' && <>
+                    <Link to="/admin/questions">Questões</Link>
+                    <Link to="/admin/users">Usuários</Link>
+                </>}
                 {session.authenticated && session.role === 'ESTUDANTE'
                     && <Link to="/simulados">Simulados</Link>}
                 {session.authenticated && <Link to="/profile">Meu perfil</Link>}

@@ -1,7 +1,7 @@
 import {act, fireEvent, render, screen, within} from '@testing-library/react'
 import {afterEach, describe, expect, it} from 'vitest'
 import {MemoryRouter, useLocation} from 'react-router-dom'
-import {saveSession} from '../../api/auth'
+import {saveSession} from '../../auth/session'
 import {Header} from './Header'
 
 function LocationInfo() {

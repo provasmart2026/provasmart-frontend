@@ -43,7 +43,6 @@ describe('App', () => {
   })
 
   it.each(['Como funciona', 'Recursos'])('o rodapé navega para a seção %s saindo do painel', async (name) => {
-    // The empty creation form needs only the area catalog; no real backend request is made.
     const {api} = await import('./api/client')
     vi.spyOn(api, 'request').mockResolvedValue({data: []} as never)
     const scroll = vi.fn()

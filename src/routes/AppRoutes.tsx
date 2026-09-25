@@ -10,7 +10,11 @@ import {Footer} from '../components/layout/Footer'
 import {Home} from '../pages/Home'
 import {SimulationStartPage} from '../pages/student/simulations/SimulationStartPage'
 import {SimulationPage} from '../pages/student/simulations/SimulationPage'
-import {ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage, VerifyTwoFactorPage} from '../pages/access/AccessPages'
+import {ForgotPasswordPage} from '../pages/access/ForgotPasswordPage'
+import {LoginPage} from '../pages/access/LoginPage'
+import {RegisterPage} from '../pages/access/RegisterPage'
+import {ResetPasswordPage} from '../pages/access/ResetPasswordPage'
+import {VerifyTwoFactorPage} from '../pages/access/VerifyTwoFactorPage'
 import {PrivacyPage, TermsPage} from '../pages/access/LegalPages'
 
 export function AppRoutes() {

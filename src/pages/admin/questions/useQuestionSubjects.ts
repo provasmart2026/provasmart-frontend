@@ -8,7 +8,11 @@ import type {Subject} from '../../../types/subject'
 import type {QuestionSubjects} from '../../../types/questionForm'
 import {SUBJECT_NAME_MAX_LENGTH} from '../../../constants/questions'
 
-export function useQuestionSubjects(initialSubjectId: string | null, selectedSubjectId: string, onSubjectChange: (id: string) => void): QuestionSubjects {
+export function useQuestionSubjects(
+    initialSubjectId: string | null,
+    selectedSubjectId: string,
+    onSubjectChange: (id: string) => void,
+): QuestionSubjects {
     const [areas, setAreas] = useState<ExamArea[]>([])
     const [area, setArea] = useState<ExamArea | ''>('')
     const [disciplines, setDisciplines] = useState<Discipline[]>([])
@@ -20,13 +24,12 @@ export function useQuestionSubjects(initialSubjectId: string | null, selectedSub
     const [creating, setCreating] = useState(false)
     const [createError, setCreateError] = useState<string | null>(null)
     const [attempt, setAttempt] = useState(0)
-    const request = useRef(0)
-    const retry = useRef<() => void>(() => {
-    })
+    const catalogRequestVersion = useRef(0)
+    const retry = useRef<() => void>(() => {})
 
     useEffect(() => {
         if (initialSubjectId === null) return
-        const version = ++request.current
+        const requestVersion = ++catalogRequestVersion.current
         setLoading(initialSubjectId ? 'Carregando área, disciplina e assunto...' : 'Carregando áreas...')
         setError(null)
         setArea('')
@@ -37,9 +40,9 @@ export function useQuestionSubjects(initialSubjectId: string | null, selectedSub
         setCreateError(null)
         retry.current = () => setAttempt((value) => value + 1)
 
-        async function initialize() {
+        async function loadInitialSubjectCatalog() {
             const availableAreas = await examAreasApi.list()
-            if (version !== request.current) return
+            if (requestVersion !== catalogRequestVersion.current) return
             setAreas(availableAreas)
             if (!initialSubjectId) return
             for (const candidateArea of availableAreas) {
@@ -47,14 +50,14 @@ export function useQuestionSubjects(initialSubjectId: string | null, selectedSub
                 try {
                     availableDisciplines = await disciplinesApi.listByExamArea(candidateArea)
                 } catch {
-                    if (version !== request.current) return
+                    if (requestVersion !== catalogRequestVersion.current) return
                     continue
                 }
-                if (version !== request.current) return
+                if (requestVersion !== catalogRequestVersion.current) return
                 const catalogs = await Promise.allSettled(availableDisciplines.map(async (discipline) => ({
                     discipline, subjects: await subjectsApi.listByDiscipline(discipline.id),
                 })))
-                if (version !== request.current) return
+                if (requestVersion !== catalogRequestVersion.current) return
                 const match = catalogs.flatMap((result) => result.status === 'fulfilled' ? [result.value] : [])
                     .find((catalog) => catalog.subjects.some((subject) => subject.id === initialSubjectId))
                 if (match) {
@@ -68,19 +71,19 @@ export function useQuestionSubjects(initialSubjectId: string | null, selectedSub
             throw new Error('Assunto não encontrado')
         }
 
-        initialize().catch(() => {
-            if (version === request.current) setError('Não foi possível carregar as opções de assunto. Tente novamente.')
+        loadInitialSubjectCatalog().catch(() => {
+            if (requestVersion === catalogRequestVersion.current) setError('Não foi possível carregar as opções de assunto. Tente novamente.')
         }).finally(() => {
-            if (version === request.current) setLoading(null)
+            if (requestVersion === catalogRequestVersion.current) setLoading(null)
         })
         return () => {
-            request.current++
+            catalogRequestVersion.current++
         }
     }, [initialSubjectId, attempt])
 
     async function selectArea(nextArea: ExamArea | '') {
         if (creating || (nextArea && !areas.includes(nextArea))) return
-        const version = ++request.current
+        const requestVersion = ++catalogRequestVersion.current
         setArea(nextArea)
         setDisciplineId('')
         setDisciplines([])
@@ -96,17 +99,17 @@ export function useQuestionSubjects(initialSubjectId: string | null, selectedSub
         }
         try {
             const result = await disciplinesApi.listByExamArea(nextArea)
-            if (version === request.current) setDisciplines(result)
+            if (requestVersion === catalogRequestVersion.current) setDisciplines(result)
         } catch {
-            if (version === request.current) setError('Não foi possível carregar as disciplinas. Tente novamente.')
+            if (requestVersion === catalogRequestVersion.current) setError('Não foi possível carregar as disciplinas. Tente novamente.')
         } finally {
-            if (version === request.current) setLoading(null)
+            if (requestVersion === catalogRequestVersion.current) setLoading(null)
         }
     }
 
     async function selectDiscipline(nextId: string) {
         if (creating || (nextId && !disciplines.some((discipline) => discipline.id === nextId))) return
-        const version = ++request.current
+        const requestVersion = ++catalogRequestVersion.current
         setDisciplineId(nextId)
         setSubjects([])
         onSubjectChange('')
@@ -120,34 +123,35 @@ export function useQuestionSubjects(initialSubjectId: string | null, selectedSub
         }
         try {
             const result = await subjectsApi.listByDiscipline(nextId)
-            if (version === request.current) setSubjects(result)
+            if (requestVersion === catalogRequestVersion.current) setSubjects(result)
         } catch {
-            if (version === request.current) setError('Não foi possível carregar os assuntos. Tente novamente.')
+            if (requestVersion === catalogRequestVersion.current) setError('Não foi possível carregar os assuntos. Tente novamente.')
         } finally {
-            if (version === request.current) setLoading(null)
+            if (requestVersion === catalogRequestVersion.current) setLoading(null)
         }
     }
 
     async function createSubject() {
-        if (creating || selectedSubjectId || !disciplineId || loading || error) return
+        const cannotCreateSubject = creating || selectedSubjectId || !disciplineId || loading || error
+        if (cannotCreateSubject) return
         const name = newSubjectName.trim()
         if (!name || name.length > SUBJECT_NAME_MAX_LENGTH) {
             setCreateError(`Informe um nome de assunto com até ${SUBJECT_NAME_MAX_LENGTH} caracteres.`)
             return
         }
-        const version = request.current
+        const requestVersion = catalogRequestVersion.current
         setCreating(true)
         setCreateError(null)
         try {
             const subject = await subjectsApi.create(disciplineId, {name})
-            if (version !== request.current) return
+            if (requestVersion !== catalogRequestVersion.current) return
             setSubjects((current) => [...current.filter((item) => item.id !== subject.id), subject])
             onSubjectChange(subject.id)
             setNewSubjectName('')
         } catch {
-            if (version === request.current) setCreateError('Não foi possível criar o assunto. Tente novamente.')
+            if (requestVersion === catalogRequestVersion.current) setCreateError('Não foi possível criar o assunto. Tente novamente.')
         } finally {
-            if (version === request.current) setCreating(false)
+            if (requestVersion === catalogRequestVersion.current) setCreating(false)
         }
     }
 

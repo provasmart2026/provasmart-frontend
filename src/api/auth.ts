@@ -1,106 +1,43 @@
 import {apiRequest} from './client'
-import {authChangedEvent, clearSession, roleKey, tokenKey} from '../auth/session'
-export {authChangedEvent} from '../auth/session'
 
-export type LoginCredentials = {
+type LoginCredentials = {
     email: string
     password: string
 }
 
-export type RegisterData = LoginCredentials & {
+type RegisterData = LoginCredentials & {
     name: string
     acceptTerms: boolean
     acceptPrivacyPolicy: boolean
 }
 
-export type UserRole = 'ADMIN' | 'ESTUDANTE'
-
 type MessageResponse = {
     message: string
 }
 
-type TokenResponse = {
-    token: string
-}
-
-export type VerifyTwoFactorData = {
+type VerifyTwoFactorData = {
     email: string
     code: string
 }
 
-export type ForgotPasswordData = {
+type ForgotPasswordData = {
     email: string
 }
 
-export type ResetPasswordData = ForgotPasswordData & {
+type ResetPasswordData = ForgotPasswordData & {
     code: string
     newPassword: string
 }
 
-export function login(credentials: LoginCredentials) {
-    return apiRequest<MessageResponse>('/auth/login', {
-        method: 'POST',
-        data: credentials,
-    })
-}
-
-export function forgotPassword(data: ForgotPasswordData) {
-    return apiRequest<MessageResponse>('/auth/forgot-password', {method: 'POST', data})
-}
-
-export function resetPassword(data: ResetPasswordData) {
-    return apiRequest<MessageResponse>('/auth/reset-password', {method: 'POST', data})
-}
-
-export function register(data: RegisterData) {
-    return apiRequest('/users', {
-        method: 'POST',
-        data,
-    })
-}
-
-export function verifyTwoFactor(data: VerifyTwoFactorData) {
-    return apiRequest<TokenResponse>('/auth/verify-2fa', {
-        method: 'POST',
-        data,
-    })
-}
-
-function getTokenRole(token: string): UserRole | null {
-    try {
-        const encoded = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
-        const payload = JSON.parse(atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, '=')))
-        const value = payload.role ?? payload.roles?.[0] ?? payload.authorities?.[0]
-        const role = typeof value === 'string' ? value.replace('ROLE_', '') : ''
-        return role === 'ADMIN' || role === 'ESTUDANTE' ? role : null
-    } catch {
-        return null
-    }
-}
-
-export function saveSession(response: TokenResponse, remember: boolean) {
-    const {token} = response
-    if (typeof token !== 'string' || !token.trim()) return false
-
-    const storage = remember ? localStorage : sessionStorage
-    const role = getTokenRole(token)
-    clearSession({notify: false})
-    storage.setItem(tokenKey, token)
-    if (role) storage.setItem(roleKey, role)
-    window.dispatchEvent(new Event(authChangedEvent))
-    return true
-}
-
-export function logout() {
-    clearSession()
-}
-
-export function getSession() {
-    const storage = localStorage.getItem(tokenKey) ? localStorage : sessionStorage
-    const token = storage.getItem(tokenKey)
-    const storedRole = storage.getItem(roleKey)
-    const role = storedRole === 'ADMIN' || storedRole === 'ESTUDANTE'
-        ? storedRole
-        : token ? getTokenRole(token) : null
-    return {authenticated: Boolean(token), role}
+export const authApi = {
+    login: (data: LoginCredentials) =>
+        apiRequest<MessageResponse>('/auth/login', {method: 'POST', data}),
+    register: (data: RegisterData) =>
+        apiRequest('/users', {method: 'POST', data}),
+    verifyTwoFactor: (data: VerifyTwoFactorData) =>
+        apiRequest<{token: string}>('/auth/verify-2fa', {method: 'POST', data}),
+    forgotPassword: (data: ForgotPasswordData) =>
+        apiRequest<MessageResponse>('/auth/forgot-password', {method: 'POST', data}),
+    resetPassword: (data: ResetPasswordData) =>
+        apiRequest<MessageResponse>('/auth/reset-password', {method: 'POST', data}),
 }

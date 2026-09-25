@@ -3,8 +3,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {AxiosError, type AxiosAdapter, type InternalAxiosRequestConfig} from 'axios'
 import {MemoryRouter, Route, Routes, useLocation, useNavigationType} from 'react-router-dom'
 import {apiRequest, ApiError} from '../api/client'
-import {logout, saveSession} from '../api/auth'
-import {authChangedEvent, authRedirectEvent, roleKey, tokenKey} from '../auth/session'
+import {authChangedEvent, authRedirectEvent, clearSession, roleKey, saveSession, tokenKey} from '../auth/session'
 import {Header} from '../components/layout/Header'
 import {RequireAuth} from './RequireAuth'
 import {AuthRedirect} from './AuthRedirect'
@@ -161,7 +160,7 @@ describe('tratamento global de autenticação HTTP', () => {
         try {
             saveSession({token: `header.${btoa(JSON.stringify({role: 'ESTUDANTE'}))}.signature`}, false)
             expect(sessionStorage.getItem(roleKey)).toBe('ESTUDANTE')
-            logout()
+            clearSession()
             expect(observed).toEqual([true, false])
             expect(sessionStorage.getItem(tokenKey)).toBeNull()
         } finally {

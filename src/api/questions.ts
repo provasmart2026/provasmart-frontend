@@ -14,6 +14,4 @@ export const questionsApi = {
         apiRequest<void>(`/questions/${encodeURIComponent(id)}/deactivate`, {method: 'PATCH'}),
     list: (page = 0, size = QUESTIONS_PAGE_SIZE) =>
         apiRequest<Page<Question>>(`/questions?page=${page}&size=${size}`),
-    listActive: (page = 0, size = QUESTIONS_PAGE_SIZE) =>
-        apiRequest<Page<Question>>(`/questions/active?page=${page}&size=${size}`),
 }

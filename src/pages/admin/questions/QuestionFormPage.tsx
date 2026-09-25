@@ -76,7 +76,9 @@ function QuestionFormScreen({id}: {id: string | undefined}) {
     }
 
     async function save() {
-        if (saving || subjectOptions.creating || subjectOptions.loading || subjectOptions.error || subjectOptions.newSubjectName) return
+        const cannotSave = saving || subjectOptions.creating || subjectOptions.loading
+            || subjectOptions.error || subjectOptions.newSubjectName
+        if (cannotSave) return
         const input: QuestionInput = {
             ...value,
             statement: value.statement.trim(),
@@ -84,9 +86,10 @@ function QuestionFormScreen({id}: {id: string | undefined}) {
             subjectId: value.subjectId.trim(),
             alternatives: value.alternatives.map((item) => ({...item, text: item.text.trim()})),
         }
-        if (!input.subjectId || !subjectOptions.subjects.some((subject) => subject.id === input.subjectId)
-            || !input.statement || !input.explanation || !input.alternatives.every((item) => item.text)
-            || input.alternatives.filter((item) => item.correct).length !== 1) {
+        const hasValidSubject = input.subjectId && subjectOptions.subjects.some(subject => subject.id === input.subjectId)
+        const hasRequiredContent = input.statement && input.explanation && input.alternatives.every(item => item.text)
+        const hasExactlyOneCorrectAlternative = input.alternatives.filter(item => item.correct).length === 1
+        if (!hasValidSubject || !hasRequiredContent || !hasExactlyOneCorrectAlternative) {
             setError('Preencha todos os campos e selecione exatamente uma alternativa correta.')
             return
         }

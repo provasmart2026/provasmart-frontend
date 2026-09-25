@@ -1,4 +1,4 @@
-﻿import {act, fireEvent, render, screen} from '@testing-library/react'
+import {act, fireEvent, render, screen} from '@testing-library/react'
 import {afterEach, describe, expect, it, vi} from 'vitest'
 import {MemoryRouter, Route, Routes} from 'react-router-dom'
 import {simulationsApi} from '../../../api/simulations'
@@ -146,6 +146,52 @@ describe('Execução do simulado', () => {
         fireEvent.click(screen.getByRole('radio', {name: 'B Alternativa B'}))
         await act(async () => {})
         expect(answer).toHaveBeenCalledTimes(2)
+    })
+
+    it('informa falha se a consulta após salvar também não confirma a alternativa', async () => {
+        await open(fixture(true))
+        vi.spyOn(simulationsApi, 'answer').mockResolvedValue(fixture(true))
+        fireEvent.click(screen.getByRole('radio', {name: 'B Alternativa B'}))
+        expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível salvar a resposta.')
+        expect(simulationsApi.get).toHaveBeenCalledTimes(2)
+        expect(screen.getByRole('radio', {name: 'A Alternativa A'})).toBeChecked()
+        expect(screen.getByRole('button', {name: 'Próxima'})).toBeEnabled()
+    })
+
+    it('aguarda a confirmação da resposta antes de salvar a última escolha', async () => {
+        await open(fixture(true))
+        const refresh = deferred<Simulation>()
+        vi.mocked(simulationsApi.get).mockReturnValueOnce(refresh.promise)
+        const final = fixture(true)
+        final.questions.find(question => question.id === 'sq-1')!.selectedAlternativeId = '1-D'
+        const answer = vi.spyOn(simulationsApi, 'answer')
+            .mockResolvedValueOnce(fixture(true)).mockResolvedValueOnce(final)
+        fireEvent.click(screen.getByRole('radio', {name: 'B Alternativa B'}))
+        await act(async () => {})
+        fireEvent.click(screen.getByRole('radio', {name: 'C Alternativa C'}))
+        fireEvent.click(screen.getByRole('radio', {name: 'D Alternativa D'}))
+        expect(answer).toHaveBeenCalledTimes(1)
+        expect(screen.getByRole('radio', {name: 'D Alternativa D'})).toBeChecked()
+        expect(screen.getByRole('button', {name: 'Próxima'})).toBeDisabled()
+        const confirmed = fixture(true)
+        confirmed.questions.find(question => question.id === 'sq-1')!.selectedAlternativeId = '1-B'
+        await act(async () => refresh.resolve(confirmed))
+        expect(answer).toHaveBeenNthCalledWith(2, 'simulation-1', 'sq-1', '1-D')
+        expect(screen.getByRole('radio', {name: 'D Alternativa D'})).toBeChecked()
+        expect(screen.getByRole('button', {name: 'Próxima'})).toBeEnabled()
+    })
+
+    it('não finaliza um simulado com 39 questões mesmo que todas estejam respondidas', async () => {
+        const simulation = fixture(true)
+        simulation.questions = simulation.questions.slice(1)
+        vi.spyOn(simulationsApi, 'get').mockResolvedValue(simulation)
+        const finish = vi.spyOn(simulationsApi, 'finish')
+        renderPage()
+        await screen.findByText('Questão 1 de 39')
+        for (let index = 1; index < 39; index++) fireEvent.click(screen.getByRole('button', {name: 'Próxima'}))
+        fireEvent.click(screen.getByRole('button', {name: 'Finalizar simulado'}))
+        expect(screen.getByRole('alert')).toHaveTextContent('O simulado deve conter 40 questões')
+        expect(finish).not.toHaveBeenCalled()
     })
 
     it('bloqueia a finalização e informa o total exato de questões pendentes', async () => {

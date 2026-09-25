@@ -1,7 +1,8 @@
 import {act, fireEvent, render, screen, waitFor, within} from '@testing-library/react'
 import {afterEach, describe, expect, it, vi} from 'vitest'
 import {api} from '../../../api/client'
-import type {PageResponse, UserResponse} from '../../../api/users'
+import type {UserResponse} from '../../../api/users'
+import type {Page} from '../../../types/api'
 import {UsersPage} from './UsersPage'
 
 const student: UserResponse = {
@@ -15,8 +16,8 @@ const inactive = {...student, id: 'inactive-uuid', name: 'Bruno', active: false}
 const requested = {...student, id: 'requested-uuid', name: 'Carla', deletionRequested: true, deletionRequestedAt: '2026-09-25T14:30:00'}
 const admin: UserResponse = {...requested, id: 'admin-uuid', name: 'Administrador teste', role: 'ADMIN'}
 
-function page(content: UserResponse[], number = 0, totalPages = 1): PageResponse<UserResponse> {
-    return {content, number, totalPages, totalElements: totalPages > 1 ? 11 : content.length, size: 10, first: number === 0, last: number >= totalPages - 1}
+function page(content: UserResponse[], number = 0, totalPages = 1): Page<UserResponse> {
+    return {content, empty: content.length === 0, numberOfElements: content.length, number, totalPages, totalElements: totalPages > 1 ? 11 : content.length, size: 10, first: number === 0, last: number >= totalPages - 1}
 }
 
 async function open(content = [student, inactive, requested, admin]) {

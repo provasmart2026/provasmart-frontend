@@ -14,15 +14,28 @@ type QuestionFormProps = {
 }
 
 export function QuestionForm({
-                                 value,
-                                 onChange,
-                                 onSubmit,
-                                 onCancel,
-                                 saving,
-                                 error,
-                                 subjectOptions: options
-                             }: QuestionFormProps) {
+    value, onChange, onSubmit, onCancel, saving, error, subjectOptions: options,
+}: QuestionFormProps) {
     const id = useId()
+    const hasValidSubject = options.subjects.some(subject => subject.id === value.subjectId)
+    const cannotSave = saving || options.creating || Boolean(options.loading) || Boolean(options.error)
+        || Boolean(options.newSubjectName) || !hasValidSubject
+
+    function changeAlternativeText(index: number, text: string) {
+        onChange({
+            ...value,
+            alternatives: value.alternatives.map((alternative, alternativeIndex) =>
+                alternativeIndex === index ? {...alternative, text} : alternative),
+        })
+    }
+
+    function selectCorrectAlternative(index: number) {
+        onChange({
+            ...value,
+            alternatives: value.alternatives.map((alternative, alternativeIndex) =>
+                ({...alternative, correct: alternativeIndex === index})),
+        })
+    }
 
     function submit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -47,16 +60,10 @@ export function QuestionForm({
                     <div className="question-alternative" key={alternative.letter}>
                         <label htmlFor={`${id}-${alternative.letter}`}>Alternativa {alternative.letter}</label>
                         <textarea id={`${id}-${alternative.letter}`} required rows={2} value={alternative.text}
-                                  onChange={(event) => onChange({
-                                      ...value, alternatives: value.alternatives.map((item, itemIndex) =>
-                                          itemIndex === index ? {...item, text: event.target.value} : item)
-                                  })}/>
+                                  onChange={(event) => changeAlternativeText(index, event.target.value)}/>
                         <label className="question-correct-option">
                             <input type="radio" name={`${id}-correct`} required checked={alternative.correct}
-                                   onChange={() => onChange({
-                                       ...value, alternatives: value.alternatives.map((item, itemIndex) =>
-                                           ({...item, correct: itemIndex === index}))
-                                   })}/>
+                                   onChange={() => selectCorrectAlternative(index)}/>
                             {alternative.letter} é a correta
                         </label>
                     </div>
@@ -70,7 +77,7 @@ export function QuestionForm({
             {error && <p id={`${id}-error`} role="alert">{error}</p>}
             <div className="question-actions">
                 <button className="primary-button" type="submit"
-                        disabled={saving || options.creating || Boolean(options.loading) || Boolean(options.error) || Boolean(options.newSubjectName) || !options.subjects.some((subject) => subject.id === value.subjectId)}>
+                        disabled={cannotSave}>
                     {saving ? 'Salvando...' : 'Salvar questão'}
                 </button>
                 <button type="button" disabled={saving || options.creating} onClick={onCancel}>Cancelar</button>

@@ -20,9 +20,9 @@ api.interceptors.response.use(response => response, error => {
     if (axios.isAxiosError(error)) {
         const token = getStoredToken()
         const status = error.response?.status
-        // Ignore responses from requests sent before login or under an older session.
         const authorization = error.config?.headers.get('Authorization')
-        if (token && authorization === `Bearer ${token}`) {
+        const isRequestFromCurrentSession = token && authorization === `Bearer ${token}`
+        if (isRequestFromCurrentSession) {
             if (status === 401) {
                 clearSession()
                 requestAuthRedirect('/login')

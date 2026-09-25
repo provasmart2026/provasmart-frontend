@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react'
-import {getCurrentUser, requestAccountDeletion, type UserResponse} from '../../api/users'
+import {usersApi, type UserResponse} from '../../api/users'
 import './ProfilePage.css'
 import {formatDate} from '../../utils/date'
 
@@ -13,13 +13,13 @@ export function ProfilePage() {
     const [loadError, setLoadError] = useState(false)
     const [requesting, setRequesting] = useState(false)
     const [requestError, setRequestError] = useState<string | null>(null)
-    const pending = useRef(false)
+    const deletionPending = useRef(false)
     const mounted = useRef(false)
 
     useEffect(() => {
         mounted.current = true
         let cancelled = false
-        getCurrentUser().then(data => {
+        usersApi.getCurrent().then(data => {
             if (!cancelled) setUser(data)
         }).catch(() => {
             if (!cancelled) setLoadError(true)
@@ -32,27 +32,29 @@ export function ProfilePage() {
         }
     }, [])
 
+    async function refreshUserAfterDeletion() {
+        try {
+            const updatedUser = await usersApi.getCurrent()
+            if (mounted.current) setUser(updatedUser)
+        } catch {
+            if (mounted.current) setRequestError('Sua solicitação foi registrada, mas não foi possível atualizar seus dados agora.')
+        }
+    }
+
     async function handleRequestDeletion() {
-        if (pending.current || !user || user.deletionRequested) return
+        if (deletionPending.current || !user || user.deletionRequested) return
         if (!window.confirm('Deseja realmente solicitar a exclusão da sua conta? Um administrador precisará concluir a exclusão definitiva.')) return
-        pending.current = true
+        deletionPending.current = true
         setRequesting(true)
         setRequestError(null)
         try {
-            await requestAccountDeletion()
+            await usersApi.requestDeletion()
             if (!mounted.current) return
-            try {
-                const updatedUser = await getCurrentUser()
-                if (mounted.current) {
-                    setUser(updatedUser)
-                }
-            } catch {
-                if (mounted.current) setRequestError('Sua solicitação foi registrada, mas não foi possível atualizar seus dados agora.')
-            }
+            await refreshUserAfterDeletion()
         } catch {
             if (mounted.current) setRequestError('Não foi possível solicitar a exclusão da conta. Tente novamente.')
         } finally {
-            pending.current = false
+            deletionPending.current = false
             if (mounted.current) setRequesting(false)
         }
     }

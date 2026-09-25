@@ -2,7 +2,7 @@ import {Link} from 'react-router-dom'
 import {privacy, terms, type LegalDocument} from './legalDocuments'
 import './access.css'
 
-function LegalPage({document}: {document: LegalDocument}) {
+function LegalPage({document}: { document: LegalDocument }) {
     return <div className="legal-page">
         <header className="legal-heading">
             <span className="badge">{document.eyebrow}</span>

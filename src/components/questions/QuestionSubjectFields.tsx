@@ -12,6 +12,8 @@ type QuestionSubjectFieldsProps = {
 export function QuestionSubjectFields({id, subjectId, options, onSubjectChange}: QuestionSubjectFieldsProps) {
     const newSubjectDisabled = !options.disciplineId || options.creating || Boolean(options.loading)
         || Boolean(options.error) || Boolean(subjectId)
+    const existingSubjectDisabled = options.creating || !options.disciplineId || Boolean(options.loading)
+        || !options.subjects.length || Boolean(options.newSubjectName)
 
     return <>
         <label htmlFor={`${id}-area`}>Área</label>
@@ -31,7 +33,7 @@ export function QuestionSubjectFields({id, subjectId, options, onSubjectChange}:
         </select>
         <label htmlFor={`${id}-subject`}>Assunto</label>
         <select id={`${id}-subject`} required value={subjectId}
-                disabled={options.creating || !options.disciplineId || Boolean(options.loading) || !options.subjects.length || Boolean(options.newSubjectName)}
+                disabled={existingSubjectDisabled}
                 onChange={(event) => onSubjectChange(event.target.value)}>
             <option value="">Selecione um assunto</option>
             {options.subjects.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
