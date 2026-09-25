@@ -2,8 +2,8 @@ import {apiRequest} from './client'
 import type {Simulation, SimulationAnswerInput} from '../types/simulation'
 
 export const simulationsApi = {
-    create: (studentId: string) =>
-        apiRequest<Simulation>(`/simulations/student/${encodeURIComponent(studentId)}`, {method: 'POST'}),
+    create: () =>
+        apiRequest<Simulation>('/simulations', {method: 'POST'}),
     get: (simulationId: string) =>
         apiRequest<Simulation>(`/simulations/${encodeURIComponent(simulationId)}`),
     answer: (simulationId: string, simulationQuestionId: string, alternativeId: string) => {

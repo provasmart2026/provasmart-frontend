@@ -91,6 +91,12 @@ a {
   min-height: 50px;
 }
 
+button.header-button {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 560px) minmax(420px, 520px);

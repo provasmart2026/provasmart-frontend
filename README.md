@@ -103,7 +103,7 @@ na branch `develop`, a API disponibiliza recursos para:
 - disciplinas: `GET /disciplines/exam-area/{examArea}`;
 - assuntos: `GET /subjects/discipline/{disciplineId}` e `POST /subjects/discipline/{disciplineId}`;
 - banco de questões: `POST /questions`, `GET /questions`, `GET /questions/active`, `GET /questions/{id}`, `PUT /questions/{id}`, `PATCH /questions/{id}/activate` e `PATCH /questions/{id}/deactivate`;
-- simulados: `POST /simulations/student/{studentId}`, `GET /simulations/{simulationId}`, `PUT /simulations/{simulationId}/questions/{simulationQuestionId}/answer` e `PATCH /simulations/{simulationId}/finish`.
+- simulados: `POST /simulations` (sem body; estudante identificado pelo JWT), `GET /simulations/{simulationId}`, `PUT /simulations/{simulationId}/questions/{simulationQuestionId}/answer` e `PATCH /simulations/{simulationId}/finish`.
 
 o backend usa Java 25, Spring Boot e PostgreSQL. as variáveis de banco esperadas são `DB_URL`, `DB_USERNAME` e `DB_PASSWORD`.
 

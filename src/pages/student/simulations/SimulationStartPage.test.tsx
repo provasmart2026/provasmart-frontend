@@ -2,12 +2,12 @@ import {act, fireEvent, render, screen, waitFor, within} from '@testing-library/
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {App} from '../../../App'
 import {simulationsApi} from '../../../api/simulations'
-import {TEMPORARY_STUDENT_ID} from '../../../constants/student'
+import {ApiError} from '../../../api/client'
 import type {Simulation} from '../../../types/simulation'
 
 const simulation: Simulation = {
     id: 'created-simulation',
-    studentId: TEMPORARY_STUDENT_ID,
+    studentId: 'student-from-response',
     status: 'EM_ANDAMENTO',
     startedAt: '2026-09-13T12:00:00',
     finishedAt: null,
@@ -15,7 +15,13 @@ const simulation: Simulation = {
 }
 
 describe('Fluxo inicial do simulado', () => {
-    beforeEach(() => { vi.spyOn(simulationsApi, 'get').mockResolvedValue(simulation) })
+    beforeEach(() => {
+        localStorage.clear()
+        sessionStorage.clear()
+        localStorage.setItem('provasmart.token', 'token-de-teste')
+        localStorage.setItem('provasmart.role', 'ESTUDANTE')
+        vi.spyOn(simulationsApi, 'get').mockResolvedValue(simulation)
+    })
 
     afterEach(() => {
         vi.restoreAllMocks()
@@ -29,12 +35,10 @@ describe('Fluxo inicial do simulado', () => {
         const create = vi.spyOn(simulationsApi, 'create').mockReturnValue(
             new Promise<Simulation>((done) => { resolve = done }),
         )
-        localStorage.setItem('provasmart.token', 'token-de-teste')
-        localStorage.setItem('provasmart.role', 'ADMIN')
         render(<App/>)
         const header = within(screen.getByRole('banner'))
         const link = header.getByRole('link', {name: 'Simulados'})
-        expect(header.getByRole('link', {name: 'Questões'}).nextElementSibling).toBe(link)
+        expect(header.getByRole('link', {name: 'Início'}).nextElementSibling).toBe(link)
         fireEvent.click(link)
         expect(window.location.pathname).toBe('/simulados')
         expect(screen.getByRole('heading', {name: 'Simulado'})).toBeInTheDocument()
@@ -43,7 +47,7 @@ describe('Fluxo inicial do simulado', () => {
         fireEvent.click(button)
         expect(screen.getByRole('button', {name: 'Criando simulado...'})).toBeDisabled()
         fireEvent.click(button)
-        expect(create).toHaveBeenCalledExactlyOnceWith(TEMPORARY_STUDENT_ID)
+        expect(create).toHaveBeenCalledExactlyOnceWith()
         await act(async () => resolve(simulation))
         expect(window.location.pathname).toBe(`/simulados/${simulation.id}`)
         expect(simulationsApi.get).toHaveBeenCalledWith(simulation.id)
@@ -63,6 +67,17 @@ describe('Fluxo inicial do simulado', () => {
         fireEvent.click(button)
         await waitFor(() => expect(window.location.pathname).toBe(`/simulados/${simulation.id}`))
         expect(create).toHaveBeenCalledTimes(2)
+    })
+
+    it('informa conflito sem buscar ou navegar para outro simulado', async () => {
+        vi.spyOn(simulationsApi, 'create').mockRejectedValue(new ApiError(409, 'detalhe interno'))
+        window.history.replaceState(null, '', '/simulados')
+        render(<App/>)
+        fireEvent.click(screen.getByRole('button', {name: 'Iniciar simulado'}))
+        expect(await screen.findByRole('alert')).toHaveTextContent('Você já possui um simulado em andamento.')
+        expect(screen.getByRole('button', {name: 'Iniciar simulado'})).toBeEnabled()
+        expect(window.location.pathname).toBe('/simulados')
+        expect(simulationsApi.get).not.toHaveBeenCalled()
     })
 
     it('não redireciona quando o aluno sai da página durante a criação', async () => {

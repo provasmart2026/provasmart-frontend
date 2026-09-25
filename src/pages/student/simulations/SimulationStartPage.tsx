@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {simulationsApi} from '../../../api/simulations'
-import {TEMPORARY_STUDENT_ID} from '../../../constants/student'
+import {ApiError} from '../../../api/client'
 import './SimulationsPage.css'
 
 export function SimulationStartPage() {
@@ -22,10 +22,12 @@ export function SimulationStartPage() {
         setCreating(true)
         setError(null)
         try {
-            const simulation = await simulationsApi.create(TEMPORARY_STUDENT_ID)
+            const simulation = await simulationsApi.create()
             if (mounted.current) navigate(`/simulados/${encodeURIComponent(simulation.id)}`)
-        } catch {
-            if (mounted.current) setError('Não foi possível criar o simulado. Tente novamente.')
+        } catch (error) {
+            if (mounted.current) setError(error instanceof ApiError && error.status === 409
+                ? 'Você já possui um simulado em andamento.'
+                : 'Não foi possível criar o simulado. Tente novamente.')
         } finally {
             pending.current = false
             if (mounted.current) setCreating(false)
