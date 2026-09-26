@@ -1,5 +1,6 @@
 import { LegalLink } from '../components/LegalLink'
 import { Link, useLocation } from 'react-router-dom'
+import './Footer.css'
 
 const compactRoutes = ['/login', '/cadastro', '/termos-de-uso', '/politica-de-privacidade']
 

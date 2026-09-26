@@ -46,7 +46,7 @@ O fluxo principal é páginas → serviços por recurso → api.ts (Axios) → b
 - services/sessionService.ts concentra JWT, perfil, armazenamento e eventos, sem depender dos serviços HTTP.
 - hooks/useSession.ts sincroniza Header e ProtectedRoute com eventos de autenticação e armazenamento.
 - App.tsx declara as rotas. components/ProtectedRoute.tsx verifica sessão e perfis; components/AuthRedirect.tsx conecta erros HTTP à navegação.
-- layouts/MainLayout.tsx reúne Header, conteúdo e Footer, preservando a estrutura visual.
+- layouts/MainLayout.tsx reúne Header, conteúdo e Footer, preservando a estrutura visual. Os estilos do rodapé compacto ficam em layouts/Footer.css e são importados pelo próprio Footer.
 - As páginas coordenam estado e operações; componentes exclusivos e hooks específicos ficam próximos delas.
 - types/ mantém contratos compartilhados, incluindo UserResponse e Page<T>. ApiError preserva o status HTTP.
 
@@ -105,7 +105,7 @@ Os testes ficam centralizados em src/test/, organizados por responsabilidade:
 src/test/
 ├── setup.ts
 ├── App.test.tsx
-├── AppRoutes.test.tsx
+├── AppRouting.test.tsx
 ├── components/
 ├── layouts/
 ├── services/
