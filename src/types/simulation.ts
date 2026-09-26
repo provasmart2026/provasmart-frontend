@@ -1,14 +1,10 @@
-export type SimulationStatus =
-    | 'EM_ANDAMENTO'
-    | 'FINALIZADO'
-
-export type SimulationAlternative = {
+type SimulationAlternative = {
     id: string
     letter: string
     text: string
 }
 
-export type SimulationQuestion = {
+type SimulationQuestion = {
     id: string
     position: number
     questionId: string
@@ -20,12 +16,8 @@ export type SimulationQuestion = {
 export type Simulation = {
     id: string
     studentId: string
-    status: SimulationStatus
+    status: 'EM_ANDAMENTO' | 'FINALIZADO'
     startedAt: string
     finishedAt: string | null
     questions: SimulationQuestion[]
-}
-
-export type SimulationAnswerInput = {
-    alternativeId: string
 }

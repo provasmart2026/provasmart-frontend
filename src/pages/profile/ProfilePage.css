@@ -1,0 +1,42 @@
+.profile-page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 24px;
+  display: grid;
+  gap: 24px;
+}
+
+.profile-panel {
+  padding: clamp(20px, 4vw, 32px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: white;
+}
+
+.profile-panel h2 { margin: 0 0 20px; }
+.profile-legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 24px;
+}
+
+.profile-legal-links a {
+  color: var(--rose-600);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.profile-panel dl { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.profile-panel dt { color: var(--text-secondary); font-size: 14px; }
+.profile-panel dd { margin: 6px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+.profile-panel p { line-height: 1.65; }
+.profile-deletion { background: var(--rose-50); border-color: var(--rose-600); }
+.profile-page [role="alert"] { color: var(--rose-600); }
+.profile-page button { border: 0; font: inherit; font-weight: 600; cursor: pointer; }
+.profile-page button:disabled { opacity: .7; cursor: wait; transform: none; }
+
+@media (max-width: 600px) {
+  .profile-panel dl { grid-template-columns: 1fr; }
+}

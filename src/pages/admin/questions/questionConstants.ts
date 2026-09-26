@@ -1,0 +1,1 @@
+export const SUBJECT_NAME_MAX_LENGTH = 150
