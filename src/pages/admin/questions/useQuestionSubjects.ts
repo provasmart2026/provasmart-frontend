@@ -1,17 +1,17 @@
-import {useEffect, useRef, useState} from 'react'
-import {examAreasApi} from '../../../api/examAreas'
-import {disciplinesApi} from '../../../api/disciplines'
-import {subjectsApi} from '../../../api/subjects'
-import type {ExamArea} from '../../../types/examArea'
-import type {Discipline} from '../../../types/discipline'
-import type {Subject} from '../../../types/subject'
-import type {QuestionSubjects} from '../../../types/questionForm'
-import {SUBJECT_NAME_MAX_LENGTH} from '../../../constants/questions'
+import { useEffect, useRef, useState } from 'react'
+import { examAreaService } from '../../../services/examAreaService'
+import { disciplineService } from '../../../services/disciplineService'
+import { subjectService } from '../../../services/subjectService'
+import type { ExamArea } from '../../../types/examArea'
+import type { Discipline } from '../../../types/discipline'
+import type { Subject } from '../../../types/subject'
+import type { QuestionSubjects } from './questionSubjects'
+import { SUBJECT_NAME_MAX_LENGTH } from './questionConstants'
 
 export function useQuestionSubjects(
     initialSubjectId: string | null,
     selectedSubjectId: string,
-    onSubjectChange: (id: string) => void,
+    onSubjectChange: (id: string) => void
 ): QuestionSubjects {
     const [areas, setAreas] = useState<ExamArea[]>([])
     const [area, setArea] = useState<ExamArea | ''>('')
@@ -41,24 +41,28 @@ export function useQuestionSubjects(
         retry.current = () => setAttempt((value) => value + 1)
 
         async function loadInitialSubjectCatalog() {
-            const availableAreas = await examAreasApi.list()
+            const availableAreas = await examAreaService.list()
             if (requestVersion !== catalogRequestVersion.current) return
             setAreas(availableAreas)
             if (!initialSubjectId) return
             for (const candidateArea of availableAreas) {
                 let availableDisciplines: Discipline[]
                 try {
-                    availableDisciplines = await disciplinesApi.listByExamArea(candidateArea)
+                    availableDisciplines = await disciplineService.listByExamArea(candidateArea)
                 } catch {
                     if (requestVersion !== catalogRequestVersion.current) return
                     continue
                 }
                 if (requestVersion !== catalogRequestVersion.current) return
-                const catalogs = await Promise.allSettled(availableDisciplines.map(async (discipline) => ({
-                    discipline, subjects: await subjectsApi.listByDiscipline(discipline.id),
-                })))
+                const catalogs = await Promise.allSettled(
+                    availableDisciplines.map(async (discipline) => ({
+                        discipline,
+                        subjects: await subjectService.listByDiscipline(discipline.id),
+                    }))
+                )
                 if (requestVersion !== catalogRequestVersion.current) return
-                const match = catalogs.flatMap((result) => result.status === 'fulfilled' ? [result.value] : [])
+                const match = catalogs
+                    .flatMap((result) => (result.status === 'fulfilled' ? [result.value] : []))
                     .find((catalog) => catalog.subjects.some((subject) => subject.id === initialSubjectId))
                 if (match) {
                     setArea(candidateArea)
@@ -71,11 +75,14 @@ export function useQuestionSubjects(
             throw new Error('Assunto não encontrado')
         }
 
-        loadInitialSubjectCatalog().catch(() => {
-            if (requestVersion === catalogRequestVersion.current) setError('Não foi possível carregar as opções de assunto. Tente novamente.')
-        }).finally(() => {
-            if (requestVersion === catalogRequestVersion.current) setLoading(null)
-        })
+        loadInitialSubjectCatalog()
+            .catch(() => {
+                if (requestVersion === catalogRequestVersion.current)
+                    setError('Não foi possível carregar as opções de assunto. Tente novamente.')
+            })
+            .finally(() => {
+                if (requestVersion === catalogRequestVersion.current) setLoading(null)
+            })
         return () => {
             catalogRequestVersion.current++
         }
@@ -98,10 +105,11 @@ export function useQuestionSubjects(
             void selectArea(nextArea)
         }
         try {
-            const result = await disciplinesApi.listByExamArea(nextArea)
+            const result = await disciplineService.listByExamArea(nextArea)
             if (requestVersion === catalogRequestVersion.current) setDisciplines(result)
         } catch {
-            if (requestVersion === catalogRequestVersion.current) setError('Não foi possível carregar as disciplinas. Tente novamente.')
+            if (requestVersion === catalogRequestVersion.current)
+                setError('Não foi possível carregar as disciplinas. Tente novamente.')
         } finally {
             if (requestVersion === catalogRequestVersion.current) setLoading(null)
         }
@@ -122,10 +130,11 @@ export function useQuestionSubjects(
             void selectDiscipline(nextId)
         }
         try {
-            const result = await subjectsApi.listByDiscipline(nextId)
+            const result = await subjectService.listByDiscipline(nextId)
             if (requestVersion === catalogRequestVersion.current) setSubjects(result)
         } catch {
-            if (requestVersion === catalogRequestVersion.current) setError('Não foi possível carregar os assuntos. Tente novamente.')
+            if (requestVersion === catalogRequestVersion.current)
+                setError('Não foi possível carregar os assuntos. Tente novamente.')
         } finally {
             if (requestVersion === catalogRequestVersion.current) setLoading(null)
         }
@@ -143,20 +152,34 @@ export function useQuestionSubjects(
         setCreating(true)
         setCreateError(null)
         try {
-            const subject = await subjectsApi.create(disciplineId, {name})
+            const subject = await subjectService.create(disciplineId, { name })
             if (requestVersion !== catalogRequestVersion.current) return
             setSubjects((current) => [...current.filter((item) => item.id !== subject.id), subject])
             onSubjectChange(subject.id)
             setNewSubjectName('')
         } catch {
-            if (requestVersion === catalogRequestVersion.current) setCreateError('Não foi possível criar o assunto. Tente novamente.')
+            if (requestVersion === catalogRequestVersion.current)
+                setCreateError('Não foi possível criar o assunto. Tente novamente.')
         } finally {
             if (requestVersion === catalogRequestVersion.current) setCreating(false)
         }
     }
 
     return {
-        areas, area, disciplines, disciplineId, subjects, loading, error, creating, createError,
-        newSubjectName, setNewSubjectName, selectArea, selectDiscipline, createSubject, retry: () => retry.current()
+        areas,
+        area,
+        disciplines,
+        disciplineId,
+        subjects,
+        loading,
+        error,
+        creating,
+        createError,
+        newSubjectName,
+        setNewSubjectName,
+        selectArea,
+        selectDiscipline,
+        createSubject,
+        retry: () => retry.current(),
     }
 }

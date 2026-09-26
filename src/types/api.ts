@@ -9,4 +9,3 @@ export type Page<T> = {
     empty: boolean
     numberOfElements: number
 }
-

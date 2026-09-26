@@ -12,7 +12,8 @@ export type LegalDocument = {
 export const terms: LegalDocument = {
     eyebrow: 'Documento legal',
     title: 'Termos de Uso do ProvaSmart',
-    description: 'Regras para utilização da plataforma, responsabilidades, segurança da conta e condições de acesso aos recursos educacionais.',
+    description:
+        'Regras para utilização da plataforma, responsabilidades, segurança da conta e condições de acesso aos recursos educacionais.',
     version: 'Versão 1.0 • vigente desde 20 de setembro de 2026',
     sections: [
         {
@@ -98,7 +99,9 @@ export const terms: LegalDocument = {
         },
         {
             title: '11. Privacidade',
-            blocks: ['O tratamento de dados pessoais é descrito na Política de Privacidade. Dúvidas, solicitações de direitos e comunicações sobre privacidade podem ser enviadas para provasmrt@gmail.com.'],
+            blocks: [
+                'O tratamento de dados pessoais é descrito na Política de Privacidade. Dúvidas, solicitações de direitos e comunicações sobre privacidade podem ser enviadas para provasmrt@gmail.com.',
+            ],
         },
         {
             title: '12. Lei aplicável e contato',
@@ -125,7 +128,9 @@ export const privacy: LegalDocument = {
         },
         {
             title: '2. A quem esta Política se aplica',
-            blocks: ['Esta Política se aplica às pessoas que visitam o site, criam conta ou utilizam as funções do ProvaSmart. A plataforma é destinada a pessoas com 13 anos ou mais. Usuários com menos de 18 anos devem utilizar o serviço com a ciência e a assistência do responsável legal.'],
+            blocks: [
+                'Esta Política se aplica às pessoas que visitam o site, criam conta ou utilizam as funções do ProvaSmart. A plataforma é destinada a pessoas com 13 anos ou mais. Usuários com menos de 18 anos devem utilizar o serviço com a ciência e a assistência do responsável legal.',
+            ],
         },
         {
             title: '3. Dados utilizados',
@@ -196,7 +201,9 @@ export const privacy: LegalDocument = {
         },
         {
             title: '11. Retenção e eliminação',
-            blocks: ['Os dados são mantidos somente enquanto necessários às finalidades descritas, ao cumprimento de obrigações e ao exercício de direitos. Após o encerramento da conta, os dados são excluídos ou anonimizados conforme o plano. Informações que precisem ser conservadas ficam bloqueadas para outras finalidades e com acesso restrito.'],
+            blocks: [
+                'Os dados são mantidos somente enquanto necessários às finalidades descritas, ao cumprimento de obrigações e ao exercício de direitos. Após o encerramento da conta, os dados são excluídos ou anonimizados conforme o plano. Informações que precisem ser conservadas ficam bloqueadas para outras finalidades e com acesso restrito.',
+            ],
         },
         {
             title: '12. Direitos do titular',

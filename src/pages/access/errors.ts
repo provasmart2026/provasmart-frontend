@@ -1,4 +1,4 @@
-import {ApiError} from '../../api/client'
+import { ApiError } from '../../services/api'
 
 export const accessRequestError = 'Não foi possível concluir agora. Tente novamente em instantes.'
 

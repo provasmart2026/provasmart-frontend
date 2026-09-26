@@ -1,10 +1,10 @@
-import {type FormEvent, useState} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import {authApi} from '../../api/auth'
-import {AccessLayout} from './components/AccessLayout'
-import {Field, PasswordField} from './components/AccessFields'
-import {isValidPassword} from './validation'
-import {getAccountAccessError} from './errors'
+import { type FormEvent, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { authService } from '../../services/authService'
+import { AccessLayout } from './components/AccessLayout'
+import { Field, PasswordField } from './components/AccessFields'
+import { isValidPassword } from './validation'
+import { getAccountAccessError } from './errors'
 
 export function RegisterPage() {
     const navigate = useNavigate()
@@ -28,7 +28,7 @@ export function RegisterPage() {
 
         setLoading(true)
         try {
-            await authApi.register({
+            await authService.register({
                 name: String(form.get('name')),
                 email: String(form.get('email')),
                 password,
@@ -43,39 +43,56 @@ export function RegisterPage() {
         }
     }
 
-    return <AccessLayout
-        title="Uma conta para organizar seus próximos passos."
-        description="Crie seu acesso para reunir simulados, resultados e plano de estudos em um só lugar."
-    >
-        <form className="access-card register-card" onSubmit={handleSubmit}>
-            <span className="eyebrow">Crie sua conta</span>
-            <h2>Comece sua preparação</h2>
-            <p>Preencha seus dados. Leva menos de dois minutos.</p>
-            <Field id="name" label="Nome completo" placeholder="Como você quer ser chamado" autoComplete="name"/>
-            <Field id="email" label="E-mail" type="email" placeholder="voce@exemplo.com" autoComplete="email"/>
-            <PasswordField
-                id="password"
-                label="Senha"
-                placeholder="Crie uma senha segura"
-                autoComplete="new-password"
-                helper="Use 8 ou mais caracteres, com maiúscula, minúscula, número e caractere especial."
-            />
-            <PasswordField id="confirmPassword" label="Confirmar senha" placeholder="Digite a senha novamente"
-                           autoComplete="new-password"/>
-            <label className="checkbox legal-check">
-                <input name="terms" type="checkbox" required/>
-                <span>Li e aceito os <Link to="/termos-de-uso">Termos de Uso</Link> e a <Link
-                    to="/politica-de-privacidade">Política de Privacidade</Link>.</span>
-            </label>
-            <label className="checkbox legal-check">
-                <input name="age" type="checkbox" required/>
-                <span>Declaro que tenho 13 anos ou mais. Se eu tiver menos de 18 anos, utilizarei a plataforma com a ciência do meu responsável legal.</span>
-            </label>
-            {error && <p className="form-error" role="alert">{error}</p>}
-            <button className="primary-button submit-button" type="submit" disabled={loading}>
-                {loading ? 'Criando conta...' : 'Criar minha conta'}
-            </button>
-            <p className="form-switch">Já tem uma conta? <Link to="/login">Entrar</Link></p>
-        </form>
-    </AccessLayout>
+    return (
+        <AccessLayout
+            title="Uma conta para organizar seus próximos passos."
+            description="Crie seu acesso para reunir simulados, resultados e plano de estudos em um só lugar."
+        >
+            <form className="access-card register-card" onSubmit={handleSubmit}>
+                <span className="eyebrow">Crie sua conta</span>
+                <h2>Comece sua preparação</h2>
+                <p>Preencha seus dados. Leva menos de dois minutos.</p>
+                <Field id="name" label="Nome completo" placeholder="Como você quer ser chamado" autoComplete="name" />
+                <Field id="email" label="E-mail" type="email" placeholder="voce@exemplo.com" autoComplete="email" />
+                <PasswordField
+                    id="password"
+                    label="Senha"
+                    placeholder="Crie uma senha segura"
+                    autoComplete="new-password"
+                    helper="Use 8 ou mais caracteres, com maiúscula, minúscula, número e caractere especial."
+                />
+                <PasswordField
+                    id="confirmPassword"
+                    label="Confirmar senha"
+                    placeholder="Digite a senha novamente"
+                    autoComplete="new-password"
+                />
+                <label className="checkbox legal-check">
+                    <input name="terms" type="checkbox" required />
+                    <span>
+                        Li e aceito os <Link to="/termos-de-uso">Termos de Uso</Link> e a{' '}
+                        <Link to="/politica-de-privacidade">Política de Privacidade</Link>.
+                    </span>
+                </label>
+                <label className="checkbox legal-check">
+                    <input name="age" type="checkbox" required />
+                    <span>
+                        Declaro que tenho 13 anos ou mais. Se eu tiver menos de 18 anos, utilizarei a plataforma com a
+                        ciência do meu responsável legal.
+                    </span>
+                </label>
+                {error && (
+                    <p className="form-error" role="alert">
+                        {error}
+                    </p>
+                )}
+                <button className="primary-button submit-button" type="submit" disabled={loading}>
+                    {loading ? 'Criando conta...' : 'Criar minha conta'}
+                </button>
+                <p className="form-switch">
+                    Já tem uma conta? <Link to="/login">Entrar</Link>
+                </p>
+            </form>
+        </AccessLayout>
+    )
 }

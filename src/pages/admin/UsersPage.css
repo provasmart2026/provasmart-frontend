@@ -1,0 +1,118 @@
+.admin-users {
+    max-width: 1440px;
+    min-height: 65vh;
+    margin: 0 auto;
+    padding: 56px clamp(20px, 5vw, 72px);
+}
+
+.admin-users .lead {
+    margin-top: 16px;
+    max-width: none;
+}
+
+.users-panel {
+    margin-top: 28px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: white;
+}
+
+.users-table-wrap {
+    overflow-x: auto;
+}
+
+.admin-users table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-users caption {
+    text-align: left;
+    padding-bottom: 16px;
+    font-weight: 700;
+}
+
+.admin-users th, .admin-users td {
+    padding: 16px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    line-height: 1.6;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+.admin-users thead th {
+    background: var(--violet-100);
+    color: var(--mauve-700);
+}
+
+.admin-users time {
+    display: block;
+    white-space: nowrap;
+}
+
+.users-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--violet-100);
+}
+
+.users-deletion {
+    color: var(--rose-600);
+}
+
+.users-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 160px;
+}
+
+.admin-users button {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mauve-700);
+    background: white;
+    cursor: pointer;
+}
+
+.admin-users .users-delete {
+    color: var(--rose-600);
+    border-color: var(--rose-600);
+}
+
+.admin-users button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.admin-users button:focus-visible, .users-table-wrap:focus-visible {
+    outline: 3px solid var(--violet-600);
+    outline-offset: 3px;
+}
+
+.admin-users [role="alert"] {
+    color: var(--rose-600);
+}
+
+.users-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+    .users-panel {
+        padding: 12px;
+    }
+}

@@ -40,24 +40,17 @@ O proxy é de desenvolvimento. Ao servir o build, configure o encaminhamento de 
 
 ## Arquitetura
 
-```text
-Páginas e componentes ──→ api/* ──→ API do ProvaSmart
-         │                  │
-         └──→ auth/session ←─┘
-                    │ eventos
-                    ├──→ auth/useSession → Header e RequireAuth
-                    └──→ routes/AuthRedirect → React Router
-```
+O fluxo principal é páginas → serviços por recurso → api.ts (Axios) → backend.
 
-- `api/` contém um objeto por recurso (`authApi`, `usersApi`, `questionsApi` etc.), contratos HTTP específicos e um único cliente Axios. Identificadores inseridos nos caminhos usam `encodeURIComponent`.
-- `auth/session.ts` concentra token, perfil `UserRole`, armazenamento, leitura mínima do JWT, limpeza e eventos. Não depende das APIs.
-- `auth/useSession.ts` acompanha os eventos de autenticação e de armazenamento entre abas.
-- `routes/` define as rotas e aplica restrições por sessão/perfil; `AuthRedirect` conecta os eventos do cliente HTTP ao React Router.
-- As páginas coordenam estado e operações. Componentes compartilhados recebem dados e callbacks; hooks de fluxos específicos ficam junto às páginas.
-- `types/api.ts` define o único contrato de paginação Spring, `Page<T>`, usado por questões e usuários.
-- `ApiError` preserva o status HTTP para tratamentos específicos com `instanceof`.
+- services/ contém os serviços de autenticação, usuários, questões, simulados e catálogos. Identificadores continuam usando encodeURIComponent.
+- services/sessionService.ts concentra JWT, perfil, armazenamento e eventos, sem depender dos serviços HTTP.
+- hooks/useSession.ts sincroniza Header e ProtectedRoute com eventos de autenticação e armazenamento.
+- App.tsx declara as rotas. components/ProtectedRoute.tsx verifica sessão e perfis; components/AuthRedirect.tsx conecta erros HTTP à navegação.
+- layouts/MainLayout.tsx reúne Header, conteúdo e Footer, preservando a estrutura visual.
+- As páginas coordenam estado e operações; componentes exclusivos e hooks específicos ficam próximos delas.
+- types/ mantém contratos compartilhados, incluindo UserResponse e Page<T>. ApiError preserva o status HTTP.
 
-Não há camada de serviços duplicando `api/`, gerenciador global de estado ou refresh token.
+Não há camadas de repositórios, adaptadores, gerenciador global de estado ou refresh token.
 
 ## Autenticação e sessão
 
@@ -87,40 +80,44 @@ As regras de senha, e-mail e código ficam em `pages/access/validation.ts`. Os c
 
 ```text
 src/
-├── App.tsx / main.tsx
-├── api/                          cliente HTTP e APIs por recurso
-├── auth/
-│   ├── session.ts                sessão, UserRole, JWT e eventos
-│   └── useSession.ts             assinatura compartilhada dos eventos
-├── components/
-│   ├── layout/                   Header e Footer
-│   ├── questions/                formulário, campos de assunto e tabela
-│   └── ...                       seções da Home
+├── components/      ProtectedRoute, AuthRedirect e StudyJourney
+├── hooks/           useSession
+├── layouts/         MainLayout, Header e Footer
 ├── pages/
-│   ├── access/
-│   │   ├── LoginPage.tsx
-│   │   ├── RegisterPage.tsx
-│   │   ├── VerifyTwoFactorPage.tsx
-│   │   ├── ForgotPasswordPage.tsx
-│   │   ├── ResetPasswordPage.tsx
-│   │   ├── LegalPages.tsx / legalDocuments.ts
-│   │   ├── validation.ts / navigationState.ts / errors.ts
-│   │   ├── components/            AccessLayout e AccessFields
-│   │   └── access.css
-│   ├── admin/questions/           páginas e useQuestionSubjects
-│   ├── admin/users/
-│   ├── profile/
-│   ├── student/simulations/
-│   └── Home.tsx
-├── routes/                       AppRoutes, RequireAuth e AuthRedirect
-├── types/                        paginação e contratos compartilhados
-├── constants/                    regras compartilhadas de questões
-├── utils/                        datas e paginação
-├── test/                         configuração do ambiente de testes
+│   ├── access/      acesso e documentos legais
+│   ├── admin/       usuários e pasta questions
+│   ├── home/        Home e suas seções exclusivas
+│   ├── profile/     perfil
+│   └── student/     simulados
+├── services/        Axios, sessão e serviços por recurso
+├── types/           contratos compartilhados
+├── utils/           datas e paginação
+├── test/            testes por área e configuração compartilhada
+├── App.tsx
+├── main.tsx
 └── styles.css
 ```
 
-Os testes ficam próximos dos módulos. Os de acesso são organizados por cadastro, login/2FA, recuperação de senha e documentos legais, preservando os cenários que atravessam mais de uma página.
+Os testes ficam centralizados em src/test/, organizados por responsabilidade:
+
+```text
+src/test/
+├── setup.ts
+├── App.test.tsx
+├── AppRoutes.test.tsx
+├── components/
+├── layouts/
+├── services/
+├── pages/
+│   ├── access/
+│   ├── admin/
+│   │   └── questions/
+│   ├── profile/
+│   └── student/
+└── utils/
+```
+
+setup.ts mantém a configuração compartilhada. Os arquivos .test.ts e .test.tsx verificam os módulos da aplicação, preservando os cenários que abrangem mais de uma página. Imagens continuam em public/.
 
 ## Validação
 

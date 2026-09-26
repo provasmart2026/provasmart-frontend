@@ -1,11 +1,11 @@
-import {type FormEvent, useRef, useState} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import {authApi} from '../../api/auth'
-import {AccessLayout} from './components/AccessLayout'
-import {Field} from './components/AccessFields'
-import type {RecoveryState} from './navigationState'
-import {isValidEmail} from './validation'
-import {accessRequestError} from './errors'
+import { type FormEvent, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { authService } from '../../services/authService'
+import { AccessLayout } from './components/AccessLayout'
+import { Field } from './components/AccessFields'
+import type { RecoveryState } from './navigationState'
+import { isValidEmail } from './validation'
+import { accessRequestError } from './errors'
 
 export function ForgotPasswordPage() {
     const navigate = useNavigate()
@@ -25,8 +25,8 @@ export function ForgotPasswordPage() {
         setLoading(true)
         setError('')
         try {
-            await authApi.forgotPassword({email})
-            navigate('/redefinir-senha', {state: {email} satisfies RecoveryState})
+            await authService.forgotPassword({ email })
+            navigate('/redefinir-senha', { state: { email } satisfies RecoveryState })
         } catch {
             setError(accessRequestError)
         } finally {
@@ -35,18 +35,25 @@ export function ForgotPasswordPage() {
         }
     }
 
-    return <AccessLayout title="Recupere seu acesso."
-                         description="Receba por e-mail um código para redefinir sua senha.">
-        <form className="access-card" onSubmit={handleSubmit}>
-            <span className="eyebrow">Recuperação de senha</span>
-            <h2>Esqueceu sua senha?</h2>
-            <p>Informe o e-mail cadastrado para receber o código.</p>
-            <Field id="email" label="E-mail" type="email" placeholder="voce@exemplo.com" autoComplete="email"/>
-            {error && <p className="form-error" role="alert">{error}</p>}
-            <button className="primary-button submit-button" type="submit" disabled={loading}>
-                {loading ? 'Enviando...' : 'Enviar código'}
-            </button>
-            <p className="form-switch"><Link to="/login">Voltar ao login</Link></p>
-        </form>
-    </AccessLayout>
+    return (
+        <AccessLayout title="Recupere seu acesso." description="Receba por e-mail um código para redefinir sua senha.">
+            <form className="access-card" onSubmit={handleSubmit}>
+                <span className="eyebrow">Recuperação de senha</span>
+                <h2>Esqueceu sua senha?</h2>
+                <p>Informe o e-mail cadastrado para receber o código.</p>
+                <Field id="email" label="E-mail" type="email" placeholder="voce@exemplo.com" autoComplete="email" />
+                {error && (
+                    <p className="form-error" role="alert">
+                        {error}
+                    </p>
+                )}
+                <button className="primary-button submit-button" type="submit" disabled={loading}>
+                    {loading ? 'Enviando...' : 'Enviar código'}
+                </button>
+                <p className="form-switch">
+                    <Link to="/login">Voltar ao login</Link>
+                </p>
+            </form>
+        </AccessLayout>
+    )
 }
