@@ -1,3 +1,4 @@
+import { LegalLink } from '../components/LegalLink'
 import { Link, useLocation } from 'react-router-dom'
 
 const compactRoutes = ['/login', '/cadastro', '/termos-de-uso', '/politica-de-privacidade']
@@ -11,8 +12,8 @@ export function Footer() {
                 <span>© 2026 Provasmart. Cada questão conta.</span>
                 <nav aria-label="Links legais">
                     <span>Acessibilidade</span>
-                    <Link to="/termos-de-uso">Termos de uso</Link>
-                    <Link to="/politica-de-privacidade">Política de privacidade</Link>
+                    <LegalLink to="/termos-de-uso">Termos de uso</LegalLink>
+                    <LegalLink to="/politica-de-privacidade">Política de privacidade</LegalLink>
                 </nav>
             </footer>
         )
@@ -40,15 +41,15 @@ export function Footer() {
                         <strong>Suporte</strong>
                         <a href="#ajuda">Central de ajuda</a>
                         <a href="#contato">Contato</a>
-                        <Link to="/politica-de-privacidade">Privacidade</Link>
+                        <LegalLink to="/politica-de-privacidade">Privacidade</LegalLink>
                     </div>
                 </div>
             </div>
             <div className="footer-bottom">
                 <span>© 2026 Provasmart. Cada questão conta.</span>
                 <span>
-                    Acessibilidade&nbsp; • &nbsp;<Link to="/termos-de-uso">Termos de uso</Link>&nbsp; • &nbsp;
-                    <Link to="/politica-de-privacidade">Política de privacidade</Link>
+                    Acessibilidade&nbsp; • &nbsp;<LegalLink to="/termos-de-uso">Termos de uso</LegalLink>&nbsp; • &nbsp;
+                    <LegalLink to="/politica-de-privacidade">Política de privacidade</LegalLink>
                 </span>
             </div>
         </footer>

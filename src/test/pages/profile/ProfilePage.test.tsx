@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { api } from '../../../services/api'
@@ -30,7 +31,7 @@ function deferred<T>() {
 
 async function open(data = user) {
     const request = vi.spyOn(api, 'request').mockResolvedValue({ data })
-    render(<ProfilePage />)
+    render(<ProfilePage />, { wrapper: MemoryRouter })
     await screen.findByText(data.name)
     return request
 }
@@ -41,7 +42,7 @@ describe('Meu perfil', () => {
     it('mostra carregamento enquanto aguarda GET /users/me', async () => {
         const pending = deferred<{ data: UserResponse }>()
         const request = vi.spyOn(api, 'request').mockReturnValue(pending.promise)
-        render(<ProfilePage />)
+        render(<ProfilePage />, { wrapper: MemoryRouter })
         expect(screen.getByRole('status')).toHaveTextContent('Carregando seus dados...')
         expect(request).toHaveBeenCalledExactlyOnceWith({ url: '/users/me', method: 'GET' })
         await act(async () => pending.resolve({ data: user }))
@@ -154,7 +155,7 @@ describe('Meu perfil', () => {
 
     it('mostra erro amigável ao carregar', async () => {
         vi.spyOn(api, 'request').mockRejectedValue(new Error('detalhe interno'))
-        render(<ProfilePage />)
+        render(<ProfilePage />, { wrapper: MemoryRouter })
         expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível carregar seus dados.')
         expect(screen.queryByText('detalhe interno')).not.toBeInTheDocument()
         expect(screen.queryByRole('button')).not.toBeInTheDocument()

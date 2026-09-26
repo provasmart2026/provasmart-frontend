@@ -1,3 +1,4 @@
+import { LegalLink } from '../../components/LegalLink'
 import { type FormEvent, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authService } from '../../services/authService'
@@ -70,8 +71,8 @@ export function RegisterPage() {
                 <label className="checkbox legal-check">
                     <input name="terms" type="checkbox" required />
                     <span>
-                        Li e aceito os <Link to="/termos-de-uso">Termos de Uso</Link> e a{' '}
-                        <Link to="/politica-de-privacidade">Política de Privacidade</Link>.
+                        Li e aceito os <LegalLink to="/termos-de-uso">Termos de Uso</LegalLink> e a{' '}
+                        <LegalLink to="/politica-de-privacidade">Política de Privacidade</LegalLink>.
                     </span>
                 </label>
                 <label className="checkbox legal-check">

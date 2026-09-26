@@ -14,7 +14,7 @@ import { LoginPage } from './pages/access/LoginPage'
 import { RegisterPage } from './pages/access/RegisterPage'
 import { ResetPasswordPage } from './pages/access/ResetPasswordPage'
 import { VerifyTwoFactorPage } from './pages/access/VerifyTwoFactorPage'
-import { PrivacyPage, TermsPage } from './pages/access/LegalPages'
+import { PrivacyPage, TermsPage } from './pages/legal/LegalPages'
 
 export function App() {
     return (

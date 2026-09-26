@@ -1,3 +1,4 @@
+import { LegalLink } from '../../components/LegalLink'
 import { useEffect, useRef, useState } from 'react'
 import { userService } from '../../services/userService'
 import type { UserResponse } from '../../types/user'
@@ -111,6 +112,10 @@ export function ProfilePage() {
                     </section>
                     <section className="profile-panel" aria-labelledby="privacy-title">
                         <h2 id="privacy-title">Privacidade e consentimentos</h2>
+                        <nav className="profile-legal-links" aria-label="Documentos de privacidade e uso">
+                            <LegalLink to="/termos-de-uso">Termos de Uso</LegalLink>
+                            <LegalLink to="/politica-de-privacidade">Política de Privacidade</LegalLink>
+                        </nav>
                         <dl>
                             <div>
                                 <dt>Versão dos Termos de Uso</dt>

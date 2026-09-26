@@ -17,7 +17,7 @@ vi.mock('../pages/access/RegisterPage', () => ({ RegisterPage: () => <div>Págin
 vi.mock('../pages/access/VerifyTwoFactorPage', () => ({ VerifyTwoFactorPage: () => <div>Verificar código</div> }))
 vi.mock('../pages/access/ForgotPasswordPage', () => ({ ForgotPasswordPage: () => <div>Recuperar senha</div> }))
 vi.mock('../pages/access/ResetPasswordPage', () => ({ ResetPasswordPage: () => <div>Redefinir senha</div> }))
-vi.mock('../pages/access/LegalPages', () => ({
+vi.mock('../pages/legal/LegalPages', () => ({
     TermsPage: () => <div>Termos de uso</div>,
     PrivacyPage: () => <div>Política de privacidade</div>,
 }))

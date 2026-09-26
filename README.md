@@ -84,9 +84,10 @@ src/
 ├── hooks/           useSession
 ├── layouts/         MainLayout, Header e Footer
 ├── pages/
-│   ├── access/      acesso e documentos legais
+│   ├── access/      login, cadastro e recuperação de senha
 │   ├── admin/       usuários e pasta questions
 │   ├── home/        Home e suas seções exclusivas
+│   ├── legal/       Termos de Uso e Política de Privacidade
 │   ├── profile/     perfil
 │   └── student/     simulados
 ├── services/        Axios, sessão e serviços por recurso
@@ -112,6 +113,7 @@ src/test/
 │   ├── access/
 │   ├── admin/
 │   │   └── questions/
+│   ├── legal/
 │   ├── profile/
 │   └── student/
 └── utils/
