@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AuthRedirect } from './components/AuthRedirect'
 import { UsersPage } from './pages/admin/UsersPage'
+import { AuditLogsPage } from './pages/admin/audit/AuditLogsPage'
 import { ProfilePage } from './pages/profile/ProfilePage'
 import { QuestionsPage } from './pages/admin/questions/QuestionsPage'
 import { QuestionFormPage } from './pages/admin/questions/QuestionFormPage'
@@ -38,6 +39,7 @@ export function App() {
                         <Route path="/simulados/:simulationId" element={<SimulationPage />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+                        <Route path="/admin/audit-logs" element={<AuditLogsPage />} />
                         <Route path="/admin/users" element={<UsersPage />} />
                         <Route path="/admin/questions" element={<QuestionsPage />} />
                         <Route path="/admin/questions/new" element={<QuestionFormPage />} />

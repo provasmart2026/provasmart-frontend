@@ -22,6 +22,7 @@ export function Header() {
                     <>
                         <Link to="/admin/questions">Questões</Link>
                         <Link to="/admin/users">Usuários</Link>
+                        <Link to="/admin/audit-logs">Auditoria</Link>
                     </>
                 )}
                 {session.authenticated && session.role === 'ESTUDANTE' && <Link to="/simulados">Simulados</Link>}

@@ -5,6 +5,7 @@ import { App } from '../App'
 
 vi.mock('../pages/home/Home', () => ({ Home: () => <div>Página inicial</div> }))
 vi.mock('../pages/admin/UsersPage', () => ({ UsersPage: () => <div>Lista de usuários</div> }))
+vi.mock('../pages/admin/audit/AuditLogsPage', () => ({ AuditLogsPage: () => <div>Logs de auditoria</div> }))
 vi.mock('../pages/profile/ProfilePage', () => ({ ProfilePage: () => <div>Dados do perfil</div> }))
 vi.mock('../pages/admin/questions/QuestionsPage', () => ({ QuestionsPage: () => <div>Lista de questões</div> }))
 vi.mock('../pages/admin/questions/QuestionFormPage', () => ({
@@ -23,6 +24,7 @@ vi.mock('../pages/legal/LegalPages', () => ({
 }))
 
 const privateRoutes: [string, UserRole, string][] = [
+    ['/admin/audit-logs', 'ADMIN', 'Logs de auditoria'],
     ['/admin/users', 'ADMIN', 'Lista de usuários'],
     ['/simulados', 'ESTUDANTE', 'Iniciar simulado'],
     ['/simulados/123', 'ESTUDANTE', 'Executar simulado'],
