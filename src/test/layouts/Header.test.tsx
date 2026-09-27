@@ -31,6 +31,7 @@ function expectVisitor() {
     expect(screen.getByRole('link', { name: 'Início' })).toHaveAttribute('href', '/')
     expect(screen.queryByRole('button', { name: 'Sair' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Questões' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Auditoria' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Simulados' })).not.toBeInTheDocument()
 }
 
@@ -56,6 +57,7 @@ describe('Header', () => {
         renderHeader('ADMIN')
         expect(screen.getByRole('link', { name: 'Usuários' })).toHaveAttribute('href', '/admin/users')
         expect(screen.getByRole('link', { name: 'Questões' })).toBeInTheDocument()
+        expect(screen.getByRole('link', { name: 'Auditoria' })).toHaveAttribute('href', '/admin/audit-logs')
         expect(screen.queryByRole('link', { name: 'Simulados' })).not.toBeInTheDocument()
     })
 
@@ -70,7 +72,9 @@ describe('Header', () => {
                 .getAllByRole('link')
                 .map((link) => link.textContent)
         ).toEqual(
-            role === 'ADMIN' ? ['Início', 'Questões', 'Usuários', 'Meu perfil'] : ['Início', 'Simulados', 'Meu perfil']
+            role === 'ADMIN'
+                ? ['Início', 'Questões', 'Usuários', 'Auditoria', 'Meu perfil']
+                : ['Início', 'Simulados', 'Meu perfil']
         )
     })
 
