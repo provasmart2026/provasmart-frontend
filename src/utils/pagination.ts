@@ -1,6 +1,6 @@
 export function getPaginationItems(currentPage: number, totalPages: number): (number | '...')[] {
     if (totalPages <= 0) return []
-    if (totalPages <= 7) return Array.from({length: totalPages}, (_, index) => index + 1)
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, index) => index + 1)
 
     const current = Math.min(totalPages, Math.max(1, currentPage + 1))
     const start = Math.max(2, Math.min(current - 1, totalPages - 2))

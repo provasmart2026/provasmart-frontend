@@ -1,157 +1,137 @@
 # ProvaSmart — frontend
 
-Interface web do ProvaSmart, criada com React, TypeScript e Vite para apoiar a preparação para o ENEM com simulados, acompanhamento de desempenho e gestão de conteúdo.
+Interface web de preparação para o ENEM com React, TypeScript, React Router, Axios e Vite.
 
-## visão geral
+## Funcionalidades implementadas
 
-O frontend do ProvaSmart foi pensado para apresentar a experiência do estudante de forma clara e responsiva, conectando-se à API do backend para consultar questões, áreas de conhecimento, disciplinas, assuntos e simulados.
+- Home responsiva, navegação, identidade visual e documentos de Termos de Uso e Política de Privacidade.
+- Cadastro com validação de senha, confirmação e aceites obrigatórios.
+- Login seguido de verificação de código por e-mail (2FA). O token só é salvo após a verificação.
+- Recuperação e redefinição de senha por código, sem iniciar uma sessão automaticamente.
+- Sessão persistente ou limitada à aba, logout, atualização do menu e proteção de rotas por perfil.
+- Tratamento global de 401/403 com proteção contra respostas de uma sessão anterior.
+- Perfil em `/profile`: dados pessoais, estado da conta, consentimentos e solicitação de exclusão.
+- Administração de usuários em `/admin/users`: paginação do backend, ativação/desativação de estudantes e exclusão definitiva quando solicitada. Administradores não têm ações nessa tabela.
+- Administração de questões em `/admin/questions`: listagem paginada, criação, edição, ativação/desativação e seleção dependente de área, disciplina e assunto, incluindo criação de assuntos.
+- Simulados para estudantes em `/simulados`: criação identificada pelo JWT, execução, persistência de respostas e finalização com exatamente 40 questões respondidas.
+- Estados de carregamento, erros e bloqueios de operações duplicadas nos fluxos cobertos pelos testes.
 
-A solução atual já inclui a estrutura inicial da interface, os componentes visuais da landing page, o cliente HTTP e a configuração para integração local com a API em `http://localhost:8080`.
+## O que ainda não está implementado
 
-## o que já está pronto
+- Dashboard do estudante, correção detalhada, resultados e desempenho por área/assunto.
+- Histórico de simulados, plano de estudos, metas e prática direcionada.
+- Filtros na listagem administrativa de questões.
+- Telas de ajuda e contato ligadas às referências da Home/rodapé.
 
-- página inicial baseada no protótipo do projeto;
-- navegação visual com cabeçalho, jornada de estudos, como funciona, recursos, chamada para cadastro e rodapé;
-- identidade visual com os logos e ícones do projeto;
-- layout responsivo para telas menores;
-- cliente HTTP com axios;
-- proxy local para a API em `http://localhost:8080`;
-- teste de renderização da página e teste do cliente da API;
-- comandos de build e testes configurados.
-- painel administrativo em `/admin/questions`, com tabela e paginação;
-- criação e edição de questões usando o mesmo formulário;
-- seleção dependente de área, disciplina e assunto, com criação de assunto;
-- ativação e desativação de questões e atualização da listagem;
-- testes de integração da interface com respostas HTTP simuladas.
+A Home apresenta também recursos planejados; seus textos não significam que todos esses fluxos já estejam implementados. Não há integração com ViaCEP no frontend atual. A administração de questões permite ativar/desativar; não há ação de exclusão definitiva de questões na interface.
 
-## funcionalidades previstas
+## Executar localmente
 
-### para estudantes
+Requisitos: Node.js `^20.19.0` ou `>=22.12.0`, npm e backend executando separadamente para trabalhar com dados reais.
 
-- cadastro e autenticação;
-- preenchimento de endereço com apoio da API ViaCEP;
-- realização de questões das quatro áreas do ENEM;
-- realização e finalização de simulados;
-- visualização da correção automática;
-- consulta ao histórico de tentativas e resultados;
-- dashboards de evolução do desempenho;
-- análise de acertos e erros por área e assunto;
-- prática direcionada aos conteúdos com maior dificuldade;
-- consulta a um plano de estudos personalizado.
-
-### para administradores
-
-- acesso restrito por perfil;
-- cadastro, consulta, alteração e exclusão de questões;
-- gerenciamento das informações necessárias à geração de simulados.
-
-## arquitetura e integrações
-
-```text
-Aluno / Administrador
-         │
-         ▼
-Aplicação React ──────────► ViaCEP
-         │             consulta de CEP
-         │ HTTP/HTTPS + JSON
-         ▼
-API Spring Boot ─────────► PostgreSQL
-```
-
-O frontend é responsável pela apresentação das telas, validações de interface, responsividade e comunicação com serviços externos. O backend concentra autenticação, autorização, regras de negócio e persistência dos dados.
-
-## requisitos
-
-- Node.js `^20.19.0` ou `>=22.12.0`, conforme a versão instalada do Vite;
-- npm;
-- backend do ProvaSmart executando separadamente para testar dados reais.
-
-## como executar
-
-instale as dependências:
-
-```bash
-npm install
-```
-
-inicie o frontend:
-
-```bash
+```sh
+npm ci
 npm run dev
 ```
 
-o Vite abre a aplicação em `http://localhost:5173`.
+O servidor de desenvolvimento usa `http://localhost:5173`. Por padrão, o cliente Axios usa `/api`; o proxy do Vite encaminha as chamadas para `http://localhost:8080`, removendo esse prefixo. Para configurar outra base, copie `.env.example` para `.env` e ajuste `VITE_API_URL`.
 
-por padrão, o axios usa `/api` como endereço base. durante o desenvolvimento, o Vite encaminha esse caminho para `http://localhost:8080` e remove o prefixo `/api` antes de enviar a requisição. para trocar o endereço, copie `.env.example` para `.env` e ajuste `VITE_API_URL`.
+O proxy é de desenvolvimento. Ao servir o build, configure o encaminhamento de `/api` para o backend ou a URL da API no ambiente de build. O servidor do frontend também deve suportar o fallback para `index.html` nas rotas do React Router.
 
-## testes e build
+## Arquitetura
 
-```bash
-npm run test:run
-npm run build
-```
+O fluxo principal é páginas → serviços por recurso → api.ts (Axios) → backend.
 
-`npm run test` mantém o Vitest em modo de observação.
+- services/ contém os serviços de autenticação, usuários, questões, simulados e catálogos. Identificadores continuam usando encodeURIComponent.
+- services/sessionService.ts concentra JWT, perfil, armazenamento e eventos, sem depender dos serviços HTTP.
+- hooks/useSession.ts sincroniza Header e ProtectedRoute com eventos de autenticação e armazenamento.
+- App.tsx declara as rotas. components/ProtectedRoute.tsx verifica sessão e perfis; components/AuthRedirect.tsx conecta erros HTTP à navegação.
+- layouts/MainLayout.tsx reúne Header, conteúdo e Footer, preservando a estrutura visual. Os estilos do rodapé compacto ficam em layouts/Footer.css e são importados pelo próprio Footer.
+- As páginas coordenam estado e operações; componentes exclusivos e hooks específicos ficam próximos delas.
+- types/ mantém contratos compartilhados, incluindo UserResponse e Page<T>. ApiError preserva o status HTTP.
 
-## integração com o backend
+Não há camadas de repositórios, adaptadores, gerenciador global de estado ou refresh token.
 
-o backend fica no repositório [provasmart-backend](https://github.com/provasmart2026/provasmart-backend) e não é alterado por este projeto.
+## Autenticação e sessão
 
-na branch `develop`, a API disponibiliza recursos para:
+1. `POST /auth/login` recebe e-mail e senha e inicia a verificação em duas etapas.
+2. A navegação para `/verificar-codigo` leva e-mail e preferência de persistência no estado do React Router.
+3. `POST /auth/verify-2fa` recebe e-mail e código de seis dígitos. Uma resposta com token permite salvar a sessão.
+4. “Manter conectado” usa `localStorage`; sem essa opção, usa `sessionStorage`. Uma nova sessão limpa os dados anteriores de ambos os armazenamentos e publica `authChangedEvent` com a sessão final.
+5. O interceptor acrescenta `Authorization: Bearer <token>` às requisições.
+6. Um 401 enviado com o token da sessão atual limpa a sessão e redireciona para `/login`. Um 403 autenticado mantém a sessão e redireciona para `/`. Respostas de requisições anteriores ao login ou com outro token não invalidam a sessão atual.
+7. O logout limpa ambos os armazenamentos, atualiza a interface e leva ao login. O evento `storage` atualiza a interface quando outra aba muda a sessão.
 
-- áreas do ENEM: `GET /exam-areas`;
-- disciplinas: `GET /disciplines/exam-area/{examArea}`;
-- assuntos: `GET /subjects/discipline/{disciplineId}` e `POST /subjects/discipline/{disciplineId}`;
-- banco de questões: `POST /questions`, `GET /questions`, `GET /questions/active`, `GET /questions/{id}`, `PUT /questions/{id}`, `PATCH /questions/{id}/activate` e `PATCH /questions/{id}/deactivate`;
-- simulados: `POST /simulations/student/{studentId}`, `GET /simulations/{simulationId}`, `PUT /simulations/{simulationId}/questions/{simulationQuestionId}/answer` e `PATCH /simulations/{simulationId}/finish`.
+`UserRole` admite `ADMIN` e `ESTUDANTE`. A leitura local do JWT serve à apresentação e às restrições da interface; o backend é responsável por validar o token e autorizar as operações.
 
-o backend usa Java 25, Spring Boot e PostgreSQL. as variáveis de banco esperadas são `DB_URL`, `DB_USERNAME` e `DB_PASSWORD`.
+`/profile` exige sessão. `/admin/users` e `/admin/questions` exigem `ADMIN`; `/simulados` exige `ESTUDANTE`. Login, cadastro, recuperação de senha e documentos legais são públicos.
 
-## o que ainda falta no front
+As regras de senha, e-mail e código ficam em `pages/access/validation.ts`. Os contextos de navegação do 2FA e da recuperação são validados antes de mostrar os formulários dependentes. As particularidades de validação de cada fluxo foram preservadas.
 
-- telas e rotas de login, cadastro e autenticação;
-- dashboard do estudante;
-- fluxo completo de criação, execução e finalização de simulados;
-- filtros na listagem de questões;
-- correção, resultados e desempenho por área do ENEM;
-- histórico de simulados e plano de estudos;
-- autenticação e autorização da área administrativa;
-- ligar cada tela aos endpoints correspondentes;
-- tratamento de sessão expirada quando a autenticação for implementada.
+## Fluxos com persistência
 
-O fluxo administrativo de questões já consome os endpoints de questões, áreas, disciplinas e assuntos. Os estados de carregamento, erro e nova tentativa estão implementados nesse fluxo. As demais integrações serão adicionadas junto às respectivas telas.
+**Perfil e usuários.** O perfil carrega com `GET /users/me`. Após confirmar, `PATCH /users/me/request-deletion` registra a solicitação e uma nova consulta atualiza os dados. `deletionRequested` e `deletionRequestedAt` vêm do backend; a interface não antecipa esse estado. O administrador usa `GET /users`, `PATCH /users/{id}/activate`, `PATCH /users/{id}/deactivate` e `DELETE /users/{id}`. A exclusão definitiva de um estudante exige solicitação existente e confirmação.
 
-## estrutura principal
+**Questões.** A criação e edição usam o mesmo formulário, com cinco alternativas A–E e exatamente uma correta. Trocar área limpa disciplina e assunto; trocar disciplina limpa assunto. Na edição, o backend retorna `subjectId`, sem área e disciplina: `useQuestionSubjects` localiza o assunto nos catálogos disponíveis. O controle de versão ignora respostas atrasadas; falhas parciais em outros catálogos não impedem localizar o assunto. Não há cache global desses dados.
+
+**Simulados.** `POST /simulations` não recebe body nem identificador de estudante: o backend identifica o estudante pelo JWT. `GET /simulations/{simulationId}` carrega a execução. A resposta é enviada por `PUT /simulations/{simulationId}/questions/{simulationQuestionId}/answer`, com apenas `alternativeId`. Cliques rápidos atualizam a seleção visível e são persistidos sequencialmente, mantendo a última escolha. Se a resposta do salvamento estiver desatualizada, uma consulta confirma a persistência. A navegação permanece bloqueada durante o salvamento. `PATCH /simulations/{simulationId}/finish` só é enviado com exatamente 40 questões respondidas.
+
+## Estrutura principal
 
 ```text
-public/       logos e ícones usados pela interface
-src/api/      cliente axios e chamadas da api
-src/components/ componentes visuais da Home, layout compartilhado e formulário/tabela de questões
-src/pages/    páginas da aplicação e hooks específicos de cada fluxo
-src/routes/   configuração de navegação
-src/types/    contratos de dados e tipos da interface separados por responsabilidade
-src/constants/ valores compartilhados do fluxo de questões
-src/utils/    funções puras compartilhadas
-src/styles.css estilos globais e identidade visual
+src/
+├── components/      ProtectedRoute, AuthRedirect e StudyJourney
+├── hooks/           useSession
+├── layouts/         MainLayout, Header e Footer
+├── pages/
+│   ├── access/      login, cadastro e recuperação de senha
+│   ├── admin/       usuários e pasta questions
+│   ├── home/        Home e suas seções exclusivas
+│   ├── legal/       Termos de Uso e Política de Privacidade
+│   ├── profile/     perfil
+│   └── student/     simulados
+├── services/        Axios, sessão e serviços por recurso
+├── types/           contratos compartilhados
+├── utils/           datas e paginação
+├── test/            testes por área e configuração compartilhada
+├── App.tsx
+├── main.tsx
+└── styles.css
 ```
 
-As páginas coordenam estado, carregamento e navegação. `QuestionForm` e `QuestionSubjectFields` recebem dados e callbacks e não fazem requisições HTTP. `useQuestionSubjects` coordena o catálogo dependente usando as APIs separadas por recurso; o cliente Axios é único.
+Os testes ficam centralizados em src/test/, organizados por responsabilidade:
 
-Na edição, a resposta da questão contém `subjectId`, sem os IDs da área e da disciplina. Por isso, o frontend localiza o assunto nos catálogos disponíveis. Essa busca pode exigir várias consultas; não há cache global para evitar dados desatualizados. Apenas o `subjectId` vincula a questão ao catálogo no envio para o backend.
+```text
+src/test/
+├── setup.ts
+├── App.test.tsx
+├── AppRouting.test.tsx
+├── components/
+├── layouts/
+├── services/
+├── pages/
+│   ├── access/
+│   ├── admin/
+│   │   └── questions/
+│   ├── legal/
+│   ├── profile/
+│   └── student/
+└── utils/
+```
 
-O fluxo exige cinco alternativas (A–E), exatamente uma correta e os campos obrigatórios. Trocar a área limpa disciplina e assunto; trocar a disciplina limpa o assunto. Selecionar um assunto existente bloqueia o cadastro de outro, e digitar um novo nome bloqueia a seleção existente.
+setup.ts mantém a configuração compartilhada. Os arquivos .test.ts e .test.tsx verificam os módulos da aplicação, preservando os cenários que abrangem mais de uma página. Imagens continuam em public/.
 
-Use `npm ci` para reproduzir as versões do `package-lock.json`. O build também verifica tipos, variáveis e parâmetros não utilizados. Os testes usam HTTP simulado e não substituem a validação de integração com o backend em execução.
+## Validação
 
-## protótipo
+```sh
+npm run build
+npm run test:run
+git diff --check
+```
 
-- [Design do ProvaSmart no Figma](https://www.figma.com/design/GmUPMt8JXVWeKDm0zqlvUV/ProvaSmart?node-id=9-2)
+No PowerShell, use `npm.cmd` se a política de execução bloquear `npm.ps1`. `npm run test` inicia o modo de observação. O build verifica tipos, variáveis e parâmetros não utilizados. A suíte usa Vitest, Testing Library e HTTP simulado; não substitui os testes com o backend real.
 
-## repositório relacionado
+## Referências
 
 - [Backend do ProvaSmart](https://github.com/provasmart2026/provasmart-backend)
-
-## status
-
-🚧 em desenvolvimento.
-
+- [Protótipo no Figma](https://www.figma.com/design/GmUPMt8JXVWeKDm0zqlvUV/ProvaSmart?node-id=9-2)

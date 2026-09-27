@@ -1,0 +1,32 @@
+.compact-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    min-height: 96px;
+    padding: 24px clamp(24px, 8vw, 120px);
+    color: var(--mauve-700);
+    background: var(--violet-100);
+    font-size: 12px;
+}
+
+.compact-footer nav {
+    display: flex;
+    gap: 24px;
+}
+
+.compact-footer a:hover,
+.compact-footer a:focus-visible {
+    color: var(--rose-600);
+}
+
+@media (max-width: 560px) {
+    .compact-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .compact-footer nav {
+        flex-wrap: wrap;
+    }
+}

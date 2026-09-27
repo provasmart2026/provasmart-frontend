@@ -1,4 +1,4 @@
-export type Alternative = {
+type Alternative = {
     id: string
     letter: string
     text: string
@@ -23,4 +23,3 @@ export type Question = {
     createdAt: string
     updatedAt: string | null
 }
-
