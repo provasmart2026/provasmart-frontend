@@ -40,7 +40,8 @@ api.interceptors.response.use(
 export class ApiError extends Error {
     constructor(
         public readonly status: number,
-        message: string
+        message: string,
+        public readonly backendMessage?: string
     ) {
         super(message)
         this.name = 'ApiError'
@@ -54,7 +55,12 @@ export async function apiRequest<T>(path: string, config?: AxiosRequestConfig): 
     } catch (error) {
         if (axios.isAxiosError(error)) {
             const status = error.response?.status ?? 0
-            throw new ApiError(status, `Erro ao acessar a API (${status || 'sem resposta'})`)
+            const data: unknown = error.response?.data
+            const backendMessage =
+                typeof data === 'object' && data !== null && 'message' in data && typeof data.message === 'string'
+                    ? data.message
+                    : undefined
+            throw new ApiError(status, `Erro ao acessar a API (${status || 'sem resposta'})`, backendMessage)
         }
         throw error
     }
