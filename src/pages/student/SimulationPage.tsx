@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { ApiError } from '../../services/api'
 import { simulationService } from '../../services/simulationService'
 import type { Simulation } from '../../types/simulation'
 import './SimulationsPage.css'
@@ -20,6 +21,7 @@ export function SimulationPage() {
 }
 
 function SimulationSession({ simulationId }: { simulationId: string | undefined }) {
+    const navigate = useNavigate()
     const [simulation, setSimulation] = useState<Simulation | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -27,6 +29,7 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
     const [saving, setSaving] = useState(false)
     const [pendingAlternativeId, setPendingAlternativeId] = useState<string | null>(null)
     const [finishing, setFinishing] = useState(false)
+    const [cancelling, setCancelling] = useState(false)
     const latestSelectedAlternativeId = useRef<string | null>(null)
     const mutationPending = useRef(false)
     const mounted = useRef(false)
@@ -55,11 +58,11 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
     const questions = [...(simulation?.questions ?? [])].sort((a, b) => a.position - b.position)
     const question = questions[currentIndex]
     const selectedAlternativeId = pendingAlternativeId ?? question?.selectedAlternativeId
-    const busy = saving || finishing
+    const busy = saving || finishing || cancelling
     const answeredCount = questions.filter((question) => question.selectedAlternativeId).length
 
     async function saveLatestSelectedAlternative(alternativeId: string) {
-        if (!simulationId || !question || finishing || selectedAlternativeId === alternativeId) return
+        if (!simulationId || !question || simulation?.status !== 'EM_ANDAMENTO' || finishing || cancelling || selectedAlternativeId === alternativeId) return
         latestSelectedAlternativeId.current = alternativeId
         setPendingAlternativeId(alternativeId)
         setError(null)
@@ -88,7 +91,7 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
         }
     }
     async function finish() {
-        if (!simulationId || mutationPending.current) return
+        if (!simulationId || simulation?.status !== 'EM_ANDAMENTO' || mutationPending.current) return
         const unanswered = questions.length - answeredCount
         if (unanswered > 0) {
             setError(
@@ -114,6 +117,32 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
         }
     }
 
+    async function cancel() {
+        if (!simulationId || simulation?.status !== 'EM_ANDAMENTO' || mutationPending.current) return
+        if (!window.confirm('Tem certeza que deseja cancelar este simulado? Após o cancelamento, ele não poderá ser retomado.')) return
+        mutationPending.current = true
+        setCancelling(true)
+        setError(null)
+        try {
+            await simulationService.cancel(simulationId)
+            if (mounted.current)
+                navigate('/student/simulations/start', {
+                    replace: true,
+                    state: { simulationCancelled: true },
+                })
+        } catch (error) {
+            if (mounted.current)
+                setError(
+                    error instanceof ApiError && error.backendMessage
+                        ? error.backendMessage
+                        : 'Não foi possível cancelar o simulado. Tente novamente.'
+                )
+        } finally {
+            mutationPending.current = false
+            if (mounted.current) setCancelling(false)
+        }
+    }
+
     function goToQuestion(index: number) {
         setCurrentIndex(index)
         setError(null)
@@ -130,6 +159,8 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
                     <p role="status">Carregando simulado...</p>
                 ) : simulation?.status === 'FINALIZADO' ? (
                     <p role="status">Simulado finalizado com sucesso.</p>
+                ) : simulation?.status === 'CANCELADO' ? (
+                    <p role="status">Este simulado foi cancelado e não pode ser retomado.</p>
                 ) : (
                     question && (
                         <>
@@ -139,7 +170,7 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
                                 </p>
                                 <p className="supporting-copy">{answeredCount} respondidas</p>
                             </div>
-                            <fieldset className="simulation-question" disabled={finishing}>
+                            <fieldset className="simulation-question" disabled={finishing || cancelling}>
                                 <legend className="simulation-statement">{question.statement}</legend>
                                 <div className="simulation-alternatives">
                                     {[...question.alternatives]
@@ -199,6 +230,16 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
                 )}
                 {!loading && simulation?.status === 'EM_ANDAMENTO' && !question && (
                     <p role="alert">Nenhuma questão disponível neste simulado.</p>
+                )}
+                {!loading && simulation?.status === 'EM_ANDAMENTO' && (
+                    <button
+                        className="simulation-secondary-button"
+                        type="button"
+                        disabled={busy}
+                        onClick={() => void cancel()}
+                    >
+                        {cancelling ? 'Cancelando simulado...' : 'Cancelar simulado'}
+                    </button>
                 )}
                 {error && <p role="alert">{error}</p>}
             </div>

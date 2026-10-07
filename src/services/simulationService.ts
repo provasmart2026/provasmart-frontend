@@ -2,6 +2,7 @@ import { apiRequest } from './api'
 import type { Simulation } from '../types/simulation'
 
 export const simulationService = {
+    current: async () => (await apiRequest<Simulation | undefined>('/simulations/current')) || null,
     create: () => apiRequest<Simulation>('/simulations', { method: 'POST' }),
     get: (simulationId: string) => apiRequest<Simulation>(`/simulations/${encodeURIComponent(simulationId)}`),
     answer: (simulationId: string, simulationQuestionId: string, alternativeId: string) =>
@@ -11,4 +12,6 @@ export const simulationService = {
         ),
     finish: (simulationId: string) =>
         apiRequest<Simulation>(`/simulations/${encodeURIComponent(simulationId)}/finish`, { method: 'PATCH' }),
+    cancel: (simulationId: string) =>
+        apiRequest<Simulation>(`/simulations/${encodeURIComponent(simulationId)}/cancel`, { method: 'PATCH' }),
 }
