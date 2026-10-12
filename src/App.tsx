@@ -37,6 +37,8 @@ export function App() {
                     <Route element={<ProtectedRoute allowedRoles={['ESTUDANTE']} />}>
                         <Route path="/simulados" element={<SimulationStartPage />} />
                         <Route path="/simulados/:simulationId" element={<SimulationPage />} />
+                        <Route path="/student/simulations/start" element={<SimulationStartPage />} />
+                        <Route path="/student/simulations/:simulationId" element={<SimulationPage />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                         <Route path="/admin/audit-logs" element={<AuditLogsPage />} />

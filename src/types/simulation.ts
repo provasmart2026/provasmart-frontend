@@ -16,7 +16,7 @@ type SimulationQuestion = {
 export type Simulation = {
     id: string
     studentId: string
-    status: 'EM_ANDAMENTO' | 'FINALIZADO'
+    status: 'EM_ANDAMENTO' | 'FINALIZADO' | 'CANCELADO'
     startedAt: string
     finishedAt: string | null
     questions: SimulationQuestion[]
