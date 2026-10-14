@@ -1,10 +1,13 @@
 import { apiRequest } from './api'
 import type { Simulation } from '../types/simulation'
+import type { SimulationPerformance } from '../types/simulationPerformance'
 
 export const simulationService = {
     current: async () => (await apiRequest<Simulation | undefined>('/simulations/current')) || null,
     create: () => apiRequest<Simulation>('/simulations', { method: 'POST' }),
     get: (simulationId: string) => apiRequest<Simulation>(`/simulations/${encodeURIComponent(simulationId)}`),
+    performance: (simulationId: string) =>
+        apiRequest<SimulationPerformance>(`/simulations/${encodeURIComponent(simulationId)}/performance`),
     answer: (simulationId: string, simulationQuestionId: string, alternativeId: string) =>
         apiRequest<Simulation>(
             `/simulations/${encodeURIComponent(simulationId)}/questions/${encodeURIComponent(simulationQuestionId)}/answer`,

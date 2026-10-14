@@ -108,7 +108,11 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
         setError(null)
         try {
             const result = await simulationService.finish(simulationId)
-            if (mounted.current) setSimulation(result)
+            if (mounted.current) {
+                setSimulation(result)
+                if (result.status === 'FINALIZADO')
+                    navigate(`/simulados/${encodeURIComponent(result.id)}/desempenho`, { replace: true })
+            }
         } catch {
             if (mounted.current) setError('Não foi possível finalizar o simulado. Tente novamente.')
         } finally {
@@ -158,7 +162,13 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
                 {loading ? (
                     <p role="status">Carregando simulado...</p>
                 ) : simulation?.status === 'FINALIZADO' ? (
-                    <p role="status">Simulado finalizado com sucesso.</p>
+                    <>
+                        <p role="status">Simulado finalizado com sucesso.</p>
+                        <button className="primary-button" type="button"
+                            onClick={() => navigate(`/simulados/${encodeURIComponent(simulation.id)}/desempenho`)}>
+                            Ver análise
+                        </button>
+                    </>
                 ) : simulation?.status === 'CANCELADO' ? (
                     <p role="status">Este simulado foi cancelado e não pode ser retomado.</p>
                 ) : (
