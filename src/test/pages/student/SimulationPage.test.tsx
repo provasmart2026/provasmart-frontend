@@ -42,6 +42,7 @@ function renderPage() {
         <MemoryRouter initialEntries={['/simulados/simulation-1']}>
             <Routes>
                 <Route path="/simulados/:simulationId" element={<SimulationPage />} />
+                <Route path="/simulados/:simulationId/desempenho" element={<h1>Análise de desempenho</h1>} />
                 <Route path="/student/simulations/start" element={<SimulationStartPage />} />
             </Routes>
         </MemoryRouter>
@@ -274,7 +275,7 @@ describe('Execução do simulado', () => {
         expect(finish).not.toHaveBeenCalled()
     })
 
-    it('finaliza com 40 respostas, bloqueia repetição e exibe sucesso', async () => {
+    it('finaliza com 40 respostas, bloqueia repetição e abre a análise', async () => {
         const simulation = fixture(true)
         const request = deferred<Simulation>()
         const finish = vi.spyOn(simulationService, 'finish').mockReturnValue(request.promise)
@@ -288,7 +289,7 @@ describe('Execução do simulado', () => {
         await act(async () =>
             request.resolve({ ...simulation, status: 'FINALIZADO', finishedAt: '2026-09-13T13:00:00' })
         )
-        expect(screen.getByRole('status')).toHaveTextContent('Simulado finalizado com sucesso.')
+        expect(screen.getByRole('heading', { name: 'Análise de desempenho' })).toBeInTheDocument()
         expect(screen.queryByRole('radio')).not.toBeInTheDocument()
     })
 

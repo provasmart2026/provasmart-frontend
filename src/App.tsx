@@ -10,6 +10,7 @@ import { MainLayout } from './layouts/MainLayout'
 import { Home } from './pages/home/Home'
 import { SimulationStartPage } from './pages/student/SimulationStartPage'
 import { SimulationPage } from './pages/student/SimulationPage'
+import { SimulationPerformancePage } from './pages/student/SimulationPerformancePage'
 import { ForgotPasswordPage } from './pages/access/ForgotPasswordPage'
 import { LoginPage } from './pages/access/LoginPage'
 import { RegisterPage } from './pages/access/RegisterPage'
@@ -37,6 +38,7 @@ export function App() {
                     <Route element={<ProtectedRoute allowedRoles={['ESTUDANTE']} />}>
                         <Route path="/simulados" element={<SimulationStartPage />} />
                         <Route path="/simulados/:simulationId" element={<SimulationPage />} />
+                        <Route path="/simulados/:simulationId/desempenho" element={<SimulationPerformancePage />} />
                         <Route path="/student/simulations/start" element={<SimulationStartPage />} />
                         <Route path="/student/simulations/:simulationId" element={<SimulationPage />} />
                     </Route>
