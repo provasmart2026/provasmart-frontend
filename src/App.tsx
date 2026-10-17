@@ -10,6 +10,9 @@ import { MainLayout } from './layouts/MainLayout'
 import { Home } from './pages/home/Home'
 import { SimulationStartPage } from './pages/student/SimulationStartPage'
 import { SimulationPage } from './pages/student/SimulationPage'
+import { DirectedPracticeStartPage } from './pages/student/DirectedPracticeStartPage'
+import { DirectedPracticePage } from './pages/student/DirectedPracticePage'
+import { DirectedPracticeAnalysisPage } from './pages/student/DirectedPracticeAnalysisPage'
 import { ForgotPasswordPage } from './pages/access/ForgotPasswordPage'
 import { LoginPage } from './pages/access/LoginPage'
 import { RegisterPage } from './pages/access/RegisterPage'
@@ -37,6 +40,9 @@ export function App() {
                     <Route element={<ProtectedRoute allowedRoles={['ESTUDANTE']} />}>
                         <Route path="/simulados" element={<SimulationStartPage />} />
                         <Route path="/simulados/:simulationId" element={<SimulationPage />} />
+                        <Route path="/praticas" element={<DirectedPracticeStartPage />} />
+                        <Route path="/praticas/:practiceId" element={<DirectedPracticePage />} />
+                        <Route path="/praticas/:practiceId/analise" element={<DirectedPracticeAnalysisPage />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                         <Route path="/admin/audit-logs" element={<AuditLogsPage />} />

@@ -3,7 +3,7 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { authService } from '../../services/authService'
 import { AccessLayout } from './components/AccessLayout'
 import { Field } from './components/AccessFields'
-import { saveSession } from '../../services/sessionService'
+import { getSession, saveSession } from '../../services/sessionService'
 import { isTwoFactorState } from './navigationState'
 import { isValidVerificationCode, verificationCodePattern } from './validation'
 import { isRejectedVerificationCode } from './errors'
@@ -31,7 +31,7 @@ export function VerifyTwoFactorPage() {
         try {
             const response = await authService.verifyTwoFactor({ email, code })
             if (!saveSession(response, remember)) throw new Error('token ausente')
-            navigate('/', { replace: true })
+            navigate(getSession().role === 'ESTUDANTE' ? '/praticas' : '/', { replace: true })
         } catch (requestError) {
             setError(
                 isRejectedVerificationCode(requestError)
