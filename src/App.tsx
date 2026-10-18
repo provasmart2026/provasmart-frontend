@@ -13,6 +13,7 @@ import { SimulationPage } from './pages/student/SimulationPage'
 import { DirectedPracticeStartPage } from './pages/student/DirectedPracticeStartPage'
 import { DirectedPracticePage } from './pages/student/DirectedPracticePage'
 import { DirectedPracticeAnalysisPage } from './pages/student/DirectedPracticeAnalysisPage'
+import { SimulationPerformancePage } from './pages/student/SimulationPerformancePage'
 import { ForgotPasswordPage } from './pages/access/ForgotPasswordPage'
 import { LoginPage } from './pages/access/LoginPage'
 import { RegisterPage } from './pages/access/RegisterPage'
@@ -43,6 +44,9 @@ export function App() {
                         <Route path="/praticas" element={<DirectedPracticeStartPage />} />
                         <Route path="/praticas/:practiceId" element={<DirectedPracticePage />} />
                         <Route path="/praticas/:practiceId/analise" element={<DirectedPracticeAnalysisPage />} />
+                        <Route path="/simulados/:simulationId/desempenho" element={<SimulationPerformancePage />} />
+                        <Route path="/student/simulations/start" element={<SimulationStartPage />} />
+                        <Route path="/student/simulations/:simulationId" element={<SimulationPage />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                         <Route path="/admin/audit-logs" element={<AuditLogsPage />} />

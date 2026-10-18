@@ -4,6 +4,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { simulationService } from '../../../services/simulationService'
 import type { Simulation } from '../../../types/simulation'
 import { SimulationPage } from '../../../pages/student/SimulationPage'
+import { SimulationStartPage } from '../../../pages/student/SimulationStartPage'
+import { ApiError } from '../../../services/api'
 
 function fixture(answered = false): Simulation {
     return {
@@ -40,6 +42,8 @@ function renderPage() {
         <MemoryRouter initialEntries={['/simulados/simulation-1']}>
             <Routes>
                 <Route path="/simulados/:simulationId" element={<SimulationPage />} />
+                <Route path="/simulados/:simulationId/desempenho" element={<h1>Análise de desempenho</h1>} />
+                <Route path="/student/simulations/start" element={<SimulationStartPage />} />
             </Routes>
         </MemoryRouter>
     )
@@ -57,6 +61,44 @@ function lastQuestion() {
 
 describe('Execução do simulado', () => {
     afterEach(() => vi.restoreAllMocks())
+
+    it('não cancela quando a confirmação é recusada', async () => {
+        await open()
+        const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false)
+        const cancel = vi.spyOn(simulationService, 'cancel')
+        fireEvent.click(screen.getByRole('button', { name: 'Cancelar simulado' }))
+        expect(confirm).toHaveBeenCalledWith('Tem certeza que deseja cancelar este simulado? Após o cancelamento, ele não poderá ser retomado.')
+        expect(cancel).not.toHaveBeenCalled()
+        expect(screen.getByText('Questão 1 de 40')).toBeInTheDocument()
+    })
+
+    it('aguarda o cancelamento, bloqueia ações e redireciona com sucesso', async () => {
+        vi.spyOn(simulationService, 'current').mockResolvedValue(null)
+        await open()
+        vi.spyOn(window, 'confirm').mockReturnValue(true)
+        const request = deferred<Simulation>()
+        const cancel = vi.spyOn(simulationService, 'cancel').mockReturnValue(request.promise)
+        fireEvent.click(screen.getByRole('button', { name: 'Cancelar simulado' }))
+        const button = screen.getByRole('button', { name: 'Cancelando simulado...' })
+        expect(button).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Próxima' })).toBeDisabled()
+        expect(screen.getAllByRole('radio')[0]).toBeDisabled()
+        fireEvent.click(button)
+        expect(cancel).toHaveBeenCalledExactlyOnceWith('simulation-1')
+        await act(async () => request.resolve({ ...fixture(), status: 'CANCELADO' }))
+        expect(screen.getByText('Simulado cancelado com sucesso.')).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: 'Iniciar simulado' })).toBeInTheDocument()
+    })
+
+    it('mantém a tela e apresenta a mensagem do backend quando o cancelamento falha', async () => {
+        await open()
+        vi.spyOn(window, 'confirm').mockReturnValue(true)
+        vi.spyOn(simulationService, 'cancel').mockRejectedValue(new ApiError(409, 'Conflito', 'O simulado não está em andamento.'))
+        fireEvent.click(screen.getByRole('button', { name: 'Cancelar simulado' }))
+        expect(await screen.findByRole('alert')).toHaveTextContent('O simulado não está em andamento.')
+        expect(screen.getByText('Questão 1 de 40')).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: 'Cancelar simulado' })).toBeEnabled()
+    })
 
     it('carrega pelo ID da rota e ordena questões e alternativas', async () => {
         const request = deferred<Simulation>()
@@ -233,7 +275,7 @@ describe('Execução do simulado', () => {
         expect(finish).not.toHaveBeenCalled()
     })
 
-    it('finaliza com 40 respostas, bloqueia repetição e exibe sucesso', async () => {
+    it('finaliza com 40 respostas, bloqueia repetição e abre a análise', async () => {
         const simulation = fixture(true)
         const request = deferred<Simulation>()
         const finish = vi.spyOn(simulationService, 'finish').mockReturnValue(request.promise)
@@ -247,7 +289,7 @@ describe('Execução do simulado', () => {
         await act(async () =>
             request.resolve({ ...simulation, status: 'FINALIZADO', finishedAt: '2026-09-13T13:00:00' })
         )
-        expect(screen.getByRole('status')).toHaveTextContent('Simulado finalizado com sucesso.')
+        expect(screen.getByRole('heading', { name: 'Análise de desempenho' })).toBeInTheDocument()
         expect(screen.queryByRole('radio')).not.toBeInTheDocument()
     })
 
