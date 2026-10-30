@@ -4,6 +4,7 @@ import type { SimulationPerformance } from '../types/simulationPerformance'
 
 export const simulationService = {
     current: async () => (await apiRequest<Simulation | undefined>('/simulations/current')) || null,
+    latestFinished: () => apiRequest<Simulation>('/simulations/latest-finished'),
     create: () => apiRequest<Simulation>('/simulations', { method: 'POST' }),
     get: (simulationId: string) => apiRequest<Simulation>(`/simulations/${encodeURIComponent(simulationId)}`),
     performance: (simulationId: string) =>
