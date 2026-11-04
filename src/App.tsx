@@ -14,6 +14,9 @@ import { DirectedPracticeStartPage } from './pages/student/DirectedPracticeStart
 import { DirectedPracticePage } from './pages/student/DirectedPracticePage'
 import { DirectedPracticeAnalysisPage } from './pages/student/DirectedPracticeAnalysisPage'
 import { SimulationPerformancePage } from './pages/student/SimulationPerformancePage'
+import { StudyPlanPage } from './pages/student/StudyPlanPage'
+import { StudyPlanHistoryPage } from './pages/student/StudyPlanHistoryPage'
+import { StudyPlanDetailsPage } from './pages/student/StudyPlanDetailsPage'
 import { ForgotPasswordPage } from './pages/access/ForgotPasswordPage'
 import { LoginPage } from './pages/access/LoginPage'
 import { RegisterPage } from './pages/access/RegisterPage'
@@ -39,6 +42,9 @@ export function App() {
                         <Route path="/profile" element={<ProfilePage />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={['ESTUDANTE']} />}>
+                        <Route path="/plano-de-estudos" element={<StudyPlanPage />} />
+                        <Route path="/plano-de-estudos/historico" element={<StudyPlanHistoryPage />} />
+                        <Route path="/plano-de-estudos/historico/:planId" element={<StudyPlanDetailsPage />} />
                         <Route path="/simulados" element={<SimulationStartPage />} />
                         <Route path="/simulados/:simulationId" element={<SimulationPage />} />
                         <Route path="/praticas" element={<DirectedPracticeStartPage />} />
