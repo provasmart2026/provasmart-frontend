@@ -5,6 +5,7 @@ import { DirectedPracticeStartPage } from '../../../pages/student/DirectedPracti
 import { DirectedPracticePage } from '../../../pages/student/DirectedPracticePage'
 import { DirectedPracticeAnalysisPage } from '../../../pages/student/DirectedPracticeAnalysisPage'
 import { directedPracticeService } from '../../../services/directedPracticeService'
+import { ApiError } from '../../../services/api'
 import type { DirectedPractice } from '../../../types/directedPractice'
 
 function practice(answered = false): DirectedPractice {
@@ -30,6 +31,22 @@ function renderRoute(route: string) {
 
 describe('Prática direcionada', () => {
     afterEach(() => vi.restoreAllMocks())
+
+    it('mostra o motivo informado quando não há questões suficientes', async () => {
+        vi.spyOn(directedPracticeService, 'list').mockResolvedValue([])
+        vi.spyOn(directedPracticeService, 'create').mockRejectedValue(new ApiError(409, 'Erro', 'Não há 20 questões ativas disponíveis para a área selecionada.'))
+        renderRoute('/praticas')
+        fireEvent.click(await screen.findByRole('button', { name: 'Iniciar prática direcionada' }))
+        expect(await screen.findByRole('alert')).toHaveTextContent('Não há 20 questões ativas')
+    })
+
+    it('mostra erro de conexão sem sugerir que falta simulado', async () => {
+        vi.spyOn(directedPracticeService, 'list').mockResolvedValue([])
+        vi.spyOn(directedPracticeService, 'create').mockRejectedValue(new ApiError(0, 'Erro'))
+        renderRoute('/praticas')
+        fireEvent.click(await screen.findByRole('button', { name: 'Iniciar prática direcionada' }))
+        expect(await screen.findByRole('alert')).toHaveTextContent('Verifique sua conexão')
+    })
 
     it('impede iniciar outra prática quando existe uma em andamento', async () => {
         vi.spyOn(directedPracticeService, 'list').mockResolvedValue([practice()])
@@ -100,7 +117,7 @@ describe('Prática direcionada', () => {
         expect(screen.getByRole('img', { name: '60% de aproveitamento' })).toBeInTheDocument()
         expect(screen.getByText('12', { selector: 'strong' })).toBeInTheDocument()
         expect(screen.getByText('8', { selector: 'strong' })).toBeInTheDocument()
-        expect(screen.getByRole('img', { name: 'Matemática: 12 acertos de 20' })).toBeInTheDocument()
+        expect(screen.getByRole('img', { name: 'Matemática: 12 acertos e 8 erros' })).toBeInTheDocument()
         expect(screen.getByRole('button', { name: 'Questão 1: erro' })).toHaveAttribute('aria-pressed', 'true')
         expect(screen.queryByText(/Explicação histórica/)).not.toBeInTheDocument()
         fireEvent.click(screen.getByRole('button', { name: 'Ver explicação' }))

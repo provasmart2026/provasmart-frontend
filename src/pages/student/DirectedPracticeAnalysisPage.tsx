@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { directedPracticeService } from '../../services/directedPracticeService'
+import { ApiError } from '../../services/api'
 import type { DirectedPracticeAnalysis, PracticeReview } from '../../types/directedPractice'
 import { areaLabel } from './DirectedPracticeStartPage'
 import './SimulationsPage.css'
@@ -56,7 +57,8 @@ export function DirectedPracticeAnalysisPage() {
         }
         directedPracticeService.analysis(practiceId)
             .then((result) => { if (active) setAnalysis(result) })
-            .catch(() => { if (active) setError('A análise só fica disponível após a finalização da prática. Práticas canceladas não têm análise.') })
+            .catch((cause: unknown) => { if (active) setError(cause instanceof ApiError && cause.status === 409 && cause.backendMessage
+                ? cause.backendMessage : 'Não foi possível carregar a análise. Verifique sua conexão e tente novamente.') })
             .finally(() => { if (active) setLoading(false) })
         return () => { active = false }
     }, [practiceId])
@@ -89,9 +91,11 @@ export function DirectedPracticeAnalysisPage() {
                         <div className="practice-analysis-disciplines" aria-label="Desempenho por disciplina">
                             {analysis.disciplines.map((item) => <div key={item.name} className="practice-analysis-discipline">
                                 <div><strong>{item.name}</strong><span>{formatPercent(item.percentage)}%</span></div>
-                                <div className="practice-analysis-bar" role="img" aria-label={`${item.name}: ${item.correct} acertos de ${item.total}`}>
-                                    <span style={{ width: `${boundedPercent(item.percentage)}%` }} />
+                                <div className="practice-analysis-bar" role="img" aria-label={`${item.name}: ${item.correct} acertos e ${item.total - item.correct} erros`}>
+                                    <span className="practice-bar-correct" style={{ width: `${boundedPercent(item.percentage)}%` }} />
+                                    <span className="practice-bar-error" style={{ width: `${100 - boundedPercent(item.percentage)}%` }} />
                                 </div>
+                                <small>{item.correct} acertos · {item.total - item.correct} erros</small>
                             </div>)}
                         </div>
                     </div>

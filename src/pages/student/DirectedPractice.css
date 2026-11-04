@@ -27,8 +27,10 @@
 .practice-analysis-disciplines { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
 .practice-analysis-discipline > div:first-child { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 13px; }
 .practice-analysis-discipline strong { overflow-wrap: anywhere; }
-.practice-analysis-bar { height: 8px; border-radius: 99px; overflow: hidden; background: var(--violet-100); }
-.practice-analysis-bar span { display: block; height: 100%; border-radius: inherit; background: var(--rose-600); }
+.practice-analysis-bar { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--violet-100); }
+.practice-analysis-bar span { display: block; height: 100%; }
+.practice-analysis-bar .practice-bar-correct { background: var(--practice-green); }
+.practice-analysis-bar .practice-bar-error { background: var(--practice-orange); }
 .practice-analysis-map { padding: 22px; margin-top: 16px; }
 .practice-analysis-map-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
 .practice-analysis-map-heading h2 { margin: 0 0 4px; font-size: 20px; }

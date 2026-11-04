@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { directedPracticeService } from '../../services/directedPracticeService'
+import { ApiError } from '../../services/api'
 import type { DirectedPractice } from '../../types/directedPractice'
 import './SimulationsPage.css'
 import './DirectedPractice.css'
@@ -35,8 +36,10 @@ export function DirectedPracticeStartPage() {
         try {
             const practice = await directedPracticeService.create()
             navigate(`/praticas/${encodeURIComponent(practice.id)}`)
-        } catch {
-            setError('Não foi possível iniciar. Finalize um Simulado Geral e verifique se há 20 questões ativas na sua área de menor aproveitamento.')
+        } catch (cause) {
+            setError(cause instanceof ApiError && cause.status === 409 && cause.backendMessage
+                ? cause.backendMessage
+                : 'Não foi possível iniciar a prática. Verifique sua conexão e tente novamente.')
         } finally {
             setCreating(false)
         }
