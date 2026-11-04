@@ -25,7 +25,12 @@ export function Header() {
                         <Link to="/admin/audit-logs">Auditoria</Link>
                     </>
                 )}
-                {session.authenticated && session.role === 'ESTUDANTE' && <Link to="/simulados">Simulados</Link>}
+                {session.authenticated && session.role === 'ESTUDANTE' && (
+                    <>
+                        <Link to="/simulados">Simulados</Link>
+                        <Link to="/plano-de-estudos">Plano de estudos</Link>
+                    </>
+                )}
                 {session.authenticated && <Link to="/profile">Meu perfil</Link>}
                 {!session.authenticated && (
                     <>
