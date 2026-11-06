@@ -62,6 +62,22 @@ function lastQuestion() {
 describe('Execução do simulado', () => {
     afterEach(() => vi.restoreAllMocks())
 
+    it('permite navegar pelo mapa e distingue questões respondidas das pendentes', async () => {
+        const simulation = fixture()
+        simulation.questions[0].selectedAlternativeId = '40-A'
+        await open(simulation)
+
+        const first = screen.getByRole('button', { name: 'Questão 1, pendente' })
+        const last = screen.getByRole('button', { name: 'Questão 40, respondida' })
+        expect(first).toHaveAttribute('aria-current', 'step')
+        expect(last).toHaveClass('is-answered')
+
+        fireEvent.click(last)
+        expect(screen.getByRole('group', { name: 'Enunciado 40' })).toBeInTheDocument()
+        expect(last).toHaveAttribute('aria-current', 'step')
+        expect(first).not.toHaveAttribute('aria-current')
+    })
+
     it('não cancela quando a confirmação é recusada', async () => {
         await open()
         const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false)

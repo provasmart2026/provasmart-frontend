@@ -2,26 +2,21 @@ import { examAreaLabels, type ExamArea } from '../../../types/examArea'
 import type { QuestionSubjects } from './questionSubjects'
 import { SUBJECT_NAME_MAX_LENGTH } from './questionConstants'
 
+const NEW_SUBJECT_OPTION = 'other'
+
 type QuestionSubjectFieldsProps = {
     id: string
     subjectId: string
     options: QuestionSubjects
-    onSubjectChange: (id: string) => void
 }
 
-export function QuestionSubjectFields({ id, subjectId, options, onSubjectChange }: QuestionSubjectFieldsProps) {
-    const newSubjectDisabled =
-        !options.disciplineId ||
-        options.creating ||
-        Boolean(options.loading) ||
-        Boolean(options.error) ||
-        Boolean(subjectId)
-    const existingSubjectDisabled =
+export function QuestionSubjectFields({ id, subjectId, options }: QuestionSubjectFieldsProps) {
+    const subjectSelectDisabled =
         options.creating ||
         !options.disciplineId ||
         Boolean(options.loading) ||
-        !options.subjects.length ||
-        Boolean(options.newSubjectName)
+        Boolean(options.error)
+    const newSubjectDisabled = subjectSelectDisabled || !options.enteringNewSubject
 
     return (
         <>
@@ -59,9 +54,13 @@ export function QuestionSubjectFields({ id, subjectId, options, onSubjectChange 
             <select
                 id={`${id}-subject`}
                 required
-                value={subjectId}
-                disabled={existingSubjectDisabled}
-                onChange={(event) => onSubjectChange(event.target.value)}
+                value={options.enteringNewSubject ? NEW_SUBJECT_OPTION : subjectId}
+                disabled={subjectSelectDisabled}
+                onChange={(event) => {
+                    const value = event.target.value
+                    const enteringNew = value === NEW_SUBJECT_OPTION
+                    options.selectSubject(enteringNew ? '' : value, enteringNew)
+                }}
             >
                 <option value="">Selecione um assunto</option>
                 {options.subjects.map((item) => (
@@ -69,6 +68,7 @@ export function QuestionSubjectFields({ id, subjectId, options, onSubjectChange 
                         {item.name}
                     </option>
                 ))}
+                <option value={NEW_SUBJECT_OPTION}>Outro</option>
             </select>
             {options.loading && <p role="status">{options.loading}</p>}
             {options.error && (
@@ -85,29 +85,34 @@ export function QuestionSubjectFields({ id, subjectId, options, onSubjectChange 
             {!options.loading && !options.error && options.disciplineId && !options.subjects.length && (
                 <p role="status">Nenhum assunto cadastrado nesta disciplina.</p>
             )}
-            <label htmlFor={`${id}-new-subject`}>Nome do novo assunto</label>
-            <input
-                id={`${id}-new-subject`}
-                maxLength={SUBJECT_NAME_MAX_LENGTH}
-                value={options.newSubjectName}
-                disabled={newSubjectDisabled}
-                aria-invalid={Boolean(options.createError)}
-                aria-describedby={options.createError ? `${id}-subject-error` : undefined}
-                onChange={(event) => options.setNewSubjectName(event.target.value)}
-            />
-            <div className="question-actions">
-                <button
-                    type="button"
-                    onClick={options.createSubject}
-                    disabled={newSubjectDisabled || !options.newSubjectName.trim()}
-                >
-                    {options.creating ? 'Criando assunto...' : 'Criar assunto'}
-                </button>
-            </div>
-            {options.createError && (
-                <p id={`${id}-subject-error`} role="alert">
-                    {options.createError}
-                </p>
+            {options.enteringNewSubject && (
+                <>
+                    <label htmlFor={`${id}-new-subject`}>Nome do novo assunto</label>
+                    <input
+                        id={`${id}-new-subject`}
+                        maxLength={SUBJECT_NAME_MAX_LENGTH}
+                        value={options.newSubjectName}
+                        disabled={newSubjectDisabled}
+                        aria-invalid={Boolean(options.createError)}
+                        aria-describedby={options.createError ? `${id}-subject-error` : undefined}
+                        onChange={(event) => options.setNewSubjectName(event.target.value)}
+                    />
+                    <div className="question-actions">
+                        <button
+                            className="primary-button"
+                            type="button"
+                            onClick={options.createSubject}
+                            disabled={newSubjectDisabled || !options.newSubjectName.trim()}
+                        >
+                            {options.creating ? 'Criando assunto...' : 'Criar assunto'}
+                        </button>
+                    </div>
+                    {options.createError && (
+                        <p id={`${id}-subject-error`} role="alert">
+                            {options.createError}
+                        </p>
+                    )}
+                </>
             )}
         </>
     )

@@ -1,5 +1,5 @@
 import { apiRequest } from './api'
-import type { Simulation } from '../types/simulation'
+import type { Simulation, SimulationQuestionCorrection } from '../types/simulation'
 import type { SimulationPerformance } from '../types/simulationPerformance'
 
 export const simulationService = {
@@ -9,6 +9,8 @@ export const simulationService = {
     get: (simulationId: string) => apiRequest<Simulation>(`/simulations/${encodeURIComponent(simulationId)}`),
     performance: (simulationId: string) =>
         apiRequest<SimulationPerformance>(`/simulations/${encodeURIComponent(simulationId)}/performance`),
+    correction: (simulationId: string) =>
+        apiRequest<SimulationQuestionCorrection[]>(`/simulations/${encodeURIComponent(simulationId)}/correction`),
     answer: (simulationId: string, simulationQuestionId: string, alternativeId: string) =>
         apiRequest<Simulation>(
             `/simulations/${encodeURIComponent(simulationId)}/questions/${encodeURIComponent(simulationQuestionId)}/answer`,

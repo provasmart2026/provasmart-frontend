@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { directedPracticeService } from '../../services/directedPracticeService'
 import type { DirectedPractice } from '../../types/directedPractice'
 import { areaLabel } from './DirectedPracticeStartPage'
+import { QuestionMap } from './QuestionMap'
 import './SimulationsPage.css'
 import './DirectedPractice.css'
 
@@ -102,7 +103,18 @@ function DirectedPracticeSession({ practiceId }: { practiceId?: string }) {
             </div>
             <div className="simulation-panel">
                 {loading ? <p role="status">Carregando prática...</p> : practice?.status === 'FINALIZADA' ? (
-                    <p>Prática finalizada. <Link to={`/praticas/${encodeURIComponent(practice.id)}/analise`}>Ver correção e análise</Link></p>
+                    <>
+                        <div className="practice-completion" role="status">
+                            <h2>Prática finalizada.</h2>
+                            <p className="supporting-copy">Confira seu desempenho e veja a explicação de cada questão.</p>
+                        </div>
+                        <Link
+                            className="primary-button practice-link-button practice-completion-action"
+                            to={`/praticas/${encodeURIComponent(practice.id)}/analise`}
+                        >
+                            Ver correção e análise
+                        </Link>
+                    </>
                 ) : practice?.status === 'CANCELADA' ? (
                     <p>Esta prática foi cancelada. <Link to="/praticas">Voltar às práticas</Link></p>
                 ) : question ? (
@@ -126,13 +138,7 @@ function DirectedPracticeSession({ practiceId }: { practiceId?: string }) {
                             </div>
                         </fieldset>
                         <p role="status" className="simulation-save-status">{busy ? 'Processando...' : ''}</p>
-                        <div className="practice-question-index" aria-label="Ir para uma questão">
-                            {questions.map((item, position) => (
-                                <button key={item.id} type="button" disabled={busy} aria-label={`Questão ${position + 1}${item.selectedAlternativeId ? ', respondida' : ', pendente'}`}
-                                    aria-current={position === index ? 'step' : undefined}
-                                    className={item.selectedAlternativeId ? 'is-answered' : ''} onClick={() => goTo(position)}>{position + 1}</button>
-                            ))}
-                        </div>
+                        <QuestionMap questions={questions} currentIndex={index} disabled={busy} onSelect={goTo} />
                         <div className="simulation-navigation">
                             <button className="simulation-secondary-button" type="button" disabled={busy || index === 0} onClick={() => goTo(index - 1)}>Anterior</button>
                             {index < questions.length - 1 ? (

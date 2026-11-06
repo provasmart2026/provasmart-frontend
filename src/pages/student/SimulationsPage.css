@@ -28,7 +28,7 @@
   cursor: pointer;
 }
 
-.student-simulations button:disabled {
+.student-simulations button:disabled:not(:where(.question-map button)) {
   background: var(--rose-600);
   opacity: .6;
   cursor: not-allowed;
@@ -73,3 +73,29 @@
 .simulation-secondary-button { min-height: 50px; padding: 14px 24px; border-radius: 12px; background: var(--violet-100); color: var(--mauve-700); }
 .simulation-secondary-button:focus-visible { outline: 3px solid var(--violet-600); outline-offset: 3px; }
 .student-simulations .simulation-secondary-button:disabled { background: var(--violet-100); }
+.question-map {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.question-map button {
+    width: 40px;
+    height: 40px;
+    background: white;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.question-map button:disabled {
+    cursor: wait;
+}
+
+.question-map button.is-answered {
+    background: var(--violet-100);
+}
+
+.question-map button[aria-current="step"] {
+    outline: 3px solid var(--violet-600);
+}

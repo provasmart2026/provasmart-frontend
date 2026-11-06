@@ -13,6 +13,17 @@ type SimulationQuestion = {
     selectedAlternativeId: string | null
 }
 
+export type SimulationQuestionCorrection = {
+    simulationQuestionId: string
+    position: number
+    statement: string
+    alternatives: SimulationAlternative[]
+    selectedAlternativeId: string | null
+    correctAlternativeId: string | null
+    isCorrect: boolean | null
+    explanation: string
+}
+
 export type Simulation = {
     id: string
     studentId: string

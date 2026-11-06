@@ -21,6 +21,7 @@ export function useQuestionSubjects(
     const [loading, setLoading] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [newSubjectName, setNewSubjectName] = useState('')
+    const [enteringNewSubject, setEnteringNewSubject] = useState(false)
     const [creating, setCreating] = useState(false)
     const [createError, setCreateError] = useState<string | null>(null)
     const [attempt, setAttempt] = useState(0)
@@ -36,6 +37,7 @@ export function useQuestionSubjects(
         setDisciplineId('')
         setDisciplines([])
         setSubjects([])
+        setEnteringNewSubject(false)
         setNewSubjectName('')
         setCreateError(null)
         retry.current = () => setAttempt((value) => value + 1)
@@ -95,9 +97,7 @@ export function useQuestionSubjects(
         setDisciplineId('')
         setDisciplines([])
         setSubjects([])
-        onSubjectChange('')
-        setNewSubjectName('')
-        setCreateError(null)
+        selectSubject('', false)
         setError(null)
         setLoading(nextArea ? 'Carregando disciplinas...' : null)
         if (!nextArea) return
@@ -120,9 +120,7 @@ export function useQuestionSubjects(
         const requestVersion = ++catalogRequestVersion.current
         setDisciplineId(nextId)
         setSubjects([])
-        onSubjectChange('')
-        setNewSubjectName('')
-        setCreateError(null)
+        selectSubject('', false)
         setError(null)
         setLoading(nextId ? 'Carregando assuntos...' : null)
         if (!nextId) return
@@ -140,8 +138,15 @@ export function useQuestionSubjects(
         }
     }
 
+    function selectSubject(id: string, enteringNew: boolean) {
+        setEnteringNewSubject(enteringNew)
+        setNewSubjectName('')
+        setCreateError(null)
+        onSubjectChange(id)
+    }
+
     async function createSubject() {
-        const cannotCreateSubject = creating || selectedSubjectId || !disciplineId || loading || error
+        const cannotCreateSubject = !enteringNewSubject || creating || selectedSubjectId || !disciplineId || loading || error
         if (cannotCreateSubject) return
         const name = newSubjectName.trim()
         if (!name || name.length > SUBJECT_NAME_MAX_LENGTH) {
@@ -155,8 +160,7 @@ export function useQuestionSubjects(
             const subject = await subjectService.create(disciplineId, { name })
             if (requestVersion !== catalogRequestVersion.current) return
             setSubjects((current) => [...current.filter((item) => item.id !== subject.id), subject])
-            onSubjectChange(subject.id)
-            setNewSubjectName('')
+            selectSubject(subject.id, false)
         } catch {
             if (requestVersion === catalogRequestVersion.current)
                 setCreateError('Não foi possível criar o assunto. Tente novamente.')
@@ -176,7 +180,9 @@ export function useQuestionSubjects(
         creating,
         createError,
         newSubjectName,
+        enteringNewSubject,
         setNewSubjectName,
+        selectSubject,
         selectArea,
         selectDiscipline,
         createSubject,
