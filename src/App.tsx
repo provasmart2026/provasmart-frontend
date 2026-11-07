@@ -10,6 +10,9 @@ import { MainLayout } from './layouts/MainLayout'
 import { Home } from './pages/home/Home'
 import { SimulationStartPage } from './pages/student/SimulationStartPage'
 import { SimulationPage } from './pages/student/SimulationPage'
+import { DirectedPracticeStartPage } from './pages/student/DirectedPracticeStartPage'
+import { DirectedPracticePage } from './pages/student/DirectedPracticePage'
+import { DirectedPracticeAnalysisPage } from './pages/student/DirectedPracticeAnalysisPage'
 import { SimulationPerformancePage } from './pages/student/SimulationPerformancePage'
 import { StudyPlanPage } from './pages/student/StudyPlanPage'
 import { StudyPlanHistoryPage } from './pages/student/StudyPlanHistoryPage'
@@ -44,6 +47,9 @@ export function App() {
                         <Route path="/plano-de-estudos/historico/:planId" element={<StudyPlanDetailsPage />} />
                         <Route path="/simulados" element={<SimulationStartPage />} />
                         <Route path="/simulados/:simulationId" element={<SimulationPage />} />
+                        <Route path="/praticas" element={<DirectedPracticeStartPage />} />
+                        <Route path="/praticas/:practiceId" element={<DirectedPracticePage />} />
+                        <Route path="/praticas/:practiceId/analise" element={<DirectedPracticeAnalysisPage />} />
                         <Route path="/simulados/:simulationId/desempenho" element={<SimulationPerformancePage />} />
                         <Route path="/student/simulations/start" element={<SimulationStartPage />} />
                         <Route path="/student/simulations/:simulationId" element={<SimulationPage />} />

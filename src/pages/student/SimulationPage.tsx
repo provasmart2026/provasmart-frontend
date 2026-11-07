@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ApiError } from '../../services/api'
 import { simulationService } from '../../services/simulationService'
 import type { Simulation } from '../../types/simulation'
+import { QuestionMap } from './QuestionMap'
 import './SimulationsPage.css'
 
 async function saveAndConfirmAnswer(simulationId: string, questionId: string, alternativeId: string) {
@@ -206,6 +207,7 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
                             <p className="supporting-copy simulation-save-status" role="status">
                                 {saving ? 'Salvando resposta...' : ''}
                             </p>
+                            <QuestionMap questions={questions} currentIndex={currentIndex} disabled={busy} onSelect={goToQuestion} />
                             <div className="simulation-navigation">
                                 <button
                                     className="simulation-secondary-button"

@@ -1,0 +1,29 @@
+.practice-link-button { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.practice-completion h2 { margin: 0 0 8px; }
+.practice-completion p { margin: 0; }
+.practice-completion-action { align-self: flex-start; text-align: center; }
+.practice-history { margin-top: 40px; }
+.practice-history h2, .practice-breakdown h2, .practice-review h2 { margin-bottom: 16px; }
+.practice-history-list { display: grid; gap: 12px; }
+.practice-history-item { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 22px; background: #fff; border: 1px solid var(--border); border-radius: 14px; }
+.practice-history-item p { margin: 4px 0 0; color: var(--mauve-700); }
+.practice-cancel { align-self: flex-start; padding: 12px 0; color: var(--rose-600); background: transparent; text-decoration: underline; }
+.practice-analysis-disciplines { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+.practice-analysis-discipline > div:first-child { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+.practice-analysis-discipline strong { overflow-wrap: anywhere; }
+.practice-analysis-bar { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--violet-100); }
+.practice-analysis-bar span { display: block; height: 100%; }
+.practice-analysis-bar .practice-bar-correct { background: var(--performance-correct); }
+.practice-analysis-bar .practice-bar-error { background: var(--performance-incorrect); }
+.practice-analysis-focus { margin: 16px 0 0; color: var(--mauve-700); font-size: 14px; }
+.practice-analysis-subjects summary:focus-visible { outline: 3px solid var(--violet-600); outline-offset: 3px; }
+.practice-analysis-subjects { margin-top: 18px; }
+.practice-analysis-subjects summary { width: fit-content; color: var(--rose-600); font-weight: 700; cursor: pointer; }
+.practice-analysis-subjects .practice-table-wrap { margin-top: 16px; }
+.practice-analysis-back { display: inline-block; margin-top: 24px; color: var(--rose-600); font-weight: 700; }
+.practice-table-wrap { overflow-x: auto; }
+.practice-subject-table { width: 100%; border-collapse: collapse; background: white; }
+.practice-subject-table th, .practice-subject-table td { padding: 12px 16px; border: 1px solid var(--border); text-align: left; }
+.practice-subject-table th { background: var(--violet-100); }
+@media (max-width: 640px) { .practice-analysis-disciplines { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .practice-history-item { flex-direction: column; align-items: flex-start; } }
