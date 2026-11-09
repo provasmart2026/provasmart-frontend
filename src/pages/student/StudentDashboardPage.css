@@ -68,3 +68,49 @@
     height: 100%;
     background: var(--violet-600);
 }
+
+.dashboard-evolution {
+    min-width: 0;
+    margin-top: 16px;
+}
+
+.dashboard-evolution-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.dashboard-evolution svg {
+    display: block;
+    width: 100%;
+    max-height: 300px;
+}
+
+.dashboard-evolution line {
+    stroke: var(--border);
+}
+
+.dashboard-evolution text {
+    fill: currentColor;
+    font-size: 12px;
+}
+
+.dashboard-evolution polyline {
+    fill: none;
+    stroke: var(--violet-600);
+    stroke-width: 2;
+}
+
+.dashboard-evolution circle {
+    fill: var(--violet-600);
+    stroke: white;
+    stroke-width: 2;
+}
+
+.dashboard-evolution circle:hover,
+.dashboard-evolution circle:focus {
+    stroke: currentColor;
+}
+
+.dashboard-evolution-detail {
+    min-height: 1.5em;
+}

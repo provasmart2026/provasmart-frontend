@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { studentDashboardService } from '../../services/studentDashboardService'
 import { examAreaLabels } from '../../types/examArea'
 import type { StudentDashboard } from '../../types/studentDashboard'
+import { DashboardEvolutionChart } from './DashboardEvolutionChart'
 import { formatPercentage } from './PerformanceSummary'
 import './SimulationsPage.css'
 import './StudentDashboardPage.css'
@@ -103,6 +104,7 @@ function DashboardResults({ modality }: { modality: Modality }) {
                     </ul>
                 )}
             </section>
+            <DashboardEvolutionChart evolution={result.evolution ?? []} />
         </>
     )
 }
