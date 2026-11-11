@@ -35,6 +35,7 @@ export function RegisterPage() {
                 password,
                 acceptTerms: Boolean(form.get('terms')),
                 acceptPrivacyPolicy: Boolean(form.get('terms')),
+                ageDeclarationAccepted: Boolean(form.get('age')),
             })
             navigate('/login?cadastro=sucesso')
         } catch (requestError) {
@@ -53,7 +54,7 @@ export function RegisterPage() {
                 <span className="eyebrow">Crie sua conta</span>
                 <h2>Comece sua preparação</h2>
                 <p>Preencha seus dados. Leva menos de dois minutos.</p>
-                <Field id="name" label="Nome completo" placeholder="Como você quer ser chamado" autoComplete="name" />
+                <Field id="name" label="Nome" placeholder="Como você quer ser chamado" autoComplete="name" />
                 <Field id="email" label="E-mail" type="email" placeholder="voce@exemplo.com" autoComplete="email" />
                 <PasswordField
                     id="password"
@@ -71,7 +72,7 @@ export function RegisterPage() {
                 <label className="checkbox legal-check">
                     <input name="terms" type="checkbox" required />
                     <span>
-                        Li e aceito os <LegalLink to="/termos-de-uso">Termos de Uso</LegalLink> e a{' '}
+                        Li e aceito os <LegalLink to="/termos-de-uso">Termos de Uso</LegalLink> e estou ciente da{' '}
                         <LegalLink to="/politica-de-privacidade">Política de Privacidade</LegalLink>.
                     </span>
                 </label>

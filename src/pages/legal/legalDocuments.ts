@@ -14,7 +14,7 @@ export const terms: LegalDocument = {
     title: 'Termos de Uso do ProvaSmart',
     description:
         'Regras para utilização da plataforma, responsabilidades, segurança da conta e condições de acesso aos recursos educacionais.',
-    version: 'Versão 1.0 • vigente desde 20 de setembro de 2026',
+    version: 'Versão 1.1 • vigente desde 11 de novembro de 2026',
     sections: [
         {
             title: '1. Apresentação',
@@ -86,7 +86,7 @@ export const terms: LegalDocument = {
         {
             title: '9. Suspensão e encerramento',
             blocks: [
-                'O usuário pode solicitar o encerramento da conta em Minha conta > Privacidade e dados. Após a solicitação, os dados serão excluídos ou anonimizados conforme a Política de Privacidade e o Plano de Retenção, ressalvadas as informações cuja conservação seja necessária para cumprimento de obrigação legal, prevenção de fraude, exercício regular de direitos ou segurança.',
+                'O usuário pode solicitar o encerramento da conta em Meu perfil > Exclusão da conta. A solicitação é registrada e a exclusão definitiva é concluída por um administrador. Após a solicitação, os dados serão excluídos ou anonimizados conforme a Política de Privacidade e o Plano de Retenção, ressalvadas as informações cuja conservação seja necessária para cumprimento de obrigação legal, prevenção de fraude, exercício regular de direitos ou segurança.',
                 'A equipe poderá suspender ou encerrar uma conta em caso de violação destes Termos, risco à segurança, fraude ou determinação legal. A medida deverá ser proporcional e poderá ser contestada pelo canal de atendimento.',
             ],
         },
@@ -107,7 +107,7 @@ export const terms: LegalDocument = {
             title: '12. Lei aplicável e contato',
             blocks: [
                 'Estes Termos são regidos pela legislação brasileira. O usuário pode procurar os canais administrativos e judiciais competentes. Antes disso, a equipe se coloca à disposição pelo e-mail provasmrt@gmail.com para tentar resolver a questão de forma direta.',
-                'Data da última atualização: 24 de setembro de 2026.',
+                'Data da última atualização: 11 de novembro de 2026.',
             ],
         },
     ],
@@ -117,7 +117,7 @@ export const privacy: LegalDocument = {
     eyebrow: 'Privacidade e dados',
     title: 'Política de Privacidade do ProvaSmart',
     description: 'Como os dados são utilizados, protegidos, armazenados e como o titular pode exercer seus direitos.',
-    version: 'Versão 1.0 • vigente desde 24 de setembro de 2026',
+    version: 'Versão 1.1 • vigente desde 11 de novembro de 2026',
     sections: [
         {
             title: '1. Quem trata os dados',
@@ -137,7 +137,7 @@ export const privacy: LegalDocument = {
             blocks: [
                 'De acordo com a função acessada, o ProvaSmart trata:',
                 [
-                    'dados da conta: nome, e-mail, senha armazenada em formato de hash, perfil, situação da conta e datas de criação e atualização;',
+                    'dados da conta: registros das versões e datas de aceite dos Termos de Uso e de ciência da Política de Privacidade, declaração de idade e data do seu registro, nome, e-mail, senha armazenada em formato de hash, perfil, situação da conta e datas de criação e atualização;',
                     'dados de autenticação e segurança: identificadores de sessão, endereço IP, data e hora de acesso, tentativas de autenticação e registros técnicos necessários à proteção do serviço;',
                     'dados de estudo: simulados gerados, questões vinculadas, alternativas selecionadas, situação e duração da tentativa, acertos, resultados por área, disciplina e assunto, histórico e evolução;',
                     'dados do plano de estudos: conteúdos sugeridos, prioridades, tarefas, progresso e ajustes realizados pelo usuário;',
@@ -188,7 +188,7 @@ export const privacy: LegalDocument = {
         {
             title: '9. Cookies e armazenamento local',
             blocks: [
-                'O ProvaSmart utiliza apenas tecnologias necessárias à autenticação, à segurança e à manutenção da sessão. Cookies ou mecanismos opcionais de análise e publicidade somente serão ativados após atualização desta Política e, quando exigido, mediante escolha do usuário.',
+                'O ProvaSmart armazena o token de autenticação e o perfil de acesso no navegador. Sem a opção de manter a sessão, utiliza sessionStorage; com essa opção, utiliza localStorage, que pode manter os dados após fechar o navegador. Ao sair da conta, esses registros são removidos. A validade do acesso também depende da expiração do token. Cookies ou mecanismos opcionais de análise e publicidade somente serão ativados após atualização desta Política e, quando exigido, mediante escolha do usuário.',
                 'O usuário pode configurar o navegador para limitar o armazenamento, mas o bloqueio dos recursos estritamente necessários pode impedir o login ou o funcionamento de áreas autenticadas.',
             ],
         },
@@ -209,14 +209,14 @@ export const privacy: LegalDocument = {
             title: '12. Direitos do titular',
             blocks: [
                 'O titular pode solicitar confirmação do tratamento, acesso, correção, informação sobre compartilhamentos, anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade, portabilidade quando regulamentada e aplicável, revisão de decisões automatizadas, informação sobre a possibilidade de negar consentimento e revogação do consentimento.',
-                'O pedido deve ser enviado para provasmrt@gmail.com ou realizado em Minha conta > Privacidade e dados. A equipe poderá solicitar informações proporcionais para confirmar a identidade e impedir que terceiros obtenham os dados do titular. A resposta observará os prazos legais; pedidos complexos receberão informação sobre as providências adotadas.',
+                'Pedidos de acesso, cópia, correção de dados e demais solicitações de privacidade devem ser enviados para provasmrt@gmail.com. A solicitação de exclusão da conta também pode ser registrada em Meu perfil > Exclusão da conta. A equipe poderá solicitar informações proporcionais para confirmar a identidade e impedir que terceiros obtenham os dados do titular. A resposta observará os prazos legais; pedidos complexos receberão informação sobre as providências adotadas.',
                 'O titular também pode apresentar petição à Autoridade Nacional de Proteção de Dados e procurar os órgãos de defesa do consumidor quando cabível.',
             ],
         },
         {
             title: '13. Crianças e adolescentes',
             blocks: [
-                'A criação de conta por pessoa com menos de 13 anos não é permitida. O ProvaSmart não solicita data de nascimento completa; utiliza uma declaração etária no cadastro para aplicar essa regra sem coletar informação excessiva. Se a equipe identificar conta criada em desacordo com esta seção, adotará as medidas necessárias para verificar a situação e excluir ou regularizar os dados.',
+                'A criação de conta por pessoa com menos de 13 anos não é permitida. O ProvaSmart não solicita data de nascimento completa; registra a declaração etária apresentada pelo usuário e a data do registro. Essa declaração não comprova a idade nem a autorização do responsável legal. Se a equipe identificar conta criada em desacordo com esta seção, adotará as medidas necessárias para verificar a situação e excluir ou regularizar os dados.',
                 'No tratamento relacionado a adolescentes, a plataforma considera seu melhor interesse, utiliza linguagem adequada e evita exposição pública de desempenho. Não existe ranking público nominal.',
             ],
         },
@@ -224,7 +224,7 @@ export const privacy: LegalDocument = {
             title: '14. Atualizações',
             blocks: [
                 'Esta Política poderá ser atualizada para refletir mudança de função, fornecedor, tecnologia ou obrigação legal. A versão vigente e a data de atualização permanecerão disponíveis na plataforma. Alterações relevantes serão comunicadas antes de produzirem efeito.',
-                'Data da última atualização: 24 de setembro de 2026.',
+                'Data da última atualização: 11 de novembro de 2026.',
             ],
         },
     ],

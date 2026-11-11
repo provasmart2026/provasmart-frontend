@@ -111,7 +111,7 @@ export function ProfilePage() {
                         </dl>
                     </section>
                     <section className="profile-panel" aria-labelledby="privacy-title">
-                        <h2 id="privacy-title">Privacidade e consentimentos</h2>
+                        <h2 id="privacy-title">Privacidade e registros de aceite</h2>
                         <nav className="profile-legal-links" aria-label="Documentos de privacidade e uso">
                             <LegalLink to="/termos-de-uso">Termos de Uso</LegalLink>
                             <LegalLink to="/politica-de-privacidade">Política de Privacidade</LegalLink>
@@ -132,7 +132,7 @@ export function ProfilePage() {
                                 <dd>{user.privacyVersion}</dd>
                             </div>
                             <div>
-                                <dt>Aceite da Política de Privacidade</dt>
+                                <dt>Ciência da Política de Privacidade</dt>
                                 <dd>
                                     <ProfileDate value={user.privacyAcceptedAt} />
                                 </dd>

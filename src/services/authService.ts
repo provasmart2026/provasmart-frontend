@@ -9,6 +9,7 @@ type RegisterData = LoginCredentials & {
     name: string
     acceptTerms: boolean
     acceptPrivacyPolicy: boolean
+    ageDeclarationAccepted: boolean
 }
 
 type MessageResponse = {
