@@ -80,7 +80,8 @@ export function RegisterPage() {
                     <input name="age" type="checkbox" required />
                     <span>
                         Declaro que tenho 13 anos ou mais. Se eu tiver menos de 18 anos, utilizarei a plataforma com a
-                        ciência do meu responsável legal.
+                        ciência e a assistência do meu responsável legal. Esta declaração não verifica minha idade
+                        nem comprova autorização do responsável.
                     </span>
                 </label>
                 {error && (

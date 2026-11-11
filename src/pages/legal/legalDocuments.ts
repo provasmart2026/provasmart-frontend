@@ -86,7 +86,7 @@ export const terms: LegalDocument = {
         {
             title: '9. Suspensão e encerramento',
             blocks: [
-                'O usuário pode solicitar o encerramento da conta em Meu perfil > Exclusão da conta. A solicitação é registrada e a exclusão definitiva é concluída por um administrador. Após a solicitação, os dados serão excluídos ou anonimizados conforme a Política de Privacidade e o Plano de Retenção, ressalvadas as informações cuja conservação seja necessária para cumprimento de obrigação legal, prevenção de fraude, exercício regular de direitos ou segurança.',
+                'O usuário pode solicitar o encerramento da conta em Meu perfil > Exclusão da conta. A solicitação é registrada e a exclusão definitiva é concluída por um administrador. Após a solicitação, os dados serão excluídos ou anonimizados conforme a Política de Privacidade e as regras de retenção nela descritas, ressalvadas as informações cuja conservação seja necessária para cumprimento de obrigação legal, prevenção de fraude, exercício regular de direitos ou segurança.',
                 'A equipe poderá suspender ou encerrar uma conta em caso de violação destes Termos, risco à segurança, fraude ou determinação legal. A medida deverá ser proporcional e poderá ser contestada pelo canal de atendimento.',
             ],
         },
@@ -202,7 +202,7 @@ export const privacy: LegalDocument = {
         {
             title: '11. Retenção e eliminação',
             blocks: [
-                'Os dados são mantidos somente enquanto necessários às finalidades descritas, ao cumprimento de obrigações e ao exercício de direitos. Após o encerramento da conta, os dados são excluídos ou anonimizados conforme o plano. Informações que precisem ser conservadas ficam bloqueadas para outras finalidades e com acesso restrito.',
+                'Os dados da conta e de estudo são mantidos durante a utilização do serviço e removidos quando o administrador conclui a exclusão solicitada pelo usuário. Os registros de auditoria, que podem conter e-mail, identificadores, ação, recurso, rota, data e resultado da operação, permanecem para investigar acessos indevidos, alterações administrativas e falhas. Esses registros são removidos em uma limpeza diária quando ultrapassam 90 dias desde o evento, inclusive após a exclusão da conta. A exclusão da conta não reinicia esse prazo. A execução da limpeza depende de o backend estar em funcionamento.',
             ],
         },
         {
@@ -218,6 +218,9 @@ export const privacy: LegalDocument = {
             blocks: [
                 'A criação de conta por pessoa com menos de 13 anos não é permitida. O ProvaSmart não solicita data de nascimento completa; registra a declaração etária apresentada pelo usuário e a data do registro. Essa declaração não comprova a idade nem a autorização do responsável legal. Se a equipe identificar conta criada em desacordo com esta seção, adotará as medidas necessárias para verificar a situação e excluir ou regularizar os dados.',
                 'No tratamento relacionado a adolescentes, a plataforma considera seu melhor interesse, utiliza linguagem adequada e evita exposição pública de desempenho. Não existe ranking público nominal.',
+                'Em outras palavras: usamos seus dados para criar sua conta, mostrar seus resultados e organizar seus estudos. Seus resultados não são publicados em um ranking com seu nome. Não informe dados pessoais de outras pessoas nos conteúdos enviados à plataforma.',
+                'Adolescentes e seus responsáveis podem entrar em contato pelo e-mail provasmrt@gmail.com para solicitar informações, correção de dados ou exclusão da conta. Antes de entregar dados a um responsável, a equipe deve confirmar a identidade e a representação de forma proporcional ao pedido. Nunca envie senha, código de autenticação ou token por e-mail.',
+                'A declaração de idade é fornecida pelo estudante. O ProvaSmart não verifica documentos nem possui, nesta versão, um fluxo de autorização do responsável legal. A exigência de ciência e assistência do responsável não significa que sua participação foi comprovada pelo sistema.',
             ],
         },
         {
