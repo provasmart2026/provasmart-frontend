@@ -165,10 +165,9 @@ export function StudyPlanPage() {
                 <span className="badge">UM PASSO DE CADA VEZ</span>
                 <h1 id="study-plan-title">Meu Plano de Estudos</h1>
                 <p className="lead">Organize sua semana e acompanhe os assuntos que precisam de atenção.</p>
-                <Link className="study-plan-reference" to="/plano-de-estudos/historico">Ver histórico de planos</Link>
             </div>
 
-            {!loading && !error && (
+            {!loading && !error && (!plan || preparingGeneration || generationPerformance || generationError) && (
                 <section className="study-plan-panel" aria-labelledby="study-plan-generation-title">
                     <h2 id="study-plan-generation-title">{plan ? 'Gerar novo plano' : 'Gerar plano'}</h2>
                     <p>Prepare um cronograma de sete dias com base no seu último Simulado Geral finalizado.</p>
@@ -236,8 +235,19 @@ export function StudyPlanPage() {
                     </div>
                 ) : (
                     <>
-                        <div className="study-plan-panel">
-                            <h2>Seu plano ativo</h2>
+                        <div className="study-plan-panel study-plan-overview">
+                            <div className="study-plan-overview-heading">
+                                <div><span className="badge">SEU PLANO ATIVO</span><h2>Uma semana para evoluir</h2></div>
+                                <button className="study-plan-new-button" type="button" disabled={preparingGeneration || creating}
+                                    onClick={() => void prepareGeneration()}>
+                                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 7v5h-5M4 17v-5h5" />
+                                        <path d="M6.1 7a7 7 0 0 1 11.6-1L20 9M4 15l2.3 3A7 7 0 0 0 17.9 17" />
+                                    </svg>
+                                    {preparingGeneration ? 'Preparando...' : 'Gerar novo plano'}
+                                </button>
+                            </div>
+                            {generationSuccess && <p role="status">Plano de estudos gerado com sucesso.</p>}
                             <p>
                                 {plan.dailyHours} {plan.dailyHours === 1 ? 'hora por dia' : 'horas por dia'}
                                 {' · '}7 dias · Início em {plan.startDate.split('-').reverse().join('/')}
@@ -256,7 +266,7 @@ export function StudyPlanPage() {
                             {completionError && <p role="alert">{completionError}</p>}
                         </div>
 
-                        <StudyPlanSchedule plan={plan} onToggleActivity={toggleActivity}
+                        <StudyPlanSchedule key={plan.id} plan={plan} onToggleActivity={toggleActivity}
                             savingActivityId={savingActivityId} disabled={creating} />
                     </>
                 )}

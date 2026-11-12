@@ -147,7 +147,7 @@ function DirectedPracticeSession({ practiceId }: { practiceId?: string }) {
                                 <button className="primary-button" type="button" disabled={busy || answered !== 20} onClick={() => void finish()}>Finalizar prática</button>
                             )}
                         </div>
-                        <button className="practice-cancel" type="button" disabled={busy} onClick={() => void cancel()}>Cancelar prática</button>
+                        <button className="simulation-cancel-button" type="button" disabled={busy} onClick={() => void cancel()}>Cancelar prática</button>
                     </>
                 ) : !error ? <p role="alert">Nenhuma questão disponível.</p> : null}
                 {error && <p role="alert">{error}</p>}

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AuthRedirect } from './components/AuthRedirect'
 import { UsersPage } from './pages/admin/UsersPage'
@@ -16,7 +16,7 @@ import { DirectedPracticeAnalysisPage } from './pages/student/DirectedPracticeAn
 import { SimulationPerformancePage } from './pages/student/SimulationPerformancePage'
 import { StudyPlanPage } from './pages/student/StudyPlanPage'
 import { StudentDashboardPage } from './pages/student/StudentDashboardPage'
-import { StudyPlanHistoryPage } from './pages/student/StudyPlanHistoryPage'
+import { StudentHistoryPage } from './pages/student/StudentHistoryPage'
 import { StudyPlanDetailsPage } from './pages/student/StudyPlanDetailsPage'
 import { ForgotPasswordPage } from './pages/access/ForgotPasswordPage'
 import { LoginPage } from './pages/access/LoginPage'
@@ -45,7 +45,8 @@ export function App() {
                     <Route element={<ProtectedRoute allowedRoles={['ESTUDANTE']} />}>
                         <Route path="/dashboard" element={<StudentDashboardPage />} />
                         <Route path="/plano-de-estudos" element={<StudyPlanPage />} />
-                        <Route path="/plano-de-estudos/historico" element={<StudyPlanHistoryPage />} />
+                        <Route path="/historico" element={<StudentHistoryPage />} />
+                        <Route path="/plano-de-estudos/historico" element={<Navigate to="/historico?aba=planos" replace />} />
                         <Route path="/plano-de-estudos/historico/:planId" element={<StudyPlanDetailsPage />} />
                         <Route path="/simulados" element={<SimulationStartPage />} />
                         <Route path="/simulados/:simulationId" element={<SimulationPage />} />

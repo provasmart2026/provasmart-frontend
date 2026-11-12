@@ -32,3 +32,14 @@ export type Simulation = {
     finishedAt: string | null
     questions: SimulationQuestion[]
 }
+export type SimulationSummary = {
+    id: string
+    status: 'FINALIZADO' | 'CANCELADO'
+    startedAt: string
+    finishedAt: string | null
+    totalQuestions: number
+    answeredQuestions: number
+    correctAnswers: number | null
+    incorrectAnswers: number | null
+    accuracyPercentage: number | null
+}
