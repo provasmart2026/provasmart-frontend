@@ -66,7 +66,10 @@ function DashboardResults({ modality }: { modality: Modality }) {
             <p>{modality === 'simulations'
                 ? 'Você ainda não finalizou nenhum simulado geral.'
                 : 'Você ainda não finalizou nenhuma prática direcionada.'}</p>
-            <Link to={options.path}>Ir para {options.label.toLowerCase()}</Link>
+            <Link className="primary-button" to={options.path}>
+                Ir para {options.label.toLowerCase()}
+                <span aria-hidden="true" style={{ marginLeft: 10 }}>→</span>
+            </Link>
         </div>
     )
 
