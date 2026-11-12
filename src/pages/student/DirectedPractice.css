@@ -7,7 +7,6 @@
 .practice-history-list { display: grid; gap: 12px; }
 .practice-history-item { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 22px; background: #fff; border: 1px solid var(--border); border-radius: 14px; }
 .practice-history-item p { margin: 4px 0 0; color: var(--mauve-700); }
-.practice-cancel { align-self: flex-start; padding: 12px 0; color: var(--rose-600); background: transparent; text-decoration: underline; }
 .practice-analysis-disciplines { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
 .practice-analysis-discipline > div:first-child { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 13px; }
 .practice-analysis-discipline strong { overflow-wrap: anywhere; }

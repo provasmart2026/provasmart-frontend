@@ -99,3 +99,11 @@
 .question-map button[aria-current="step"] {
     outline: 3px solid var(--violet-600);
 }
+.simulation-cancel-button {
+  align-self: flex-start;
+  padding: 12px 0;
+  color: var(--rose-600);
+  background: transparent;
+  text-decoration: underline;
+}
+

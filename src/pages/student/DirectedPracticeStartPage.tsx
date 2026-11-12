@@ -67,26 +67,6 @@ export function DirectedPracticeStartPage() {
                 )}
                 {error && <p role="alert">{error}</p>}
             </div>
-            {!loading && practices.length > 0 && (
-                <section className="practice-history" aria-labelledby="practice-history-title">
-                    <h2 id="practice-history-title">Suas práticas</h2>
-                    <div className="practice-history-list">
-                        {practices.map((practice) => (
-                            <div className="practice-history-item" key={practice.id}>
-                                <div>
-                                    <strong>{areaLabel(practice.area)}</strong>
-                                    <p>{practice.status === 'FINALIZADA' ? 'Finalizada' : practice.status === 'CANCELADA' ? 'Cancelada' : 'Em andamento'} · {new Date(practice.startedAt).toLocaleDateString('pt-BR')}</p>
-                                </div>
-                                {practice.status === 'FINALIZADA' ? (
-                                    <Link to={`/praticas/${encodeURIComponent(practice.id)}/analise`}>Ver análise</Link>
-                                ) : practice.status === 'EM_ANDAMENTO' ? (
-                                    <Link to={`/praticas/${encodeURIComponent(practice.id)}`}>Continuar</Link>
-                                ) : <span>Sem análise</span>}
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
         </section>
     )
 }

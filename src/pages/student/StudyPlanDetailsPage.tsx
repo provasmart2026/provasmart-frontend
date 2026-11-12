@@ -49,7 +49,7 @@ function StudyPlanDetails({ planId }: { planId: string | undefined }) {
                 <span className="badge">SUA JORNADA DE ESTUDOS</span>
                 <h1 id="study-plan-details-title">Detalhes do plano</h1>
                 <p className="lead">Consulte o cronograma e o progresso registrado neste plano.</p>
-                <Link className="study-plan-reference" to="/plano-de-estudos/historico">Voltar ao histórico</Link>
+                <Link className="study-plan-reference" to="/historico?aba=planos">Voltar ao histórico</Link>
             </div>
 
             {loading ? <p className="study-plan-panel" role="status">Consultando detalhes do plano...</p> : error ? (

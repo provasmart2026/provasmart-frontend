@@ -1,5 +1,18 @@
 export type PracticeStatus = 'EM_ANDAMENTO' | 'FINALIZADA' | 'CANCELADA'
 
+export type DirectedPracticeSummary = {
+    id: string
+    area: string
+    status: 'FINALIZADA' | 'CANCELADA'
+    startedAt: string
+    finishedAt: string | null
+    totalQuestions: number
+    answeredQuestions: number
+    correctAnswers: number | null
+    incorrectAnswers: number | null
+    accuracyPercentage: number | null
+}
+
 export type PracticeAlternative = { id: string; letter: string; text: string }
 
 export type PracticeQuestion = {

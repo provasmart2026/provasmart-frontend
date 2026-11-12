@@ -85,13 +85,14 @@ describe('Prática direcionada', () => {
         expect(analysis).not.toHaveBeenCalled()
     })
 
-    it('não oferece análise para prática cancelada', async () => {
+    it('centraliza o histórico na nova tela', async () => {
         vi.spyOn(directedPracticeService, 'list').mockResolvedValue([{
             ...practice(), status: 'CANCELADA', finishedAt: '2026-10-16T11:00:00',
         }])
         renderRoute('/praticas')
-        expect(await screen.findByText(/Cancelada ·/)).toBeInTheDocument()
-        expect(screen.getByText('Sem análise')).toBeInTheDocument()
+        await screen.findByRole('button', { name: 'Iniciar prática direcionada' })
+        expect(screen.queryByRole('link', { name: 'Ver histórico de práticas' })).not.toBeInTheDocument()
+        expect(screen.queryByRole('heading', { name: 'Suas práticas' })).not.toBeInTheDocument()
         expect(screen.queryByRole('link', { name: 'Ver análise' })).not.toBeInTheDocument()
     })
 

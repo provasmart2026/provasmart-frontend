@@ -245,7 +245,7 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
                 )}
                 {!loading && simulation?.status === 'EM_ANDAMENTO' && (
                     <button
-                        className="simulation-secondary-button"
+                        className="simulation-cancel-button"
                         type="button"
                         disabled={busy}
                         onClick={() => void cancel()}

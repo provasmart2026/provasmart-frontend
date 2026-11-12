@@ -1,8 +1,11 @@
 import { apiRequest } from './api'
-import type { Simulation, SimulationQuestionCorrection } from '../types/simulation'
+import type { Simulation, SimulationQuestionCorrection, SimulationSummary } from '../types/simulation'
 import type { SimulationPerformance } from '../types/simulationPerformance'
+import type { Page } from '../types/api'
 
 export const simulationService = {
+    history: (page: number, size: number) =>
+        apiRequest<Page<SimulationSummary>>('/simulations/history', { params: { page, size } }),
     current: async () => (await apiRequest<Simulation | undefined>('/simulations/current')) || null,
     latestFinished: () => apiRequest<Simulation>('/simulations/latest-finished'),
     create: () => apiRequest<Simulation>('/simulations', { method: 'POST' }),

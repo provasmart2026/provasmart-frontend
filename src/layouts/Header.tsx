@@ -28,9 +28,10 @@ export function Header() {
                 {session.authenticated && session.role === 'ESTUDANTE' && (
                     <>
                         <Link to="/simulados">Simulados</Link>
-                        <Link to="/dashboard">Meu Dashboard</Link>
                         <Link to="/praticas">Prática direcionada</Link>
                         <Link to="/plano-de-estudos">Plano de estudos</Link>
+                        <Link to="/dashboard">Meu Dashboard</Link>
+                        <Link to="/historico">Histórico</Link>
                     </>
                 )}
                 {session.authenticated && <Link to="/profile">Meu perfil</Link>}
