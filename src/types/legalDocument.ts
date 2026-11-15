@@ -17,3 +17,15 @@ export type LegalDocument = {
     effectiveAt: string
     createdAt: string
 }
+
+export type LegalAcceptanceStatus = {
+    termsAcceptanceRequired: boolean
+    privacyAcceptanceRequired: boolean
+}
+
+export type LegalAcceptanceRequest = {
+    acceptTerms: boolean
+    acceptPrivacyPolicy: boolean
+    termsVersion: string
+    privacyVersion: string
+}

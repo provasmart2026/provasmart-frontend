@@ -24,6 +24,7 @@ import { RegisterPage } from './pages/access/RegisterPage'
 import { ResetPasswordPage } from './pages/access/ResetPasswordPage'
 import { VerifyTwoFactorPage } from './pages/access/VerifyTwoFactorPage'
 import { PrivacyPage, TermsPage } from './pages/legal/LegalPages'
+import { LegalAcceptancePage } from './pages/legal/LegalAcceptancePage'
 
 export function App() {
     return (
@@ -41,6 +42,7 @@ export function App() {
                     <Route path="/politica-de-privacidade" element={<PrivacyPage />} />
                     <Route element={<ProtectedRoute />}>
                         <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/aceite-documentos" element={<LegalAcceptancePage />} />
                     </Route>
                     <Route element={<ProtectedRoute allowedRoles={['ESTUDANTE']} />}>
                         <Route path="/dashboard" element={<StudentDashboardPage />} />

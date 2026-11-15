@@ -1,5 +1,5 @@
 import { apiRequest } from './api'
-import type { LegalDocument, LegalDocumentContent, LegalDocumentType } from '../types/legalDocument'
+import type { LegalDocument, LegalDocumentContent, LegalDocumentType, LegalAcceptanceStatus, LegalAcceptanceRequest } from '../types/legalDocument'
 
 function parseContent(value: string): LegalDocumentContent {
     const content = JSON.parse(value)
@@ -14,6 +14,9 @@ function parseContent(value: string): LegalDocumentContent {
 }
 
 export const legalDocumentService = {
+    acceptanceStatus: () => apiRequest<LegalAcceptanceStatus>('/legal-documents/acceptance-status'),
+    accept: (data: LegalAcceptanceRequest) =>
+        apiRequest<void>('/legal-documents/acceptance', { method: 'POST', data }),
     async current(type: LegalDocumentType): Promise<LegalDocument> {
         const response = await apiRequest<Omit<LegalDocument, 'content'> & { content: string }>(
             `/legal-documents/${type}/current`)

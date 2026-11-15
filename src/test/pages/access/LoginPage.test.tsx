@@ -36,7 +36,7 @@ describe('login e verificação em duas etapas', () => {
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/verificar-codigo" element={<VerifyTwoFactorPage />} />
-                    <Route path="/" element={<p>Sessão iniciada</p>} />
+                    <Route path="/aceite-documentos" element={<p>Sessão iniciada</p>} />
                 </Routes>
             </MemoryRouter>
         )
