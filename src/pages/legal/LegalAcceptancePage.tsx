@@ -4,12 +4,15 @@ import { LegalLink } from '../../components/LegalLink'
 import { AccessLayout } from '../access/components/AccessLayout'
 import { legalDocumentService } from '../../services/legalDocumentService'
 import { ApiError } from '../../services/api'
+import { useSession } from '../../hooks/useSession'
 import type { LegalAcceptanceStatus, LegalDocument } from '../../types/legalDocument'
 
 type Documents = { terms: LegalDocument; privacy: LegalDocument; status: LegalAcceptanceStatus }
 
 export function LegalAcceptancePage() {
     const navigate = useNavigate()
+    const session = useSession()
+    const nextPath = session.role === 'ADMIN' ? '/admin/questions' : '/simulados'
     const [documents, setDocuments] = useState<Documents | null>(null)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -27,7 +30,7 @@ export function LegalAcceptancePage() {
                 const status = await legalDocumentService.acceptanceStatus()
                 if (!active) return
                 if (!status.termsAcceptanceRequired && !status.privacyAcceptanceRequired) {
-                    navigate('/', { replace: true })
+                    navigate(nextPath, { replace: true })
                     return
                 }
                 const [terms, privacy] = await Promise.all([
@@ -43,7 +46,7 @@ export function LegalAcceptancePage() {
         }
         void load()
         return () => { active = false }
-    }, [attempt, navigate])
+    }, [attempt, navigate, nextPath])
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -57,7 +60,7 @@ export function LegalAcceptancePage() {
                 termsVersion: documents.terms.version,
                 privacyVersion: documents.privacy.version,
             })
-            navigate('/', { replace: true })
+            navigate(nextPath, { replace: true })
         } catch (requestError) {
             if (requestError instanceof ApiError && requestError.status === 409) {
                 setError('Os documentos foram atualizados durante a leitura. Confira as novas versões e confirme novamente.')

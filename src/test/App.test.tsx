@@ -1,6 +1,7 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { App } from '../App'
+import { clearSession, saveSession } from '../services/sessionService'
 
 describe('App', () => {
     afterEach(() => {
@@ -12,7 +13,29 @@ describe('App', () => {
     it('exibe a mensagem principal e o CTA da Home', () => {
         render(<App />)
         expect(screen.getByRole('heading', { name: /cada questão conta/i })).toBeInTheDocument()
-        expect(screen.getByRole('link', { name: /começar agora/i })).toBeInTheDocument()
+        expect(screen.getByRole('link', { name: /começar agora/i })).toHaveAttribute('href', '/cadastro')
+    })
+
+    it.each([false, true])('Começar agora leva o estudante aos simulados, lembrar=%s', (remember) => {
+        saveSession({ token: `header.${btoa(JSON.stringify({ role: 'ESTUDANTE' }))}.signature` }, remember)
+        render(<App />)
+        expect(screen.getByRole('link', { name: /começar agora/i })).toHaveAttribute('href', '/simulados')
+    })
+
+    it('atualiza Começar agora quando a sessão muda', () => {
+        render(<App />)
+        act(() => {
+            saveSession({ token: `header.${btoa(JSON.stringify({ role: 'ESTUDANTE' }))}.signature` }, false)
+        })
+        expect(screen.getByRole('link', { name: /começar agora/i })).toHaveAttribute('href', '/simulados')
+        act(() => clearSession())
+        expect(screen.getByRole('link', { name: /começar agora/i })).toHaveAttribute('href', '/cadastro')
+    })
+
+    it('Começar agora leva o administrador à gestão de questões', () => {
+        saveSession({ token: `header.${btoa(JSON.stringify({ role: 'ADMIN' }))}.signature` }, false)
+        render(<App />)
+        expect(screen.getByRole('link', { name: /começar agora/i })).toHaveAttribute('href', '/admin/questions')
     })
 
     it('exibe as três etapas da jornada', () => {

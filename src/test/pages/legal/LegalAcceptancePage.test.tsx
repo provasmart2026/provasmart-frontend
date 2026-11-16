@@ -1,26 +1,31 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { LegalAcceptancePage } from '../../../pages/legal/LegalAcceptancePage'
 import { legalDocumentService } from '../../../services/legalDocumentService'
 import { ApiError } from '../../../services/api'
 import { PrivacyPage, TermsPage } from '../../../pages/legal/LegalPages'
 import fixtures from '../../fixtures/legalDocuments.json'
+import { clearSession, saveSession, type UserRole } from '../../../services/sessionService'
 
 vi.mock('../../../services/legalDocumentService', () => ({
     legalDocumentService: { acceptanceStatus: vi.fn(), current: vi.fn(), accept: vi.fn() },
 }))
 
-function openPage() {
+function openPage(role: UserRole = 'ESTUDANTE') {
+    saveSession({ token: `header.${btoa(JSON.stringify({ role }))}.signature` }, false)
     render(<MemoryRouter initialEntries={['/aceite-documentos']}><Routes>
         <Route path="/aceite-documentos" element={<LegalAcceptancePage />} />
-        <Route path="/" element={<p>Sistema disponível</p>} />
+        <Route path="/simulados" element={<p>Simulados disponíveis</p>} />
+        <Route path="/admin/questions" element={<p>Gestão de questões</p>} />
         <Route path="/termos-de-uso" element={<TermsPage />} />
         <Route path="/politica-de-privacidade" element={<PrivacyPage />} />
     </Routes></MemoryRouter>)
 }
 
 describe('aviso de atualização dos documentos', () => {
+    afterEach(() => clearSession({ notify: false }))
+
     beforeEach(() => {
         vi.resetAllMocks()
         vi.mocked(legalDocumentService.acceptanceStatus).mockResolvedValue({
@@ -35,12 +40,15 @@ describe('aviso de atualização dos documentos', () => {
         vi.mocked(legalDocumentService.accept).mockResolvedValue(undefined)
     })
 
-    it('entra diretamente quando os documentos já foram aceitos', async () => {
+    it.each([
+        ['ESTUDANTE', 'Simulados disponíveis'],
+        ['ADMIN', 'Gestão de questões'],
+    ] as const)('abre a área de %s quando os documentos já foram aceitos', async (role, page) => {
         vi.mocked(legalDocumentService.acceptanceStatus).mockResolvedValue({
             termsAcceptanceRequired: false, privacyAcceptanceRequired: false,
         })
-        openPage()
-        expect(await screen.findByText('Sistema disponível')).toBeInTheDocument()
+        openPage(role)
+        expect(await screen.findByText(page)).toBeInTheDocument()
         expect(legalDocumentService.current).not.toHaveBeenCalled()
     })
 
@@ -62,11 +70,14 @@ describe('aviso de atualização dos documentos', () => {
         expect(legalDocumentService.accept).not.toHaveBeenCalled()
     })
 
-    it('envia as versões apresentadas somente após confirmação explícita', async () => {
-        openPage()
+    it.each([
+        ['ESTUDANTE', 'Simulados disponíveis'],
+        ['ADMIN', 'Gestão de questões'],
+    ] as const)('registra o aceite e abre a área de %s', async (role, page) => {
+        openPage(role)
         fireEvent.click(await screen.findByRole('checkbox'))
         fireEvent.click(screen.getByRole('button', { name: 'Aceitar e continuar' }))
-        expect(await screen.findByText('Sistema disponível')).toBeInTheDocument()
+        expect(await screen.findByText(page)).toBeInTheDocument()
         expect(legalDocumentService.accept).toHaveBeenCalledWith({
             acceptTerms: true, acceptPrivacyPolicy: true, termsVersion: '1.2', privacyVersion: '1.1',
         })
