@@ -62,6 +62,25 @@ a {
   object-position: left center;
 }
 
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  color: var(--rose-600);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--rose-600);
+  outline-offset: 3px;
+}
+
 .site-header nav {
   display: flex;
   gap: 32px;
@@ -502,8 +521,37 @@ a:focus-visible {
 }
 
 @media (max-width: 960px) {
+  .site-header {
+    height: auto;
+    min-height: 76px;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-block: 12px;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+  }
+
   .site-header nav {
     display: none;
+    order: 3;
+    flex-basis: 100%;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .site-header nav.is-open {
+    display: flex;
+  }
+
+  .site-header nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 12px;
   }
 
   .hero {
