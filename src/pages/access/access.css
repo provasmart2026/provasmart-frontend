@@ -214,6 +214,7 @@
 
     .access-card {
         width: 100%;
+        grid-row: 1;
     }
 }
 
