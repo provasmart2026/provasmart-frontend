@@ -23,9 +23,14 @@ vi.mock('../pages/legal/LegalPages', () => ({
     PrivacyPage: () => <div>Política de privacidade</div>,
 }))
 
+vi.mock('../pages/admin/reports/QuestionReportsPage', () => ({ QuestionReportsPage: () => <div>Lista de reportes</div> }))
+vi.mock('../pages/admin/reports/QuestionReportDetailPage', () => ({ QuestionReportDetailPage: () => <div>Detalhe do reporte</div> }))
+
 const privateRoutes: [string, UserRole, string][] = [
     ['/admin/audit-logs', 'ADMIN', 'Logs de auditoria'],
     ['/admin/users', 'ADMIN', 'Lista de usuários'],
+    ['/admin/question-reports', 'ADMIN', 'Lista de reportes'],
+    ['/admin/question-reports/report-1', 'ADMIN', 'Detalhe do reporte'],
     ['/simulados', 'ESTUDANTE', 'Iniciar simulado'],
     ['/simulados/123', 'ESTUDANTE', 'Executar simulado'],
     ['/admin/questions', 'ADMIN', 'Lista de questões'],

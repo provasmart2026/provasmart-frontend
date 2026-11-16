@@ -3,6 +3,7 @@ import type { Page } from '../types/api'
 import { apiRequest } from './api'
 
 export const userService = {
+    updateName: (name: string) => apiRequest<UserResponse>('/users/me/name', { method: 'PATCH', data: { name } }),
     getCurrent: () => apiRequest<UserResponse>('/users/me', { method: 'GET' }),
     requestDeletion: () => apiRequest<void>('/users/me/request-deletion', { method: 'PATCH' }),
     list: (page = 0, size = 10) =>

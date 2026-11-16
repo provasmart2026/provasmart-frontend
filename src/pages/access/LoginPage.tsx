@@ -4,7 +4,7 @@ import { authService } from '../../services/authService'
 import { AccessLayout } from './components/AccessLayout'
 import { Field, PasswordField } from './components/AccessFields'
 import type { TwoFactorState } from './navigationState'
-import { getAccountAccessError } from './errors'
+import { getAccountAccessError, twoFactorAttemptLimitMessage } from './errors'
 
 export function LoginPage() {
     const navigate = useNavigate()
@@ -45,6 +45,11 @@ export function LoginPage() {
                 <span className="eyebrow">Acesso</span>
                 <h2>Entre no Provasmart</h2>
                 <p>Use o e-mail cadastrado para acessar sua conta.</p>
+                {params.get('2fa') === 'limite' && (
+                    <p className="form-error" role="alert">
+                        {twoFactorAttemptLimitMessage}
+                    </p>
+                )}
                 {params.get('senha') === 'alterada' && (
                     <p className="form-success" role="status">
                         Senha alterada com sucesso. Faça login com sua nova senha.

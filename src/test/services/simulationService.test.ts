@@ -18,6 +18,13 @@ describe('simulationService', () => {
         expect(request).toHaveBeenCalledExactlyOnceWith({ url: '/simulations/simulation-1' })
     })
 
+    it('busca a correção pelo ID do simulado', async () => {
+        const response = [{ simulationQuestionId: 'sq-1', isCorrect: false }]
+        const request = vi.spyOn(api, 'request').mockResolvedValue({ data: response })
+        await expect(simulationService.correction('simulation-1')).resolves.toEqual(response)
+        expect(request).toHaveBeenCalledExactlyOnceWith({ url: '/simulations/simulation-1/correction' })
+    })
+
     it('responde com somente alternativeId no body', async () => {
         const request = vi.spyOn(api, 'request').mockResolvedValue({ data: { id: 'simulation-1' } })
         await simulationService.answer('simulation-1', 'question-1', 'alternative-1')

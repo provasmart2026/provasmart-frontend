@@ -237,3 +237,10 @@
         flex-direction: column;
     }
 }
+
+.legal-document-reference a {
+    color: var(--rose-600);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}

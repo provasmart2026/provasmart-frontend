@@ -13,7 +13,9 @@ export type QuestionSubjects = {
     creating: boolean
     createError: string | null
     newSubjectName: string
+    enteringNewSubject: boolean
     setNewSubjectName: (name: string) => void
+    selectSubject: (id: string, enteringNewSubject: boolean) => void
     selectArea: (area: ExamArea | '') => void
     selectDiscipline: (id: string) => void
     createSubject: () => void

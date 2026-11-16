@@ -21,11 +21,20 @@ export function Header() {
                 {session.authenticated && session.role === 'ADMIN' && (
                     <>
                         <Link to="/admin/questions">Questões</Link>
+                        <Link to="/admin/question-reports">Reportes</Link>
                         <Link to="/admin/users">Usuários</Link>
                         <Link to="/admin/audit-logs">Auditoria</Link>
                     </>
                 )}
-                {session.authenticated && session.role === 'ESTUDANTE' && <Link to="/simulados">Simulados</Link>}
+                {session.authenticated && session.role === 'ESTUDANTE' && (
+                    <>
+                        <Link to="/simulados">Simulados</Link>
+                        <Link to="/praticas">Prática direcionada</Link>
+                        <Link to="/plano-de-estudos">Plano de estudos</Link>
+                        <Link to="/dashboard">Meu Dashboard</Link>
+                        <Link to="/historico">Histórico</Link>
+                    </>
+                )}
                 {session.authenticated && <Link to="/profile">Meu perfil</Link>}
                 {!session.authenticated && (
                     <>

@@ -21,6 +21,7 @@ describe('Fluxo inicial do simulado', () => {
         localStorage.setItem('provasmart.token', 'token-de-teste')
         localStorage.setItem('provasmart.role', 'ESTUDANTE')
         vi.spyOn(simulationService, 'get').mockResolvedValue(simulation)
+        vi.spyOn(simulationService, 'current').mockResolvedValue(null)
     })
 
     afterEach(() => {
@@ -28,6 +29,35 @@ describe('Fluxo inicial do simulado', () => {
         localStorage.clear()
         sessionStorage.clear()
         window.history.replaceState(null, '', '/')
+    })
+
+    it('consulta o simulado em andamento e permite continuar com o ID retornado', async () => {
+        vi.mocked(simulationService.current).mockResolvedValue(simulation)
+        window.history.replaceState(null, '', '/simulados')
+        render(<App />)
+        fireEvent.click(await screen.findByRole('button', { name: 'Continuar simulado' }))
+        expect(window.location.pathname).toBe(`/simulados/${simulation.id}`)
+        expect(simulationService.get).toHaveBeenCalledWith(simulation.id)
+    })
+
+    it('cancela o simulado em andamento e libera a criação de outro', async () => {
+        vi.mocked(simulationService.current).mockResolvedValue(simulation)
+        vi.spyOn(window, 'confirm').mockReturnValue(true)
+        const cancel = vi.spyOn(simulationService, 'cancel').mockResolvedValue({ ...simulation, status: 'CANCELADO' })
+        window.history.replaceState(null, '', '/simulados')
+        render(<App />)
+        fireEvent.click(await screen.findByRole('button', { name: 'Cancelar simulado' }))
+        expect(await screen.findByRole('button', { name: 'Iniciar simulado' })).toBeEnabled()
+        expect(screen.getByText('Simulado cancelado com sucesso.')).toBeInTheDocument()
+        expect(cancel).toHaveBeenCalledExactlyOnceWith(simulation.id)
+    })
+
+    it('permite repetir a consulta quando ela falha', async () => {
+        vi.mocked(simulationService.current).mockRejectedValueOnce(new Error('Falha'))
+        window.history.replaceState(null, '', '/simulados')
+        render(<App />)
+        fireEvent.click(await screen.findByRole('button', { name: 'Tentar novamente' }))
+        expect(await screen.findByRole('button', { name: 'Iniciar simulado' })).toBeEnabled()
     })
 
     it('acessa pelo Header, bloqueia cliques repetidos e redireciona com o ID retornado', async () => {
@@ -45,7 +75,7 @@ describe('Fluxo inicial do simulado', () => {
         expect(window.location.pathname).toBe('/simulados')
         expect(screen.getByRole('heading', { name: 'Simulado' })).toBeInTheDocument()
         expect(screen.getByText(/40 questões, com 10 questões de cada área do ENEM/)).toBeInTheDocument()
-        const button = screen.getByRole('button', { name: 'Iniciar simulado' })
+        const button = await screen.findByRole('button', { name: 'Iniciar simulado' })
         fireEvent.click(button)
         expect(screen.getByRole('button', { name: 'Criando simulado...' })).toBeDisabled()
         fireEvent.click(button)
@@ -62,10 +92,10 @@ describe('Fluxo inicial do simulado', () => {
             .mockResolvedValueOnce(simulation)
         window.history.replaceState(null, '', '/simulados')
         render(<App />)
-        fireEvent.click(screen.getByRole('button', { name: 'Iniciar simulado' }))
+        fireEvent.click(await screen.findByRole('button', { name: 'Iniciar simulado' }))
         expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível criar o simulado.')
         expect(window.location.pathname).toBe('/simulados')
-        const button = screen.getByRole('button', { name: 'Iniciar simulado' })
+        const button = await screen.findByRole('button', { name: 'Iniciar simulado' })
         expect(button).toBeEnabled()
         fireEvent.click(button)
         await waitFor(() => expect(window.location.pathname).toBe(`/simulados/${simulation.id}`))
@@ -76,7 +106,7 @@ describe('Fluxo inicial do simulado', () => {
         vi.spyOn(simulationService, 'create').mockRejectedValue(new ApiError(409, 'detalhe interno'))
         window.history.replaceState(null, '', '/simulados')
         render(<App />)
-        fireEvent.click(screen.getByRole('button', { name: 'Iniciar simulado' }))
+        fireEvent.click(await screen.findByRole('button', { name: 'Iniciar simulado' }))
         expect(await screen.findByRole('alert')).toHaveTextContent('Você já possui um simulado em andamento.')
         expect(screen.getByRole('button', { name: 'Iniciar simulado' })).toBeEnabled()
         expect(window.location.pathname).toBe('/simulados')
@@ -92,7 +122,7 @@ describe('Fluxo inicial do simulado', () => {
         )
         window.history.replaceState(null, '', '/simulados')
         render(<App />)
-        fireEvent.click(screen.getByRole('button', { name: 'Iniciar simulado' }))
+        fireEvent.click(await screen.findByRole('button', { name: 'Iniciar simulado' }))
         fireEvent.click(within(screen.getByRole('banner')).getByRole('link', { name: 'Início' }))
         await act(async () => resolve(simulation))
         expect(window.location.pathname).toBe('/')

@@ -69,7 +69,6 @@ export function QuestionForm({
                     id={id}
                     subjectId={value.subjectId}
                     options={options}
-                    onSubjectChange={(subjectId) => onChange({ ...value, subjectId })}
                 />
                 <label htmlFor={`${id}-statement`}>Enunciado</label>
                 <textarea

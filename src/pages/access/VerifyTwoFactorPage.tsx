@@ -6,7 +6,7 @@ import { Field } from './components/AccessFields'
 import { saveSession } from '../../services/sessionService'
 import { isTwoFactorState } from './navigationState'
 import { isValidVerificationCode, verificationCodePattern } from './validation'
-import { isRejectedVerificationCode } from './errors'
+import { isRejectedVerificationCode, isTwoFactorAttemptLimit } from './errors'
 
 export function VerifyTwoFactorPage() {
     const navigate = useNavigate()
@@ -19,7 +19,8 @@ export function VerifyTwoFactorPage() {
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
-        const form = new FormData(event.currentTarget)
+        const formElement = event.currentTarget
+        const form = new FormData(formElement)
         const code = String(form.get('code') ?? '').trim()
         if (loading) return
         if (!isValidVerificationCode(code)) {
@@ -31,8 +32,14 @@ export function VerifyTwoFactorPage() {
         try {
             const response = await authService.verifyTwoFactor({ email, code })
             if (!saveSession(response, remember)) throw new Error('token ausente')
-            navigate('/', { replace: true })
+            navigate('/aceite-documentos', { replace: true })
         } catch (requestError) {
+            if (isTwoFactorAttemptLimit(requestError)) {
+                formElement.reset()
+                setError('')
+                navigate('/login?2fa=limite', { replace: true, state: null })
+                return
+            }
             setError(
                 isRejectedVerificationCode(requestError)
                     ? 'Código inválido ou expirado. Confira o código ou faça login novamente.'

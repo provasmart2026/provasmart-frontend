@@ -36,13 +36,12 @@ export function Footer() {
                         <strong>Produto</strong>
                         <Link to="/#como-funciona">Como funciona</Link>
                         <Link to="/#recursos">Recursos</Link>
-                        <a href="#simulados">Simulados</a>
                     </div>
                     <div>
                         <strong>Suporte</strong>
-                        <a href="#ajuda">Central de ajuda</a>
-                        <a href="#contato">Contato</a>
-                        <LegalLink to="/politica-de-privacidade">Privacidade</LegalLink>
+                        <a href="mailto:provasmrt@gmail.com">Contato: provasmrt@gmail.com</a>
+                        <LegalLink to="/politica-de-privacidade">Política de Privacidade</LegalLink>
+                        <LegalLink to="/termos-de-uso">Termos de Uso</LegalLink>
                     </div>
                 </div>
             </div>
