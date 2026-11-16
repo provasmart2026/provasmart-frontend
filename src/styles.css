@@ -538,8 +538,11 @@ a:focus-visible {
 
 @media (max-width: 560px) {
   .site-header {
-    height: 68px;
-    padding-inline: 20px;
+    min-height: 68px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 12px 16px;
   }
 
   .brand img {
@@ -547,7 +550,13 @@ a:focus-visible {
   }
 
   .header-action {
-    display: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .account-actions {
+    gap: 12px;
   }
 
   .header-button {
