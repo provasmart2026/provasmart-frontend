@@ -5,6 +5,8 @@ import { UsersPage } from './pages/admin/UsersPage'
 import { AuditLogsPage } from './pages/admin/audit/AuditLogsPage'
 import { ProfilePage } from './pages/profile/ProfilePage'
 import { QuestionsPage } from './pages/admin/questions/QuestionsPage'
+import { QuestionReportsPage } from './pages/admin/reports/QuestionReportsPage'
+import { QuestionReportDetailPage } from './pages/admin/reports/QuestionReportDetailPage'
 import { QuestionFormPage } from './pages/admin/questions/QuestionFormPage'
 import { MainLayout } from './layouts/MainLayout'
 import { Home } from './pages/home/Home'
@@ -63,6 +65,8 @@ export function App() {
                         <Route path="/admin/audit-logs" element={<AuditLogsPage />} />
                         <Route path="/admin/users" element={<UsersPage />} />
                         <Route path="/admin/questions" element={<QuestionsPage />} />
+                        <Route path="/admin/question-reports" element={<QuestionReportsPage />} />
+                        <Route path="/admin/question-reports/:id" element={<QuestionReportDetailPage />} />
                         <Route path="/admin/questions/new" element={<QuestionFormPage />} />
                         <Route path="/admin/questions/:id/edit" element={<QuestionFormPage />} />
                     </Route>

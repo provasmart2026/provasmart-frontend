@@ -73,7 +73,7 @@ describe('Header', () => {
                 .map((link) => link.textContent)
         ).toEqual(
             role === 'ADMIN'
-                ? ['Início', 'Questões', 'Usuários', 'Auditoria', 'Meu perfil']
+                ? ['Início', 'Questões', 'Reportes', 'Usuários', 'Auditoria', 'Meu perfil']
                 : ['Início', 'Simulados', 'Prática direcionada', 'Plano de estudos', 'Meu Dashboard', 'Histórico', 'Meu perfil']
         )
     })

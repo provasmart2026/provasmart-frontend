@@ -81,6 +81,12 @@ function QuestionFormScreen({ id }: { id: string | undefined }) {
     }, [id, attempt])
 
     function returnToList() {
+        const state: unknown = location.state
+        if (state && typeof state === 'object' && 'returnTo' in state && typeof state.returnTo === 'string'
+            && new RegExp('^/admin/question-reports/[a-zA-Z0-9-]+([?][^#]*)?$').test(state.returnTo)) {
+            navigate(state.returnTo)
+            return
+        }
         navigate('/admin/questions', { state: { page: getReturnPage(location.state) } })
     }
 

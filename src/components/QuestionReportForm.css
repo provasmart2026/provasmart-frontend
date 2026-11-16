@@ -1,0 +1,12 @@
+.question-report { margin-block: 12px 20px; }
+.question-report-trigger { padding: 8px 0; color: var(--rose-600); background: transparent; text-decoration: underline; cursor: pointer; }
+.question-report-form { display: grid; gap: 12px; margin-top: 12px; padding: 20px; border: 1px solid var(--border); border-radius: 16px; background: white; }
+.question-report-form p { margin: 0; line-height: 1.6; }
+.question-report-form label { font-weight: 600; }
+.question-report-form select, .question-report-form textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font: inherit; color: var(--text-primary); background: white; }
+.question-report-form textarea { resize: vertical; }
+.question-report-count { text-align: right; color: var(--text-secondary); font-size: 13px; }
+.question-report-form [role="alert"] { color: var(--rose-600); }
+.question-report-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+.question-report-success { color: var(--text-primary); }
+.question-report button:disabled { opacity: .6; cursor: wait; }
