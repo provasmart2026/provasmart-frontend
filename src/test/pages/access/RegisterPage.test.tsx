@@ -27,6 +27,7 @@ describe('cadastro', () => {
         await waitFor(() => expect(screen.getByRole('button', { name: 'Criar minha conta' })).toBeEnabled())
         fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Estudante' } })
         fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'estudante@example.com' } })
+        fireEvent.change(screen.getByLabelText('Confirmar e-mail'), { target: { value: 'estudante@example.com' } })
         fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'Senha@123' } })
         fireEvent.change(screen.getByLabelText('Confirmar senha'), { target: { value: 'Senha@123' } })
         fireEvent.click(screen.getByRole('checkbox', { name: /li e aceito/i }))
@@ -44,13 +45,14 @@ describe('cadastro', () => {
         await waitFor(() => expect(screen.getByRole('button', { name: 'Criar minha conta' })).toBeEnabled())
         fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Aline Souza' } })
         fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'aline@exemplo.com' } })
+        fireEvent.change(screen.getByLabelText('Confirmar e-mail'), { target: { value: 'aline@exemplo.com' } })
         fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'Senha@123' } })
         fireEvent.change(screen.getByLabelText('Confirmar senha'), { target: { value: 'Senha@123' } })
         fireEvent.click(screen.getByRole('checkbox', { name: /li e aceito/i }))
         fireEvent.click(screen.getByRole('checkbox', { name: /declaro que tenho 13 anos/i }))
         fireEvent.submit(screen.getByRole('button', { name: 'Criar minha conta' }).closest('form')!)
         await waitFor(() => expect(auth.register).toHaveBeenCalledWith({
-            name: 'Aline Souza', email: 'aline@exemplo.com', password: 'Senha@123',
+            name: 'Aline Souza', email: 'aline@exemplo.com', confirmEmail: 'aline@exemplo.com', password: 'Senha@123',
             acceptTerms: true, acceptPrivacyPolicy: true, ageDeclarationAccepted: true,
             termsVersion: '1.1', privacyVersion: '1.1',
         }))
@@ -83,6 +85,15 @@ describe('cadastro', () => {
         )
     })
 
+    it('bloqueia e-mails diferentes antes de chamar a API', () => {
+        render(<MemoryRouter><RegisterPage /></MemoryRouter>)
+        fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'aline@exemplo.com' } })
+        fireEvent.change(screen.getByLabelText('Confirmar e-mail'), { target: { value: 'outro@exemplo.com' } })
+        fireEvent.submit(screen.getByRole('button', { name: 'Criar minha conta' }).closest('form')!)
+        expect(screen.getByRole('alert')).toHaveTextContent('Os e-mails não coincidem.')
+        expect(auth.register).not.toHaveBeenCalled()
+    })
+
     it('valida a confirmação da senha antes de cadastrar', () => {
         render(
             <MemoryRouter>
@@ -91,6 +102,7 @@ describe('cadastro', () => {
         )
         fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Aline Souza' } })
         fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'aline@exemplo.com' } })
+        fireEvent.change(screen.getByLabelText('Confirmar e-mail'), { target: { value: 'aline@exemplo.com' } })
         fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'Senha@123' } })
         fireEvent.change(screen.getByLabelText('Confirmar senha'), { target: { value: 'Senha@456' } })
         fireEvent.submit(screen.getByRole('button', { name: 'Criar minha conta' }).closest('form')!)

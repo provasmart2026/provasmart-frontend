@@ -32,7 +32,7 @@ export function VerifyTwoFactorPage() {
         try {
             const response = await authService.verifyTwoFactor({ email, code })
             if (!saveSession(response, remember)) throw new Error('token ausente')
-            navigate('/', { replace: true })
+            navigate('/aceite-documentos', { replace: true })
         } catch (requestError) {
             if (isTwoFactorAttemptLimit(requestError)) {
                 formElement.reset()

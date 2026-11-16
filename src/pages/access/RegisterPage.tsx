@@ -24,6 +24,13 @@ export function RegisterPage() {
         setError('')
         const form = new FormData(event.currentTarget)
         const password = String(form.get('password'))
+        const email = String(form.get('email')).trim().toLowerCase()
+        const confirmEmail = String(form.get('confirmEmail')).trim().toLowerCase()
+
+        if (!confirmEmail || email !== confirmEmail) {
+            setError('Os e-mails não coincidem.')
+            return
+        }
 
         if (!isValidPassword(password)) {
             setError('A senha precisa atender a todos os requisitos informados.')
@@ -43,7 +50,8 @@ export function RegisterPage() {
         try {
             await authService.register({
                 name: String(form.get('name')),
-                email: String(form.get('email')),
+                email,
+                confirmEmail,
                 password,
                 acceptTerms: Boolean(form.get('terms')),
                 acceptPrivacyPolicy: Boolean(form.get('terms')),
@@ -78,6 +86,7 @@ export function RegisterPage() {
                 <p>Preencha seus dados. Leva menos de dois minutos.</p>
                 <Field id="name" label="Nome" placeholder="Como você quer ser chamado" autoComplete="name" />
                 <Field id="email" label="E-mail" type="email" placeholder="voce@exemplo.com" autoComplete="email" />
+                <Field id="confirmEmail" label="Confirmar e-mail" type="email" placeholder="Digite o e-mail novamente" autoComplete="off" />
                 <PasswordField
                     id="password"
                     label="Senha"
@@ -85,6 +94,7 @@ export function RegisterPage() {
                     autoComplete="new-password"
                     helper="Use 8 ou mais caracteres, com maiúscula, minúscula, número e caractere especial."
                 />
+
                 <PasswordField
                     id="confirmPassword"
                     label="Confirmar senha"

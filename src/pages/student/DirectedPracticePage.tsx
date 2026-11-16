@@ -4,6 +4,7 @@ import { directedPracticeService } from '../../services/directedPracticeService'
 import type { DirectedPractice } from '../../types/directedPractice'
 import { areaLabel } from './DirectedPracticeStartPage'
 import { QuestionMap } from './QuestionMap'
+import { QuestionReportForm } from '../../components/QuestionReportForm'
 import './SimulationsPage.css'
 import './DirectedPractice.css'
 
@@ -138,6 +139,8 @@ function DirectedPracticeSession({ practiceId }: { practiceId?: string }) {
                             </div>
                         </fieldset>
                         <p role="status" className="simulation-save-status">{busy ? 'Processando...' : ''}</p>
+                        {practice?.status === 'EM_ANDAMENTO' && <QuestionReportForm key={question.id}
+                            origin="PRATICA_DIRECIONADA" activityId={practice.id} questionId={question.id} disabled={busy} />}
                         <QuestionMap questions={questions} currentIndex={index} disabled={busy} onSelect={goTo} />
                         <div className="simulation-navigation">
                             <button className="simulation-secondary-button" type="button" disabled={busy || index === 0} onClick={() => goTo(index - 1)}>Anterior</button>

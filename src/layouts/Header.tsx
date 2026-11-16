@@ -21,6 +21,7 @@ export function Header() {
                 {session.authenticated && session.role === 'ADMIN' && (
                     <>
                         <Link to="/admin/questions">Questões</Link>
+                        <Link to="/admin/question-reports">Reportes</Link>
                         <Link to="/admin/users">Usuários</Link>
                         <Link to="/admin/audit-logs">Auditoria</Link>
                     </>
