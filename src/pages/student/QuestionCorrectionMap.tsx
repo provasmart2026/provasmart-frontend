@@ -1,4 +1,6 @@
 import { useId, useState } from 'react'
+import { QuestionReportForm } from '../../components/QuestionReportForm'
+import type { QuestionReportOrigin } from '../../types/questionReport'
 import './QuestionCorrectionMap.css'
 
 export type CorrectionQuestion = {
@@ -19,7 +21,9 @@ function outcome(correct: boolean | null) {
     return { label: 'Resultado indisponível', className: 'is-unavailable' }
 }
 
-function QuestionDetail({ question }: { question: CorrectionQuestion }) {
+type ReportContext = { origin: QuestionReportOrigin; activityId: string }
+
+function QuestionDetail({ question, reportContext }: { question: CorrectionQuestion; reportContext?: ReportContext }) {
     const [expanded, setExpanded] = useState(false)
     const result = outcome(question.correct)
     const selectedLetter = question.alternatives.find(item => item.id === question.selectedAlternativeId)?.letter
@@ -36,6 +40,9 @@ function QuestionDetail({ question }: { question: CorrectionQuestion }) {
                     {expanded ? 'Ocultar explicação' : 'Ver explicação'}
                 </button>
             </div>
+            {reportContext && <QuestionReportForm origin={reportContext.origin}
+                activityId={reportContext.activityId} questionId={question.questionId}
+                triggerLabel="Reportar questão" />}
             {expanded && <div className="correction-explanation">
                 <p className="correction-statement">{question.statement}</p>
                 <ul>{question.alternatives.map((alternative) => (
@@ -49,7 +56,7 @@ function QuestionDetail({ question }: { question: CorrectionQuestion }) {
     )
 }
 
-export function QuestionCorrectionMap({ questions }: { questions: CorrectionQuestion[] }) {
+export function QuestionCorrectionMap({ questions, reportContext }: { questions: CorrectionQuestion[]; reportContext?: ReportContext }) {
     const titleId = useId()
     const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null)
     const ordered = [...questions].sort((a, b) => a.position - b.position)
@@ -69,7 +76,7 @@ export function QuestionCorrectionMap({ questions }: { questions: CorrectionQues
                     aria-pressed={selectedQuestion?.questionId === question.questionId}
                     onClick={() => setSelectedQuestionId(question.questionId)}>{question.position}</button>)}
             </div>
-            {selectedQuestion ? <QuestionDetail key={selectedQuestion.questionId} question={selectedQuestion} />
+            {selectedQuestion ? <QuestionDetail key={`${reportContext?.activityId ?? ''}-${selectedQuestion.questionId}`} question={selectedQuestion} reportContext={reportContext} />
                 : <p>Nenhuma questão disponível para correção.</p>}
         </section>
     )
