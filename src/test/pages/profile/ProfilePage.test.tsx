@@ -111,7 +111,7 @@ describe('Meu perfil', () => {
             screen.getByText('Sua solicitação de exclusão foi registrada e aguarda processamento.')
         ).toBeInTheDocument()
         expect(screen.getByText('25/09/2026, 14:30')).toBeInTheDocument()
-        expect(screen.queryByRole('button')).not.toBeInTheDocument()
+        expect(screen.queryByRole('button', { name: 'Solicitar exclusão da conta' })).not.toBeInTheDocument()
         fireEvent.click(button)
         expect(request).toHaveBeenCalledTimes(3)
         expect(window.confirm).toHaveBeenCalledTimes(1)
@@ -124,7 +124,7 @@ describe('Meu perfil', () => {
             const refresh = deferred<{ data: UserResponse }>()
             request.mockResolvedValueOnce({ status: 204, data: undefined }).mockReturnValueOnce(refresh.promise)
             vi.spyOn(window, 'confirm').mockReturnValue(true)
-            fireEvent.click(screen.getByRole('button'))
+            fireEvent.click(screen.getByRole('button', { name: 'Solicitar exclusão da conta' }))
             await waitFor(() => expect(request).toHaveBeenCalledTimes(3))
             const button = screen.getByRole('button', { name: 'Solicitando exclusão...' })
             expect(button).toBeDisabled()
@@ -135,7 +135,7 @@ describe('Meu perfil', () => {
             expect(screen.getByText('Nome atualizado')).toBeInTheDocument()
             if (deletionRequested) {
                 expect(screen.getByText('Exclusão solicitada')).toBeInTheDocument()
-                expect(screen.queryByRole('button')).not.toBeInTheDocument()
+                expect(screen.queryByRole('button', { name: 'Solicitar exclusão da conta' })).not.toBeInTheDocument()
             } else {
                 expect(screen.queryByText('Exclusão solicitada')).not.toBeInTheDocument()
                 expect(screen.getByRole('button', { name: 'Solicitar exclusão da conta' })).toBeEnabled()
@@ -148,7 +148,7 @@ describe('Meu perfil', () => {
     it.each([null, '2026-09-25T14:30:00'])('mostra solicitação existente com data %s', async (deletionRequestedAt) => {
         await open({ ...user, deletionRequested: true, deletionRequestedAt })
         expect(screen.getByText('Exclusão solicitada')).toBeInTheDocument()
-        expect(screen.queryByRole('button')).not.toBeInTheDocument()
+        expect(screen.queryByRole('button', { name: 'Solicitar exclusão da conta' })).not.toBeInTheDocument()
         if (deletionRequestedAt) expect(screen.getByText('25/09/2026, 14:30')).toBeInTheDocument()
         else expect(screen.queryByText(/Data da solicitação/)).not.toBeInTheDocument()
     })
@@ -158,14 +158,14 @@ describe('Meu perfil', () => {
         render(<ProfilePage />, { wrapper: MemoryRouter })
         expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível carregar seus dados.')
         expect(screen.queryByText('detalhe interno')).not.toBeInTheDocument()
-        expect(screen.queryByRole('button')).not.toBeInTheDocument()
+        expect(screen.queryByRole('button', { name: 'Solicitar exclusão da conta' })).not.toBeInTheDocument()
     })
 
     it('mantém o botão disponível após falha do PATCH', async () => {
         const request = await open()
         request.mockRejectedValueOnce(new Error('detalhe interno'))
         vi.spyOn(window, 'confirm').mockReturnValue(true)
-        fireEvent.click(screen.getByRole('button'))
+        fireEvent.click(screen.getByRole('button', { name: 'Solicitar exclusão da conta' }))
         expect(await screen.findByRole('alert')).toHaveTextContent(
             'Não foi possível solicitar a exclusão da conta. Tente novamente.'
         )
@@ -178,12 +178,78 @@ describe('Meu perfil', () => {
         const request = await open()
         request.mockResolvedValueOnce({ status: 204, data: undefined }).mockRejectedValueOnce(new Error('Falha'))
         vi.spyOn(window, 'confirm').mockReturnValue(true)
-        fireEvent.click(screen.getByRole('button'))
+        fireEvent.click(screen.getByRole('button', { name: 'Solicitar exclusão da conta' }))
         await waitFor(() => expect(request).toHaveBeenCalledTimes(3))
         expect(await screen.findByRole('alert')).toHaveTextContent(
             'Sua solicitação foi registrada, mas não foi possível atualizar seus dados agora.'
         )
         expect(screen.queryByText('Exclusão solicitada')).not.toBeInTheDocument()
         expect(screen.getByRole('button', { name: 'Solicitar exclusão da conta' })).toBeEnabled()
+    })
+})
+
+describe('alteração do nome no perfil', () => {
+    afterEach(() => vi.restoreAllMocks())
+
+    it.each(['ADMIN', 'ESTUDANTE'] as const)('edita o próprio nome para %s e atualiza os dados exibidos', async role => {
+        const request = await open({ ...user, role })
+        fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
+        expect(screen.getByLabelText('Nome')).toHaveValue(user.name)
+        request.mockResolvedValueOnce({ data: { ...user, role, name: 'Novo nome' } })
+        fireEvent.change(screen.getByLabelText('Nome'), { target: { value: '  Novo nome  ' } })
+        fireEvent.submit(screen.getByRole('form', { name: 'Alterar nome' }))
+        expect(await screen.findByText('Nome atualizado com sucesso.')).toBeInTheDocument()
+        expect(screen.getByText('Novo nome')).toBeInTheDocument()
+        expect(screen.getByText(user.email)).toBeInTheDocument()
+        expect(request).toHaveBeenLastCalledWith({ url: '/users/me/name', method: 'PATCH', data: { name: 'Novo nome' } })
+    })
+
+    it('cancela a edição sem enviar e restaura o nome ao reabrir', async () => {
+        const request = await open()
+        fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
+        fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Não salvar' } })
+        fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
+        expect(request).toHaveBeenCalledTimes(1)
+        expect(screen.getByText(user.name)).toBeInTheDocument()
+        fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
+        expect(screen.getByLabelText('Nome')).toHaveValue(user.name)
+    })
+
+    it.each(['', '   ', 'a'.repeat(151)])('rejeita nome inválido antes da API', async name => {
+        const request = await open()
+        fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
+        expect(screen.getByLabelText('Nome')).toHaveAttribute('maxlength', '150')
+        fireEvent.change(screen.getByLabelText('Nome'), { target: { value: name } })
+        fireEvent.submit(screen.getByRole('form', { name: 'Alterar nome' }))
+        expect(await screen.findByRole('alert')).toHaveTextContent('até 150 caracteres')
+        expect(request).toHaveBeenCalledTimes(1)
+    })
+
+    it('preserva o texto e permite nova tentativa após erro', async () => {
+        const request = await open()
+        fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
+        fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Novo nome' } })
+        request.mockRejectedValueOnce(new Error('offline'))
+        fireEvent.submit(screen.getByRole('form', { name: 'Alterar nome' }))
+        expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível atualizar')
+        expect(screen.getByLabelText('Nome')).toHaveValue('Novo nome')
+        request.mockResolvedValueOnce({ data: { ...user, name: 'Novo nome' } })
+        fireEvent.submit(screen.getByRole('form', { name: 'Alterar nome' }))
+        expect(await screen.findByText('Nome atualizado com sucesso.')).toBeInTheDocument()
+    })
+
+    it('impede envio duplo e solicitação de exclusão enquanto salva', async () => {
+        const request = await open()
+        const pending = deferred<{ data: UserResponse }>()
+        request.mockReturnValueOnce(pending.promise)
+        fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
+        fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Novo nome' } })
+        fireEvent.submit(screen.getByRole('form', { name: 'Alterar nome' }))
+        fireEvent.submit(screen.getByRole('form', { name: 'Alterar nome' }))
+        expect(request).toHaveBeenCalledTimes(2)
+        expect(screen.getByRole('button', { name: 'Salvando nome...' })).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Solicitar exclusão da conta' })).toBeDisabled()
+        await act(async () => pending.resolve({ data: { ...user, name: 'Novo nome' } }))
+        expect(screen.getByText('Nome atualizado com sucesso.')).toBeInTheDocument()
     })
 })

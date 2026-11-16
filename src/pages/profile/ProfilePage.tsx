@@ -1,5 +1,6 @@
 import { LegalLink } from '../../components/LegalLink'
-import { useEffect, useRef, useState } from 'react'
+import { type FormEvent, useEffect, useRef, useState } from 'react'
+import { ApiError } from '../../services/api'
 import { userService } from '../../services/userService'
 import type { UserResponse } from '../../types/user'
 import './ProfilePage.css'
@@ -15,6 +16,12 @@ export function ProfilePage() {
     const [loadError, setLoadError] = useState(false)
     const [requesting, setRequesting] = useState(false)
     const [requestError, setRequestError] = useState<string | null>(null)
+    const [editingName, setEditingName] = useState(false)
+    const [name, setName] = useState('')
+    const [savingName, setSavingName] = useState(false)
+    const [nameError, setNameError] = useState('')
+    const [nameSuccess, setNameSuccess] = useState('')
+    const namePending = useRef(false)
     const deletionPending = useRef(false)
     const mounted = useRef(false)
 
@@ -38,6 +45,41 @@ export function ProfilePage() {
         }
     }, [])
 
+    function startEditingName() {
+        if (!user || deletionPending.current) return
+        setName(user.name)
+        setNameError('')
+        setNameSuccess('')
+        setEditingName(true)
+    }
+
+    async function saveName(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        if (!user || namePending.current || deletionPending.current) return
+        const normalizedName = name.trim()
+        if (!normalizedName || name.length > 150) {
+            setNameError('Informe um nome com até 150 caracteres.')
+            return
+        }
+        namePending.current = true
+        setSavingName(true)
+        setNameError('')
+        try {
+            const result = await userService.updateName(normalizedName)
+            if (mounted.current) {
+                setUser(result)
+                setEditingName(false)
+                setNameSuccess('Nome atualizado com sucesso.')
+            }
+        } catch (error) {
+            if (mounted.current) setNameError(error instanceof ApiError && error.backendMessage
+                ? error.backendMessage : 'Não foi possível atualizar o nome. Tente novamente.')
+        } finally {
+            namePending.current = false
+            if (mounted.current) setSavingName(false)
+        }
+    }
+
     async function refreshUserAfterDeletion() {
         try {
             const updatedUser = await userService.getCurrent()
@@ -49,7 +91,7 @@ export function ProfilePage() {
     }
 
     async function handleRequestDeletion() {
-        if (deletionPending.current || !user || user.deletionRequested) return
+        if (deletionPending.current || namePending.current || !user || user.deletionRequested) return
         if (
             !window.confirm(
                 'Deseja realmente solicitar a exclusão da sua conta? Um administrador precisará concluir a exclusão definitiva.'
@@ -83,7 +125,18 @@ export function ProfilePage() {
                         <dl>
                             <div>
                                 <dt>Nome</dt>
-                                <dd>{user.name}</dd>
+                                <dd className="profile-name-value">
+                                    <span>{user.name}</span>
+                                    {!editingName && <button className="profile-edit-name" type="button"
+                                        aria-label="Editar nome" title="Editar nome" disabled={requesting || savingName}
+                                        onClick={startEditingName}>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                            <path d="m16 3 5 5-12 12-6 1 1-6L16 3Z" />
+                                            <path d="m13 6 5 5" />
+                                        </svg>
+                                    </button>}
+                                </dd>
                             </div>
                             <div>
                                 <dt>E-mail</dt>
@@ -94,6 +147,23 @@ export function ProfilePage() {
                                 <dd>{user.role === 'ADMIN' ? 'Administrador' : 'Estudante'}</dd>
                             </div>
                         </dl>
+                        {editingName ? <form className="profile-name-form" aria-label="Alterar nome" onSubmit={saveName}>
+                            <label htmlFor="profile-name">Nome</label>
+                            <input id="profile-name" name="name" autoComplete="name" required maxLength={150}
+                                value={name} disabled={savingName || requesting} onChange={event => setName(event.target.value)} autoFocus />
+                            <span className="profile-name-count">{name.length}/150 caracteres</span>
+                            {nameError && <p role="alert">{nameError}</p>}
+                            <div className="profile-name-actions">
+                                <button type="button" disabled={savingName} onClick={() => {
+                                    setEditingName(false)
+                                    setNameError('')
+                                }}>Cancelar</button>
+                                <button className="primary-button" type="submit" disabled={savingName || requesting}>
+                                    {savingName ? 'Salvando nome...' : 'Salvar nome'}
+                                </button>
+                            </div>
+                        </form> : null}
+                        {nameSuccess && <p role="status">{nameSuccess}</p>}
                     </section>
                     <section className="profile-panel" aria-labelledby="account-title">
                         <h2 id="account-title">Conta</h2>
@@ -159,7 +229,7 @@ export function ProfilePage() {
                                 <button
                                     className="primary-button"
                                     type="button"
-                                    disabled={requesting}
+                                    disabled={requesting || savingName}
                                     onClick={handleRequestDeletion}
                                 >
                                     {requesting ? 'Solicitando exclusão...' : 'Solicitar exclusão da conta'}
