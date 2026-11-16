@@ -163,5 +163,5 @@ function SimulationCorrection({ simulationId }: { simulationId: string }) {
         </div>
     )
     if (!questions) return <p role="status">Carregando correção das questões...</p>
-    return <QuestionCorrectionMap questions={questions} />
+    return <QuestionCorrectionMap questions={questions} reportContext={{ origin: 'SIMULADO', activityId: simulationId }} />
 }
