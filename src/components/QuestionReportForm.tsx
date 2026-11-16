@@ -9,6 +9,7 @@ type Props = {
     activityId: string
     questionId: string
     disabled?: boolean
+    triggerLabel?: string
 }
 
 const reasons: { value: QuestionReportReason; label: string }[] = [
@@ -19,7 +20,7 @@ const reasons: { value: QuestionReportReason; label: string }[] = [
     { value: 'OUTRO', label: 'Outro' },
 ]
 
-export function QuestionReportForm({ origin, activityId, questionId, disabled = false }: Props) {
+export function QuestionReportForm({ origin, activityId, questionId, disabled = false, triggerLabel = 'Reportar problema' }: Props) {
     const id = useId()
     const [open, setOpen] = useState(false)
     const [reason, setReason] = useState<QuestionReportReason | ''>('')
@@ -68,7 +69,7 @@ export function QuestionReportForm({ origin, activityId, questionId, disabled = 
             {sent ? <p role="status" className="question-report-success">Reporte enviado. Obrigado por avisar!</p> : <>
                 <button type="button" className="question-report-trigger" disabled={disabled || sending}
                     aria-expanded={open} aria-controls={`${id}-form`} onClick={() => setOpen(value => !value)}>
-                    Reportar problema
+                    {triggerLabel}
                 </button>
                 {open && <form id={`${id}-form`} className="question-report-form" aria-label="Reportar problema na questão" onSubmit={submit}>
                     <p>Encontrou um problema? Seu reporte será analisado pela administração e não altera sua resposta ou nota automaticamente.</p>

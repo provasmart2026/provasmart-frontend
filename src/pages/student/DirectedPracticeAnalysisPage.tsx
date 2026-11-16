@@ -63,7 +63,8 @@ export function DirectedPracticeAnalysisPage() {
                     </div>
                 </section>
 
-                <QuestionCorrectionMap key={practiceId} questions={analysis.questions} />
+                <QuestionCorrectionMap key={practiceId} questions={analysis.questions}
+                    reportContext={practiceId ? { origin: 'PRATICA_DIRECIONADA', activityId: practiceId } : undefined} />
 
                 {subjectsToReview.length > 0 && <p className="practice-analysis-focus"><strong>Revisar primeiro:</strong> {subjectsToReview.map((item) => item.name).join(' · ')}</p>}
                 <details className="practice-analysis-subjects">
