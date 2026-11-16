@@ -4,6 +4,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { LoginPage } from '../../../pages/access/LoginPage'
 import { VerifyTwoFactorPage } from '../../../pages/access/VerifyTwoFactorPage'
 import { ApiError } from '../../../services/api'
+import { LegalAcceptancePage } from '../../../pages/legal/LegalAcceptancePage'
+import { ProtectedRoute } from '../../../components/ProtectedRoute'
 
 const auth = vi.hoisted(() => ({
     login: vi.fn(),
@@ -11,6 +13,11 @@ const auth = vi.hoisted(() => ({
 }))
 
 vi.mock('../../../services/authService', () => ({ authService: auth }))
+vi.mock('../../../services/legalDocumentService', () => ({
+    legalDocumentService: {
+        acceptanceStatus: vi.fn().mockResolvedValue({ termsAcceptanceRequired: false, privacyAcceptanceRequired: false }),
+    },
+}))
 
 describe('login e verificação em duas etapas', () => {
     beforeEach(() => {
@@ -28,15 +35,21 @@ describe('login e verificação em duas etapas', () => {
         expect(screen.getByRole('status')).toHaveTextContent('Conta criada. Agora é só entrar.')
     })
 
-    it.each([false, true])('salva o token somente após o 2FA, lembrar=%s', async (remember) => {
+    it.each([false, true])('conclui o 2FA e abre os simulados, lembrar=%s', async (remember) => {
         auth.login.mockResolvedValue({ message: 'Código enviado.' })
-        auth.verifyTwoFactor.mockResolvedValue({ token: 'token-de-teste' })
+        const token = `header.${btoa(JSON.stringify({ role: 'ESTUDANTE' }))}.signature`
+        auth.verifyTwoFactor.mockResolvedValue({ token })
         render(
             <MemoryRouter initialEntries={['/login']}>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/verificar-codigo" element={<VerifyTwoFactorPage />} />
-                    <Route path="/aceite-documentos" element={<p>Sessão iniciada</p>} />
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="/aceite-documentos" element={<LegalAcceptancePage />} />
+                    </Route>
+                    <Route element={<ProtectedRoute allowedRoles={['ESTUDANTE']} />}>
+                        <Route path="/simulados" element={<p>Simulados disponíveis</p>} />
+                    </Route>
                 </Routes>
             </MemoryRouter>
         )
@@ -56,9 +69,9 @@ describe('login e verificação em duas etapas', () => {
         expect(localStorage.getItem('provasmart.token')).toBeNull()
         fireEvent.change(codeField, { target: { value: '012345' } })
         fireEvent.submit(screen.getByRole('button', { name: 'Verificar código' }).closest('form')!)
-        await screen.findByText('Sessão iniciada')
+        await screen.findByText('Simulados disponíveis')
         expect(auth.verifyTwoFactor).toHaveBeenCalledWith({ email: 'aline@exemplo.com', code: '012345' })
-        expect((remember ? localStorage : sessionStorage).getItem('provasmart.token')).toBe('token-de-teste')
+        expect((remember ? localStorage : sessionStorage).getItem('provasmart.token')).toBe(token)
         expect((remember ? sessionStorage : localStorage).getItem('provasmart.token')).toBeNull()
     })
 

@@ -1,12 +1,15 @@
 import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { StudyJourney } from '../../components/StudyJourney'
+import { useSession } from '../../hooks/useSession'
 import { HowItWorks } from './HowItWorks'
 import { Resources } from './Resources'
 import { SignUpCallout } from './SignUpCallout'
 
 export function Home() {
     const location = useLocation()
+    const session = useSession()
+    const startPath = !session.authenticated ? '/cadastro' : session.role === 'ADMIN' ? '/admin/questions' : '/simulados'
 
     useEffect(() => {
         if (location.hash === '#como-funciona' || location.hash === '#recursos') {
@@ -28,7 +31,7 @@ export function Home() {
                         Pratique com simulados, entenda seus erros e descubra o que revisar. Uma preparação que
                         acompanha o seu ritmo.
                     </p>
-                    <Link className="primary-button" to="/cadastro">
+                    <Link className="primary-button" to={startPath}>
                         Começar agora
                     </Link>
                     <p className="supporting-copy">Comece de onde você está. A gente ajuda no próximo passo.</p>
