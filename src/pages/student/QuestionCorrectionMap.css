@@ -16,7 +16,8 @@
 .correction-detail-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 .correction-detail-heading strong { font-size: 14px; }
 .correction-detail-heading p { margin: 5px 0 0; color: var(--mauve-700); font-size: 13px; }
-.correction-detail button { padding: 7px 0; color: var(--rose-600); background: transparent; white-space: nowrap; }
+.correction-detail-heading button { padding: 7px 0; color: var(--rose-600); background: transparent; white-space: nowrap; }
+.correction-detail > .question-report { margin: 8px 0 0; }
 .correction-explanation { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); line-height: 1.6; white-space: pre-wrap; }
 .correction-explanation p { margin: 0 0 12px; }
 .correction-explanation ul { margin: 0 0 14px; padding-left: 22px; }
