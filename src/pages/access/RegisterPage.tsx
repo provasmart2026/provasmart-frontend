@@ -16,8 +16,8 @@ export function RegisterPage() {
     const [accepted, setAccepted] = useState(false)
     const terms = useLegalDocument('TERMOS_DE_USO')
     const privacy = useLegalDocument('POLITICA_DE_PRIVACIDADE')
-    const documentsReady = !terms.loading && !privacy.loading && !terms.error && !privacy.error
-        && terms.document && privacy.document
+    const documentsReady =
+        !terms.loading && !privacy.loading && !terms.error && !privacy.error && terms.document && privacy.document
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -61,8 +61,11 @@ export function RegisterPage() {
             })
             navigate('/login?cadastro=sucesso')
         } catch (requestError) {
-            if (requestError instanceof ApiError && requestError.status === 409
-                && requestError.backendMessage?.includes('documentos legais')) {
+            if (
+                requestError instanceof ApiError &&
+                requestError.status === 409 &&
+                requestError.backendMessage?.includes('documentos legais')
+            ) {
                 setAccepted(false)
                 terms.retry()
                 privacy.retry()
@@ -86,7 +89,13 @@ export function RegisterPage() {
                 <p>Preencha seus dados. Leva menos de dois minutos.</p>
                 <Field id="name" label="Nome" placeholder="Como você quer ser chamado" autoComplete="name" />
                 <Field id="email" label="E-mail" type="email" placeholder="voce@exemplo.com" autoComplete="email" />
-                <Field id="confirmEmail" label="Confirmar e-mail" type="email" placeholder="Digite o e-mail novamente" autoComplete="off" />
+                <Field
+                    id="confirmEmail"
+                    label="Confirmar e-mail"
+                    type="email"
+                    placeholder="Digite o e-mail novamente"
+                    autoComplete="off"
+                />
                 <PasswordField
                     id="password"
                     label="Senha"
@@ -102,25 +111,48 @@ export function RegisterPage() {
                     autoComplete="new-password"
                 />
                 <label className="checkbox legal-check">
-                    <input name="terms" type="checkbox" required checked={accepted}
-                        disabled={!documentsReady || loading} onChange={event => setAccepted(event.target.checked)} />
+                    <input
+                        name="terms"
+                        type="checkbox"
+                        required
+                        checked={accepted}
+                        disabled={!documentsReady || loading}
+                        onChange={(event) => setAccepted(event.target.checked)}
+                    />
                     <span>
                         Li e aceito os <LegalLink to="/termos-de-uso">Termos de Uso</LegalLink> e estou ciente da{' '}
                         <LegalLink to="/politica-de-privacidade">Política de Privacidade</LegalLink>.
                     </span>
                 </label>
                 {(terms.loading || privacy.loading) && <p role="status">Carregando termos e política...</p>}
-                {(terms.error || privacy.error) && <div>
-                    <p className="form-error" role="alert">Não foi possível carregar os documentos necessários ao cadastro.</p>
-                    <button type="button" onClick={() => { setAccepted(false); terms.retry(); privacy.retry() }}>Tentar novamente</button>
-                </div>}
-                {documentsReady && <p>Termos: versão {terms.document!.version}. Política: versão {privacy.document!.version}.</p>}
+                {(terms.error || privacy.error) && (
+                    <div>
+                        <p className="form-error" role="alert">
+                            Não foi possível carregar os documentos necessários ao cadastro.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setAccepted(false)
+                                terms.retry()
+                                privacy.retry()
+                            }}
+                        >
+                            Tentar novamente
+                        </button>
+                    </div>
+                )}
+                {documentsReady && (
+                    <p>
+                        Termos: versão {terms.document!.version}. Política: versão {privacy.document!.version}.
+                    </p>
+                )}
                 <label className="checkbox legal-check">
                     <input name="age" type="checkbox" required />
                     <span>
                         Declaro que tenho 13 anos ou mais. Se eu tiver menos de 18 anos, utilizarei a plataforma com a
-                        ciência e a assistência do meu responsável legal. Esta declaração não verifica minha idade
-                        nem comprova autorização do responsável.
+                        ciência e a assistência do meu responsável legal. Esta declaração não verifica minha idade nem
+                        comprova autorização do responsável.
                     </span>
                 </label>
                 {error && (

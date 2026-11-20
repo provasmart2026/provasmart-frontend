@@ -77,7 +77,9 @@ describe('Auditoria de logs', () => {
             .mockRejectedValueOnce(new Error('falha interna'))
             .mockResolvedValueOnce({ data: page([log]) })
         render(<AuditLogsPage />)
-        expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível carregar os registros de auditoria.')
+        expect(await screen.findByRole('alert')).toHaveTextContent(
+            'Não foi possível carregar os registros de auditoria.'
+        )
         fireEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }))
         await screen.findByText('admin@provasmart.com')
         expect(request).toHaveBeenCalledTimes(2)

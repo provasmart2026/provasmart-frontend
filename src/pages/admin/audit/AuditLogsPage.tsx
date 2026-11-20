@@ -126,7 +126,9 @@ export function AuditLogsPage() {
                                         </td>
                                         <td>{textOrFallback(log.actorEmail, 'Não identificado')}</td>
                                         <td>
-                                            <span className="audit-action">{actionLabels[log.action] ?? log.action}</span>
+                                            <span className="audit-action">
+                                                {actionLabels[log.action] ?? log.action}
+                                            </span>
                                             <small>{log.action}</small>
                                         </td>
                                         <td>{log.resource}</td>
@@ -137,12 +139,16 @@ export function AuditLogsPage() {
                                             <code>{log.endpoint}</code>
                                         </td>
                                         <td>
-                                            <span className={`audit-status audit-status--${log.success ? 'success' : 'error'}`}>
+                                            <span
+                                                className={`audit-status audit-status--${log.success ? 'success' : 'error'}`}
+                                            >
                                                 {log.statusCode} · {statusLabels[log.statusCode] ?? 'Resposta HTTP'}
                                             </span>
                                         </td>
                                         <td>
-                                            <span className={`audit-result audit-result--${log.success ? 'success' : 'error'}`}>
+                                            <span
+                                                className={`audit-result audit-result--${log.success ? 'success' : 'error'}`}
+                                            >
                                                 {log.success ? 'Sucesso' : 'Falha'}
                                             </span>
                                         </td>

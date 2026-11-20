@@ -13,7 +13,9 @@
   background: white;
 }
 
-.profile-panel h2 { margin: 0 0 20px; }
+.profile-panel h2 {
+  margin: 0 0 20px;
+}
 .profile-legal-links {
   display: flex;
   flex-wrap: wrap;
@@ -28,27 +30,106 @@
   text-underline-offset: 4px;
 }
 
-.profile-panel dl { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.profile-panel dt { color: var(--text-secondary); font-size: 14px; }
-.profile-panel dd { margin: 6px 0 0; font-weight: 600; overflow-wrap: anywhere; }
-.profile-panel p { line-height: 1.65; }
-.profile-deletion { background: var(--rose-50); border-color: var(--rose-600); }
-.profile-page [role="alert"] { color: var(--rose-600); }
-.profile-page button { border: 0; font: inherit; font-weight: 600; cursor: pointer; }
-.profile-page button:disabled { opacity: .7; cursor: wait; transform: none; }
-
-@media (max-width: 600px) {
-  .profile-panel dl { grid-template-columns: 1fr; }
+.profile-panel dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.profile-panel dt {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+.profile-panel dd {
+  margin: 6px 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.profile-panel p {
+  line-height: 1.65;
+}
+.profile-deletion {
+  background: var(--rose-50);
+  border-color: var(--rose-600);
+}
+.profile-page [role='alert'] {
+  color: var(--rose-600);
+}
+.profile-page button {
+  border: 0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.profile-page button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
 }
 
-.profile-name-value { display: flex; align-items: center; gap: 8px; }
-.profile-page .profile-edit-name { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 36px; width: 36px; height: 36px; padding: 8px; border-radius: 8px; color: var(--rose-600); background: transparent; }
-.profile-page .profile-edit-name:hover { background: var(--rose-50); }
-.profile-page .profile-edit-name:focus-visible { outline: 2px solid var(--rose-600); outline-offset: 2px; }
-.profile-name-form { display: grid; gap: 10px; max-width: 520px; margin-top: 24px; }
-.profile-name-form label { font-weight: 600; }
-.profile-name-form input { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; font: inherit; color: var(--text-primary); }
-.profile-name-count { font-size: 13px; text-align: right; color: var(--text-secondary); }
-.profile-name-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 16px; }
-.profile-name-actions button { padding: 12px 20px; border-radius: 10px; }
-.profile-name-actions button:not(.primary-button) { background: var(--violet-100); color: var(--text-primary); }
+@media (max-width: 600px) {
+  .profile-panel dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-name-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.profile-page .profile-edit-name {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: 8px;
+  color: var(--rose-600);
+  background: transparent;
+}
+.profile-page .profile-edit-name:hover {
+  background: var(--rose-50);
+}
+.profile-page .profile-edit-name:focus-visible {
+  outline: 2px solid var(--rose-600);
+  outline-offset: 2px;
+}
+.profile-name-form {
+  display: grid;
+  gap: 10px;
+  max-width: 520px;
+  margin-top: 24px;
+}
+.profile-name-form label {
+  font-weight: 600;
+}
+.profile-name-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+  color: var(--text-primary);
+}
+.profile-name-count {
+  font-size: 13px;
+  text-align: right;
+  color: var(--text-secondary);
+}
+.profile-name-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.profile-name-actions button {
+  padding: 12px 20px;
+  border-radius: 10px;
+}
+.profile-name-actions button:not(.primary-button) {
+  background: var(--violet-100);
+  color: var(--text-primary);
+}

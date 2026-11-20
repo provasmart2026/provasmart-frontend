@@ -72,8 +72,12 @@ export function ProfilePage() {
                 setNameSuccess('Nome atualizado com sucesso.')
             }
         } catch (error) {
-            if (mounted.current) setNameError(error instanceof ApiError && error.backendMessage
-                ? error.backendMessage : 'Não foi possível atualizar o nome. Tente novamente.')
+            if (mounted.current)
+                setNameError(
+                    error instanceof ApiError && error.backendMessage
+                        ? error.backendMessage
+                        : 'Não foi possível atualizar o nome. Tente novamente.'
+                )
         } finally {
             namePending.current = false
             if (mounted.current) setSavingName(false)
@@ -127,15 +131,31 @@ export function ProfilePage() {
                                 <dt>Nome</dt>
                                 <dd className="profile-name-value">
                                     <span>{user.name}</span>
-                                    {!editingName && <button className="profile-edit-name" type="button"
-                                        aria-label="Editar nome" title="Editar nome" disabled={requesting || savingName}
-                                        onClick={startEditingName}>
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                            <path d="m16 3 5 5-12 12-6 1 1-6L16 3Z" />
-                                            <path d="m13 6 5 5" />
-                                        </svg>
-                                    </button>}
+                                    {!editingName && (
+                                        <button
+                                            className="profile-edit-name"
+                                            type="button"
+                                            aria-label="Editar nome"
+                                            title="Editar nome"
+                                            disabled={requesting || savingName}
+                                            onClick={startEditingName}
+                                        >
+                                            <svg
+                                                width="18"
+                                                height="18"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="1.8"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                aria-hidden="true"
+                                            >
+                                                <path d="m16 3 5 5-12 12-6 1 1-6L16 3Z" />
+                                                <path d="m13 6 5 5" />
+                                            </svg>
+                                        </button>
+                                    )}
                                 </dd>
                             </div>
                             <div>
@@ -147,22 +167,43 @@ export function ProfilePage() {
                                 <dd>{user.role === 'ADMIN' ? 'Administrador' : 'Estudante'}</dd>
                             </div>
                         </dl>
-                        {editingName ? <form className="profile-name-form" aria-label="Alterar nome" onSubmit={saveName}>
-                            <label htmlFor="profile-name">Nome</label>
-                            <input id="profile-name" name="name" autoComplete="name" required maxLength={150}
-                                value={name} disabled={savingName || requesting} onChange={event => setName(event.target.value)} autoFocus />
-                            <span className="profile-name-count">{name.length}/150 caracteres</span>
-                            {nameError && <p role="alert">{nameError}</p>}
-                            <div className="profile-name-actions">
-                                <button type="button" disabled={savingName} onClick={() => {
-                                    setEditingName(false)
-                                    setNameError('')
-                                }}>Cancelar</button>
-                                <button className="primary-button" type="submit" disabled={savingName || requesting}>
-                                    {savingName ? 'Salvando nome...' : 'Salvar nome'}
-                                </button>
-                            </div>
-                        </form> : null}
+                        {editingName ? (
+                            <form className="profile-name-form" aria-label="Alterar nome" onSubmit={saveName}>
+                                <label htmlFor="profile-name">Nome</label>
+                                <input
+                                    id="profile-name"
+                                    name="name"
+                                    autoComplete="name"
+                                    required
+                                    maxLength={150}
+                                    value={name}
+                                    disabled={savingName || requesting}
+                                    onChange={(event) => setName(event.target.value)}
+                                    autoFocus
+                                />
+                                <span className="profile-name-count">{name.length}/150 caracteres</span>
+                                {nameError && <p role="alert">{nameError}</p>}
+                                <div className="profile-name-actions">
+                                    <button
+                                        type="button"
+                                        disabled={savingName}
+                                        onClick={() => {
+                                            setEditingName(false)
+                                            setNameError('')
+                                        }}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        className="primary-button"
+                                        type="submit"
+                                        disabled={savingName || requesting}
+                                    >
+                                        {savingName ? 'Salvando nome...' : 'Salvar nome'}
+                                    </button>
+                                </div>
+                            </form>
+                        ) : null}
                         {nameSuccess && <p role="status">{nameSuccess}</p>}
                     </section>
                     <section className="profile-panel" aria-labelledby="account-title">

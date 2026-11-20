@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { api } from '../../../services/api'
 import type { UserResponse } from '../../../types/user'
 import type { Page } from '../../../types/api'
-import { UsersPage } from '../../../pages/admin/UsersPage'
+import { UsersPage } from '../../../pages/admin/users/UsersPage'
 
 const student: UserResponse = {
     id: 'student-uuid',

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { userService } from '../../services/userService'
-import type { UserResponse } from '../../types/user'
-import type { Page } from '../../types/api'
-import { formatDate } from '../../utils/date'
+import { userService } from '../../../services/userService'
+import type { UserResponse } from '../../../types/user'
+import type { Page } from '../../../types/api'
+import { formatDate } from '../../../utils/date'
 import './UsersPage.css'
 
 type UserAction = 'activate' | 'deactivate' | 'delete'

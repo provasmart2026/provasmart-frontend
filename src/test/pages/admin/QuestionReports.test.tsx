@@ -12,11 +12,24 @@ vi.mock('../../../services/questionReportService', () => ({
 }))
 
 const detail: QuestionReportDetail = {
-    id: 'report-1', studentId: 'student-1', studentName: 'Ana', originalQuestionId: 'question-1',
-    origin: 'SIMULADO', reason: 'OUTRO', status: 'PENDENTE', createdAt: '2026-11-15T12:00:00',
-    updatedAt: null, simulationId: 'simulation-1', simulationQuestionId: 'sq-1', practiceId: null,
-    practiceQuestionId: null, description: 'Duas alternativas iguais.',
-    contentSnapshot: JSON.stringify({ statement: 'Enunciado preservado', alternatives: [{ letter: 'A', text: 'Texto da alternativa' }] }),
+    id: 'report-1',
+    studentId: 'student-1',
+    studentName: 'Ana',
+    originalQuestionId: 'question-1',
+    origin: 'SIMULADO',
+    reason: 'OUTRO',
+    status: 'PENDENTE',
+    createdAt: '2026-11-15T12:00:00',
+    updatedAt: null,
+    simulationId: 'simulation-1',
+    simulationQuestionId: 'sq-1',
+    practiceId: null,
+    practiceQuestionId: null,
+    description: 'Duas alternativas iguais.',
+    contentSnapshot: JSON.stringify({
+        statement: 'Enunciado preservado',
+        alternatives: [{ letter: 'A', text: 'Texto da alternativa' }],
+    }),
 }
 
 function EditorLocation() {
@@ -25,21 +38,36 @@ function EditorLocation() {
 }
 
 function open(path = '/admin/question-reports') {
-    render(<MemoryRouter initialEntries={[path]}><Routes>
-        <Route path="/admin/question-reports" element={<QuestionReportsPage />} />
-        <Route path="/admin/question-reports/:id" element={<QuestionReportDetailPage />} />
-        <Route path="/admin/questions/:id/edit" element={<EditorLocation />} />
-    </Routes></MemoryRouter>)
+    render(
+        <MemoryRouter initialEntries={[path]}>
+            <Routes>
+                <Route path="/admin/question-reports" element={<QuestionReportsPage />} />
+                <Route path="/admin/question-reports/:id" element={<QuestionReportDetailPage />} />
+                <Route path="/admin/questions/:id/edit" element={<EditorLocation />} />
+            </Routes>
+        </MemoryRouter>
+    )
 }
 
 beforeEach(() => {
     vi.resetAllMocks()
     vi.spyOn(window, 'confirm').mockReturnValue(true)
     vi.mocked(questionReportService.get).mockResolvedValue({ ...detail })
-    vi.mocked(questionReportService.list).mockResolvedValue({ content: [detail], number: 0, size: 10,
-        totalElements: 2, totalPages: 2, first: true, last: false, empty: false, numberOfElements: 1 })
+    vi.mocked(questionReportService.list).mockResolvedValue({
+        content: [detail],
+        number: 0,
+        size: 10,
+        totalElements: 2,
+        totalPages: 2,
+        first: true,
+        last: false,
+        empty: false,
+        numberOfElements: 1,
+    })
     vi.mocked(questionReportService.updateStatus).mockImplementation(async (_id, status) => ({
-        ...detail, status, updatedAt: '2026-11-15T13:00:00',
+        ...detail,
+        status,
+        updatedAt: '2026-11-15T13:00:00',
     }))
 })
 
@@ -68,8 +96,17 @@ describe('lista administrativa de reportes', () => {
     })
 
     it('informa quando não há reportes', async () => {
-        vi.mocked(questionReportService.list).mockResolvedValue({ content: [], number: 0, size: 10,
-            totalElements: 0, totalPages: 0, first: true, last: true, empty: true, numberOfElements: 0 })
+        vi.mocked(questionReportService.list).mockResolvedValue({
+            content: [],
+            number: 0,
+            size: 10,
+            totalElements: 0,
+            totalPages: 0,
+            first: true,
+            last: true,
+            empty: true,
+            numberOfElements: 0,
+        })
         open()
         expect(await screen.findByText('Nenhum reporte encontrado para este filtro.')).toBeInTheDocument()
     })
@@ -90,7 +127,10 @@ describe('detalhe administrativo do reporte', () => {
         expect(screen.getByText('Texto da alternativa')).toBeInTheDocument()
         const link = screen.getByRole('link', { name: 'Abrir questão original' })
         expect(link).toHaveAttribute('href', '/admin/questions/question-1/edit')
-        expect(screen.getByRole('link', { name: 'Voltar aos reportes' })).toHaveAttribute('href', '/admin/question-reports?status=TODOS&page=1')
+        expect(screen.getByRole('link', { name: 'Voltar aos reportes' })).toHaveAttribute(
+            'href',
+            '/admin/question-reports?status=TODOS&page=1'
+        )
         fireEvent.click(link)
         expect(screen.getByText(/returnTo/)).toHaveTextContent('/admin/question-reports/report-1?status=TODOS&page=1')
     })
@@ -123,8 +163,11 @@ describe('detalhe administrativo do reporte', () => {
     })
 
     it('recarrega o status após conflito de atualização', async () => {
-        vi.mocked(questionReportService.updateStatus).mockRejectedValueOnce(new ApiError(409, 'Conflito', 'Reporte já encerrado.'))
-        vi.mocked(questionReportService.get).mockResolvedValueOnce({ ...detail })
+        vi.mocked(questionReportService.updateStatus).mockRejectedValueOnce(
+            new ApiError(409, 'Conflito', 'Reporte já encerrado.')
+        )
+        vi.mocked(questionReportService.get)
+            .mockResolvedValueOnce({ ...detail })
             .mockResolvedValueOnce({ ...detail, status: 'RESOLVIDO' })
         open('/admin/question-reports/report-1')
         fireEvent.click(await screen.findByRole('button', { name: 'Descartar reporte' }))

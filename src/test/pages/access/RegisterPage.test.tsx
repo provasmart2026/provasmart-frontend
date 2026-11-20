@@ -13,7 +13,11 @@ vi.mock('../../../services/legalDocumentService', () => ({ legalDocumentService:
 describe('cadastro', () => {
     it('bloqueia cadastro quando a consulta dos documentos falha e permite tentar novamente', async () => {
         vi.mocked(legalDocumentService.current).mockRejectedValueOnce(new Error('indisponível'))
-        render(<MemoryRouter><RegisterPage /></MemoryRouter>)
+        render(
+            <MemoryRouter>
+                <RegisterPage />
+            </MemoryRouter>
+        )
         expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível carregar os documentos')
         expect(screen.getByRole('button', { name: 'Criar minha conta' })).toBeDisabled()
         fireEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }))
@@ -23,7 +27,11 @@ describe('cadastro', () => {
 
     it('exige nova confirmação quando as versões são rejeitadas pelo backend', async () => {
         auth.register.mockRejectedValueOnce(new ApiError(409, 'Conflito', 'Os documentos legais foram atualizados.'))
-        render(<MemoryRouter><RegisterPage /></MemoryRouter>)
+        render(
+            <MemoryRouter>
+                <RegisterPage />
+            </MemoryRouter>
+        )
         await waitFor(() => expect(screen.getByRole('button', { name: 'Criar minha conta' })).toBeEnabled())
         fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Estudante' } })
         fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'estudante@example.com' } })
@@ -41,7 +49,11 @@ describe('cadastro', () => {
 
     it('envia a declaração de idade junto com o cadastro', async () => {
         auth.register.mockResolvedValueOnce(undefined)
-        render(<MemoryRouter><RegisterPage /></MemoryRouter>)
+        render(
+            <MemoryRouter>
+                <RegisterPage />
+            </MemoryRouter>
+        )
         await waitFor(() => expect(screen.getByRole('button', { name: 'Criar minha conta' })).toBeEnabled())
         fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Aline Souza' } })
         fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'aline@exemplo.com' } })
@@ -51,17 +63,29 @@ describe('cadastro', () => {
         fireEvent.click(screen.getByRole('checkbox', { name: /li e aceito/i }))
         fireEvent.click(screen.getByRole('checkbox', { name: /declaro que tenho 13 anos/i }))
         fireEvent.submit(screen.getByRole('button', { name: 'Criar minha conta' }).closest('form')!)
-        await waitFor(() => expect(auth.register).toHaveBeenCalledWith({
-            name: 'Aline Souza', email: 'aline@exemplo.com', confirmEmail: 'aline@exemplo.com', password: 'Senha@123',
-            acceptTerms: true, acceptPrivacyPolicy: true, ageDeclarationAccepted: true,
-            termsVersion: '1.1', privacyVersion: '1.1',
-        }))
+        await waitFor(() =>
+            expect(auth.register).toHaveBeenCalledWith({
+                name: 'Aline Souza',
+                email: 'aline@exemplo.com',
+                confirmEmail: 'aline@exemplo.com',
+                password: 'Senha@123',
+                acceptTerms: true,
+                acceptPrivacyPolicy: true,
+                ageDeclarationAccepted: true,
+                termsVersion: '1.1',
+                privacyVersion: '1.1',
+            })
+        )
     })
 
     beforeEach(() => {
         vi.clearAllMocks()
-        vi.mocked(legalDocumentService.current).mockImplementation(async type => ({
-            id: type, type, version: '1.1', title: type, effectiveAt: '2026-11-11T00:00:00',
+        vi.mocked(legalDocumentService.current).mockImplementation(async (type) => ({
+            id: type,
+            type,
+            version: '1.1',
+            title: type,
+            effectiveAt: '2026-11-11T00:00:00',
             createdAt: '2026-11-11T00:00:00',
             content: type === 'TERMOS_DE_USO' ? fixtures.terms : fixtures.privacy,
         }))
@@ -86,7 +110,11 @@ describe('cadastro', () => {
     })
 
     it('bloqueia e-mails diferentes antes de chamar a API', () => {
-        render(<MemoryRouter><RegisterPage /></MemoryRouter>)
+        render(
+            <MemoryRouter>
+                <RegisterPage />
+            </MemoryRouter>
+        )
         fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'aline@exemplo.com' } })
         fireEvent.change(screen.getByLabelText('Confirmar e-mail'), { target: { value: 'outro@exemplo.com' } })
         fireEvent.submit(screen.getByRole('button', { name: 'Criar minha conta' }).closest('form')!)

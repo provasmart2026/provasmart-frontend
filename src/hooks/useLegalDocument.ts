@@ -13,12 +13,21 @@ export function useLegalDocument(type: LegalDocumentType) {
         setLoading(true)
         setDocument(null)
         setError(false)
-        legalDocumentService.current(type)
-            .then(result => { if (active) setDocument(result) })
-            .catch(() => { if (active) setError(true) })
-            .finally(() => { if (active) setLoading(false) })
-        return () => { active = false }
+        legalDocumentService
+            .current(type)
+            .then((result) => {
+                if (active) setDocument(result)
+            })
+            .catch(() => {
+                if (active) setError(true)
+            })
+            .finally(() => {
+                if (active) setLoading(false)
+            })
+        return () => {
+            active = false
+        }
     }, [type, attempt])
 
-    return { document, error, loading, retry: () => setAttempt(value => value + 1) }
+    return { document, error, loading, retry: () => setAttempt((value) => value + 1) }
 }

@@ -1,5 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { authChangedEvent, getSession, getStoredToken, roleKey, saveSession, tokenKey } from '../../services/sessionService'
+import {
+    authChangedEvent,
+    getSession,
+    getStoredToken,
+    roleKey,
+    saveSession,
+    tokenKey,
+} from '../../services/sessionService'
 
 describe('sessão', () => {
     afterEach(() => {

@@ -14,13 +14,17 @@ vi.mock('../../../services/legalDocumentService', () => ({
 
 function openPage(role: UserRole = 'ESTUDANTE') {
     saveSession({ token: `header.${btoa(JSON.stringify({ role }))}.signature` }, false)
-    render(<MemoryRouter initialEntries={['/aceite-documentos']}><Routes>
-        <Route path="/aceite-documentos" element={<LegalAcceptancePage />} />
-        <Route path="/simulados" element={<p>Simulados disponíveis</p>} />
-        <Route path="/admin/questions" element={<p>Gestão de questões</p>} />
-        <Route path="/termos-de-uso" element={<TermsPage />} />
-        <Route path="/politica-de-privacidade" element={<PrivacyPage />} />
-    </Routes></MemoryRouter>)
+    render(
+        <MemoryRouter initialEntries={['/aceite-documentos']}>
+            <Routes>
+                <Route path="/aceite-documentos" element={<LegalAcceptancePage />} />
+                <Route path="/simulados" element={<p>Simulados disponíveis</p>} />
+                <Route path="/admin/questions" element={<p>Gestão de questões</p>} />
+                <Route path="/termos-de-uso" element={<TermsPage />} />
+                <Route path="/politica-de-privacidade" element={<PrivacyPage />} />
+            </Routes>
+        </MemoryRouter>
+    )
 }
 
 describe('aviso de atualização dos documentos', () => {
@@ -29,11 +33,15 @@ describe('aviso de atualização dos documentos', () => {
     beforeEach(() => {
         vi.resetAllMocks()
         vi.mocked(legalDocumentService.acceptanceStatus).mockResolvedValue({
-            termsAcceptanceRequired: true, privacyAcceptanceRequired: false,
+            termsAcceptanceRequired: true,
+            privacyAcceptanceRequired: false,
         })
-        vi.mocked(legalDocumentService.current).mockImplementation(async type => ({
-            id: type, type, version: type === 'TERMOS_DE_USO' ? '1.2' : '1.1',
-            effectiveAt: '2026-11-15T00:00:00', createdAt: '2026-11-15T00:00:00',
+        vi.mocked(legalDocumentService.current).mockImplementation(async (type) => ({
+            id: type,
+            type,
+            version: type === 'TERMOS_DE_USO' ? '1.2' : '1.1',
+            effectiveAt: '2026-11-15T00:00:00',
+            createdAt: '2026-11-15T00:00:00',
             title: type === 'TERMOS_DE_USO' ? fixtures.terms.title : fixtures.privacy.title,
             content: type === 'TERMOS_DE_USO' ? fixtures.terms : fixtures.privacy,
         }))
@@ -45,16 +53,22 @@ describe('aviso de atualização dos documentos', () => {
         ['ADMIN', 'Gestão de questões'],
     ] as const)('abre a área de %s quando os documentos já foram aceitos', async (role, page) => {
         vi.mocked(legalDocumentService.acceptanceStatus).mockResolvedValue({
-            termsAcceptanceRequired: false, privacyAcceptanceRequired: false,
+            termsAcceptanceRequired: false,
+            privacyAcceptanceRequired: false,
         })
         openPage(role)
         expect(await screen.findByText(page)).toBeInTheDocument()
         expect(legalDocumentService.current).not.toHaveBeenCalled()
     })
 
-    it.each([[true, false], [false, true], [true, true]])('mostra atualizações termos=%s política=%s', async (terms, privacy) => {
+    it.each([
+        [true, false],
+        [false, true],
+        [true, true],
+    ])('mostra atualizações termos=%s política=%s', async (terms, privacy) => {
         vi.mocked(legalDocumentService.acceptanceStatus).mockResolvedValue({
-            termsAcceptanceRequired: terms, privacyAcceptanceRequired: privacy,
+            termsAcceptanceRequired: terms,
+            privacyAcceptanceRequired: privacy,
         })
         openPage()
         const checkbox = await screen.findByRole('checkbox')
@@ -79,7 +93,10 @@ describe('aviso de atualização dos documentos', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Aceitar e continuar' }))
         expect(await screen.findByText(page)).toBeInTheDocument()
         expect(legalDocumentService.accept).toHaveBeenCalledWith({
-            acceptTerms: true, acceptPrivacyPolicy: true, termsVersion: '1.2', privacyVersion: '1.1',
+            acceptTerms: true,
+            acceptPrivacyPolicy: true,
+            termsVersion: '1.2',
+            privacyVersion: '1.1',
         })
     })
 

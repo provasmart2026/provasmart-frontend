@@ -12,7 +12,10 @@ describe('serviço de reporte', () => {
     ] as const)('monta a rota de %s com os IDs da atividade', async (origin, base) => {
         const data = { reason: 'OUTRO' as const, description: 'Descrição' }
         await questionReportService.create(origin, 'activity/id', 'question/id', data)
-        expect(apiRequest).toHaveBeenCalledWith(`${base}/activity%2Fid/questions/question%2Fid/reports`, { method: 'POST', data })
+        expect(apiRequest).toHaveBeenCalledWith(`${base}/activity%2Fid/questions/question%2Fid/reports`, {
+            method: 'POST',
+            data,
+        })
     })
 })
 it('consulta a lista e o detalhe administrativos e atualiza o status', async () => {
@@ -21,5 +24,8 @@ it('consulta a lista e o detalhe administrativos e atualiza o status', async () 
     await questionReportService.get('report/id')
     expect(apiRequest).toHaveBeenCalledWith('/question-reports/report%2Fid')
     await questionReportService.updateStatus('report/id', 'DESCARTADO')
-    expect(apiRequest).toHaveBeenCalledWith('/question-reports/report%2Fid/status', { method: 'PATCH', data: { status: 'DESCARTADO' } })
+    expect(apiRequest).toHaveBeenCalledWith('/question-reports/report%2Fid/status', {
+        method: 'PATCH',
+        data: { status: 'DESCARTADO' },
+    })
 })

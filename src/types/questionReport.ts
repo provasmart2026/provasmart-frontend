@@ -1,7 +1,11 @@
 export type QuestionReportOrigin = 'SIMULADO' | 'PRATICA_DIRECIONADA'
 export type QuestionReportStatus = 'PENDENTE' | 'RESOLVIDO' | 'DESCARTADO'
-export type QuestionReportReason = 'ENUNCIADO_INCORRETO' | 'ALTERNATIVAS_COM_PROBLEMA'
-    | 'GABARITO_INCORRETO' | 'EXPLICACAO_INCORRETA' | 'OUTRO'
+export type QuestionReportReason =
+    | 'ENUNCIADO_INCORRETO'
+    | 'ALTERNATIVAS_COM_PROBLEMA'
+    | 'GABARITO_INCORRETO'
+    | 'EXPLICACAO_INCORRETA'
+    | 'OUTRO'
 
 export type QuestionReportRequest = { reason: QuestionReportReason; description: string }
 
@@ -13,6 +17,8 @@ export type QuestionReportResponse = {
     status: QuestionReportStatus
     createdAt: string
 }
+export type QuestionReportPendingCount = { count: number }
+
 export type QuestionReportSummary = {
     id: string
     studentId: string
