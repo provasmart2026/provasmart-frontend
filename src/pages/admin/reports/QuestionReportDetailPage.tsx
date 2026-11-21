@@ -264,8 +264,12 @@ function OriginalQuestionActions({ questionId, returnTo }: { questionId: string;
             if (active) await questionService.deactivate(questionId)
             else await questionService.activate(questionId)
             setActive(!active)
-        } catch {
-            setError('Não foi possível alterar o status da questão. Tente novamente.')
+        } catch (requestError) {
+            if (!active && requestError instanceof ApiError && requestError.status === 409 && requestError.backendMessage) {
+                setError(requestError.backendMessage)
+            } else {
+                setError('Não foi possível alterar o status da questão. Tente novamente.')
+            }
         } finally {
             pending.current = false
             setSaving(false)
