@@ -128,7 +128,7 @@ export function DirectedPracticeAnalysisPage() {
                         )}
                         <details className="practice-analysis-subjects">
                             <summary>Ver desempenho por assunto</summary>
-                            <div className="practice-table-wrap">
+                            <div className="practice-table-wrap" role="region" aria-label="Resultados por assunto" tabIndex={0}>
                                 <table className="practice-subject-table">
                                     <thead>
                                         <tr>

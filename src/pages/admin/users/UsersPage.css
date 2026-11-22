@@ -24,6 +24,7 @@
 
 .admin-users table {
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
   text-align: left;
 }
@@ -42,6 +43,10 @@
   line-height: 1.6;
   vertical-align: top;
   overflow-wrap: anywhere;
+}
+
+.admin-users th {
+  overflow-wrap: normal;
 }
 
 .admin-users thead th {
