@@ -191,18 +191,25 @@ describe('Meu perfil', () => {
 describe('alteração do nome no perfil', () => {
     afterEach(() => vi.restoreAllMocks())
 
-    it.each(['ADMIN', 'ESTUDANTE'] as const)('edita o próprio nome para %s e atualiza os dados exibidos', async role => {
-        const request = await open({ ...user, role })
-        fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
-        expect(screen.getByLabelText('Nome')).toHaveValue(user.name)
-        request.mockResolvedValueOnce({ data: { ...user, role, name: 'Novo nome' } })
-        fireEvent.change(screen.getByLabelText('Nome'), { target: { value: '  Novo nome  ' } })
-        fireEvent.submit(screen.getByRole('form', { name: 'Alterar nome' }))
-        expect(await screen.findByText('Nome atualizado com sucesso.')).toBeInTheDocument()
-        expect(screen.getByText('Novo nome')).toBeInTheDocument()
-        expect(screen.getByText(user.email)).toBeInTheDocument()
-        expect(request).toHaveBeenLastCalledWith({ url: '/users/me/name', method: 'PATCH', data: { name: 'Novo nome' } })
-    })
+    it.each(['ADMIN', 'ESTUDANTE'] as const)(
+        'edita o próprio nome para %s e atualiza os dados exibidos',
+        async (role) => {
+            const request = await open({ ...user, role })
+            fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
+            expect(screen.getByLabelText('Nome')).toHaveValue(user.name)
+            request.mockResolvedValueOnce({ data: { ...user, role, name: 'Novo nome' } })
+            fireEvent.change(screen.getByLabelText('Nome'), { target: { value: '  Novo nome  ' } })
+            fireEvent.submit(screen.getByRole('form', { name: 'Alterar nome' }))
+            expect(await screen.findByText('Nome atualizado com sucesso.')).toBeInTheDocument()
+            expect(screen.getByText('Novo nome')).toBeInTheDocument()
+            expect(screen.getByText(user.email)).toBeInTheDocument()
+            expect(request).toHaveBeenLastCalledWith({
+                url: '/users/me/name',
+                method: 'PATCH',
+                data: { name: 'Novo nome' },
+            })
+        }
+    )
 
     it('cancela a edição sem enviar e restaura o nome ao reabrir', async () => {
         const request = await open()
@@ -215,7 +222,7 @@ describe('alteração do nome no perfil', () => {
         expect(screen.getByLabelText('Nome')).toHaveValue(user.name)
     })
 
-    it.each(['', '   ', 'a'.repeat(151)])('rejeita nome inválido antes da API', async name => {
+    it.each(['', '   ', 'a'.repeat(151)])('rejeita nome inválido antes da API', async (name) => {
         const request = await open()
         fireEvent.click(screen.getByRole('button', { name: 'Editar nome' }))
         expect(screen.getByLabelText('Nome')).toHaveAttribute('maxlength', '150')

@@ -94,6 +94,24 @@ a {
   color: var(--rose-600);
 }
 
+.header-reports-link {
+  white-space: nowrap;
+}
+
+.header-reports-count {
+  display: inline-block;
+  min-width: 20px;
+  margin-inline-start: 6px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--rose-600);
+  color: white;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
 .header-action {
   color: var(--rose-600);
   font-size: 14px;
@@ -148,7 +166,7 @@ h1 {
   font-size: clamp(42px, 4.2vw, 52px);
   font-weight: 800;
   line-height: 1.19;
-  letter-spacing: -.035em;
+  letter-spacing: -0.035em;
 }
 
 .lead {
@@ -169,7 +187,10 @@ h1 {
   color: white;
   background: var(--rose-600);
   font-weight: 600;
-  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
 }
 
 .primary-button:hover {
@@ -212,7 +233,7 @@ a:focus-visible {
   line-height: 1.34;
 }
 
-.study-card>p {
+.study-card > p {
   margin: 0 0 18px;
   color: var(--text-secondary);
   font-size: 14px;
@@ -260,7 +281,7 @@ a:focus-visible {
   background: var(--rose-600);
 }
 
-.study-card li>span:last-child {
+.study-card li > span:last-child {
   display: grid;
   gap: 2px;
 }
@@ -295,7 +316,7 @@ a:focus-visible {
   margin: 0;
   font-size: 40px;
   line-height: 1.2;
-  letter-spacing: -.025em;
+  letter-spacing: -0.025em;
 }
 
 .section-heading p {
@@ -436,7 +457,7 @@ a:focus-visible {
   text-align: center;
 }
 
-.signup-panel>div {
+.signup-panel > div {
   max-width: 720px;
 }
 
@@ -490,7 +511,7 @@ a:focus-visible {
   min-width: 360px;
 }
 
-.footer-links>div {
+.footer-links > div {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -675,7 +696,6 @@ a:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

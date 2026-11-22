@@ -1,24 +1,18 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { api } from '../../../services/api'
-import type { UserResponse } from '../../../types/user'
+import type { UserAdminSummary } from '../../../types/user'
 import type { Page } from '../../../types/api'
-import { UsersPage } from '../../../pages/admin/UsersPage'
+import { UsersPage } from '../../../pages/admin/users/UsersPage'
 
-const student: UserResponse = {
+const student: UserAdminSummary = {
     id: 'student-uuid',
     name: 'Aline Souza',
-    email: 'aline@exemplo.com',
     role: 'ESTUDANTE',
     active: true,
     deletionRequested: false,
     deletionRequestedAt: null,
     createdAt: '2026-09-19T09:15:00',
-    updatedAt: '2026-09-22T12:00:00',
-    termsVersion: '1',
-    termsAcceptedAt: '2026-09-19T09:15:00',
-    privacyVersion: '1',
-    privacyAcceptedAt: '2026-09-19T09:15:00',
 }
 const inactive = { ...student, id: 'inactive-uuid', name: 'Bruno', active: false }
 const requested = {
@@ -28,9 +22,9 @@ const requested = {
     deletionRequested: true,
     deletionRequestedAt: '2026-09-25T14:30:00',
 }
-const admin: UserResponse = { ...requested, id: 'admin-uuid', name: 'Administrador teste', role: 'ADMIN' }
+const admin: UserAdminSummary = { ...requested, id: 'admin-uuid', name: 'Administrador teste', role: 'ADMIN' }
 
-function page(content: UserResponse[], number = 0, totalPages = 1): Page<UserResponse> {
+function page(content: UserAdminSummary[], number = 0, totalPages = 1): Page<UserAdminSummary> {
     return {
         content,
         empty: content.length === 0,
@@ -62,12 +56,12 @@ describe('Administração de usuários', () => {
         const storage = vi.spyOn(Storage.prototype, 'setItem')
         const request = await open()
         expect(request).toHaveBeenCalledExactlyOnceWith({ url: '/users?page=0&size=10', method: 'GET' })
-        expect(row(student.name).getByText(student.email)).toBeInTheDocument()
+        expect(row(student.name).getByRole('button', { name: 'Mostrar e-mail' })).toBeEnabled()
         expect(row(student.name).getByText('Estudante')).toBeInTheDocument()
         expect(row(student.name).getByText('Ativo')).toBeInTheDocument()
         expect(row(inactive.name).getByText('Inativo')).toBeInTheDocument()
         expect(row(admin.name).getByText('Administrador')).toBeInTheDocument()
-        expect(row(admin.name).queryByRole('button')).not.toBeInTheDocument()
+        expect(row(admin.name).getByText('Sem ações disponíveis')).toBeInTheDocument()
         expect(row(student.name).getByRole('button', { name: 'Desativar' })).toBeEnabled()
         expect(row(inactive.name).getByRole('button', { name: 'Ativar' })).toBeEnabled()
         expect(row(student.name).getByText('Não solicitada')).toBeInTheDocument()

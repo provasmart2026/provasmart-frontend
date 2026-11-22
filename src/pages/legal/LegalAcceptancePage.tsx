@@ -45,7 +45,9 @@ export function LegalAcceptancePage() {
             }
         }
         void load()
-        return () => { active = false }
+        return () => {
+            active = false
+        }
     }, [attempt, navigate, nextPath])
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -63,8 +65,10 @@ export function LegalAcceptancePage() {
             navigate(nextPath, { replace: true })
         } catch (requestError) {
             if (requestError instanceof ApiError && requestError.status === 409) {
-                setError('Os documentos foram atualizados durante a leitura. Confira as novas versões e confirme novamente.')
-                setAttempt(value => value + 1)
+                setError(
+                    'Os documentos foram atualizados durante a leitura. Confira as novas versões e confirme novamente.'
+                )
+                setAttempt((value) => value + 1)
             } else {
                 setError('Não foi possível registrar o aceite. Tente novamente.')
             }
@@ -74,34 +78,68 @@ export function LegalAcceptancePage() {
     }
 
     return (
-        <AccessLayout title="Confira o que mudou." description="Mantenha-se informado sobre os documentos do ProvaSmart.">
+        <AccessLayout
+            title="Confira o que mudou."
+            description="Mantenha-se informado sobre os documentos do ProvaSmart."
+        >
             <form className="access-card" onSubmit={handleSubmit}>
                 <span className="eyebrow">Documentos atualizados</span>
                 <h2>Atualização dos documentos</h2>
                 <p>Há novas versões disponíveis. Leia os documentos e confirme o aceite das versões apresentadas.</p>
                 {loading && <p role="status">Consultando atualizações...</p>}
-                {documents && <>
-                    <p className="legal-document-reference">
-                        <LegalLink to="/termos-de-uso">Ler Termos de Uso</LegalLink>
-                        {' — versão '}{documents.terms.version}
-                        {documents.status.termsAcceptanceRequired ? ' (novo aceite pendente)' : ' (já aceita)'}
+                {documents && (
+                    <>
+                        <p className="legal-document-reference">
+                            <LegalLink to="/termos-de-uso">Ler Termos de Uso</LegalLink>
+                            {' — versão '}
+                            {documents.terms.version}
+                            {documents.status.termsAcceptanceRequired ? ' (novo aceite pendente)' : ' (já aceita)'}
+                        </p>
+                        <p className="legal-document-reference">
+                            <LegalLink to="/politica-de-privacidade">Ler Política de Privacidade</LegalLink>
+                            {' — versão '}
+                            {documents.privacy.version}
+                            {documents.status.privacyAcceptanceRequired ? ' (novo aceite pendente)' : ' (já aceita)'}
+                        </p>
+                        <label className="checkbox legal-check">
+                            <input
+                                type="checkbox"
+                                checked={accepted}
+                                disabled={saving}
+                                onChange={(event) => setAccepted(event.target.checked)}
+                            />
+                            <span>
+                                Li e aceito os Termos de Uso e a Política de Privacidade nas versões apresentadas.
+                            </span>
+                        </label>
+                    </>
+                )}
+                {error && (
+                    <p className="form-error" role="alert">
+                        {error}
                     </p>
-                    <p className="legal-document-reference">
-                        <LegalLink to="/politica-de-privacidade">Ler Política de Privacidade</LegalLink>
-                        {' — versão '}{documents.privacy.version}
-                        {documents.status.privacyAcceptanceRequired ? ' (novo aceite pendente)' : ' (já aceita)'}
-                    </p>
-                    <label className="checkbox legal-check">
-                        <input type="checkbox" checked={accepted} disabled={saving}
-                            onChange={event => setAccepted(event.target.checked)} />
-                        <span>Li e aceito os Termos de Uso e a Política de Privacidade nas versões apresentadas.</span>
-                    </label>
-                </>}
-                {error && <p className="form-error" role="alert">{error}</p>}
-                {!loading && !documents && <button type="button" className="secondary-button submit-button"
-                    onClick={() => { setError(''); setAttempt(value => value + 1) }}>Tentar novamente</button>}
-                {documents && <button className="primary-button submit-button" type="submit"
-                    disabled={!accepted || saving || loading}>{saving ? 'Registrando...' : 'Aceitar e continuar'}</button>}
+                )}
+                {!loading && !documents && (
+                    <button
+                        type="button"
+                        className="secondary-button submit-button"
+                        onClick={() => {
+                            setError('')
+                            setAttempt((value) => value + 1)
+                        }}
+                    >
+                        Tentar novamente
+                    </button>
+                )}
+                {documents && (
+                    <button
+                        className="primary-button submit-button"
+                        type="submit"
+                        disabled={!accepted || saving || loading}
+                    >
+                        {saving ? 'Registrando...' : 'Aceitar e continuar'}
+                    </button>
+                )}
             </form>
         </AccessLayout>
     )

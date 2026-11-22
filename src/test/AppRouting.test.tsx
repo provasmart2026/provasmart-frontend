@@ -4,15 +4,17 @@ import { authChangedEvent, clearSession, type UserRole } from '../services/sessi
 import { App } from '../App'
 
 vi.mock('../pages/home/Home', () => ({ Home: () => <div>Página inicial</div> }))
-vi.mock('../pages/admin/UsersPage', () => ({ UsersPage: () => <div>Lista de usuários</div> }))
+vi.mock('../pages/admin/users/UsersPage', () => ({ UsersPage: () => <div>Lista de usuários</div> }))
 vi.mock('../pages/admin/audit/AuditLogsPage', () => ({ AuditLogsPage: () => <div>Logs de auditoria</div> }))
 vi.mock('../pages/profile/ProfilePage', () => ({ ProfilePage: () => <div>Dados do perfil</div> }))
 vi.mock('../pages/admin/questions/QuestionsPage', () => ({ QuestionsPage: () => <div>Lista de questões</div> }))
 vi.mock('../pages/admin/questions/QuestionFormPage', () => ({
     QuestionFormPage: () => <div>Formulário de questão</div>,
 }))
-vi.mock('../pages/student/SimulationStartPage', () => ({ SimulationStartPage: () => <div>Iniciar simulado</div> }))
-vi.mock('../pages/student/SimulationPage', () => ({ SimulationPage: () => <div>Executar simulado</div> }))
+vi.mock('../pages/student/simulations/SimulationStartPage', () => ({
+    SimulationStartPage: () => <div>Iniciar simulado</div>,
+}))
+vi.mock('../pages/student/simulations/SimulationPage', () => ({ SimulationPage: () => <div>Executar simulado</div> }))
 vi.mock('../pages/access/LoginPage', () => ({ LoginPage: () => <div>Página de login</div> }))
 vi.mock('../pages/access/RegisterPage', () => ({ RegisterPage: () => <div>Página de cadastro</div> }))
 vi.mock('../pages/access/VerifyTwoFactorPage', () => ({ VerifyTwoFactorPage: () => <div>Verificar código</div> }))
@@ -23,8 +25,12 @@ vi.mock('../pages/legal/LegalPages', () => ({
     PrivacyPage: () => <div>Política de privacidade</div>,
 }))
 
-vi.mock('../pages/admin/reports/QuestionReportsPage', () => ({ QuestionReportsPage: () => <div>Lista de reportes</div> }))
-vi.mock('../pages/admin/reports/QuestionReportDetailPage', () => ({ QuestionReportDetailPage: () => <div>Detalhe do reporte</div> }))
+vi.mock('../pages/admin/reports/QuestionReportsPage', () => ({
+    QuestionReportsPage: () => <div>Lista de reportes</div>,
+}))
+vi.mock('../pages/admin/reports/QuestionReportDetailPage', () => ({
+    QuestionReportDetailPage: () => <div>Detalhe do reporte</div>,
+}))
 
 const privateRoutes: [string, UserRole, string][] = [
     ['/admin/audit-logs', 'ADMIN', 'Logs de auditoria'],

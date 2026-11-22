@@ -20,18 +20,22 @@ function fill() {
 describe('formulário de reporte', () => {
     beforeEach(() => vi.resetAllMocks())
 
-    it.each(['SIMULADO', 'PRATICA_DIRECIONADA'] as const)('envia o reporte de %s e confirma sucesso', async origin => {
-        vi.mocked(questionReportService.create).mockResolvedValue({} as never)
-        open(origin)
-        fill()
-        fireEvent.submit(screen.getByRole('form'))
-        expect(await screen.findByRole('status')).toHaveTextContent('Reporte enviado')
-        expect(questionReportService.create).toHaveBeenCalledWith(origin, 'activity', 'question', {
-            reason: 'OUTRO', description: 'Problema de teste',
-        })
-    })
+    it.each(['SIMULADO', 'PRATICA_DIRECIONADA'] as const)(
+        'envia o reporte de %s e confirma sucesso',
+        async (origin) => {
+            vi.mocked(questionReportService.create).mockResolvedValue({} as never)
+            open(origin)
+            fill()
+            fireEvent.submit(screen.getByRole('form'))
+            expect(await screen.findByRole('status')).toHaveTextContent('Reporte enviado')
+            expect(questionReportService.create).toHaveBeenCalledWith(origin, 'activity', 'question', {
+                reason: 'OUTRO',
+                description: 'Problema de teste',
+            })
+        }
+    )
 
-    it.each(['', '   ', 'a'.repeat(1001)])('rejeita descrição inválida', async description => {
+    it.each(['', '   ', 'a'.repeat(1001)])('rejeita descrição inválida', async (description) => {
         open()
         fireEvent.change(screen.getByLabelText('Motivo'), { target: { value: 'OUTRO' } })
         fireEvent.change(screen.getByLabelText('Descrição do problema'), { target: { value: description } })
@@ -51,7 +55,9 @@ describe('formulário de reporte', () => {
     })
 
     it('mostra mensagem de duplicidade sem apagar a descrição', async () => {
-        vi.mocked(questionReportService.create).mockRejectedValue(new ApiError(409, 'Conflito', 'Você já possui um reporte pendente para esta questão.'))
+        vi.mocked(questionReportService.create).mockRejectedValue(
+            new ApiError(409, 'Conflito', 'Você já possui um reporte pendente para esta questão.')
+        )
         open()
         fill()
         fireEvent.submit(screen.getByRole('form'))
@@ -61,7 +67,9 @@ describe('formulário de reporte', () => {
     })
 
     it('permite nova tentativa após erro de conexão', async () => {
-        vi.mocked(questionReportService.create).mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce({} as never)
+        vi.mocked(questionReportService.create)
+            .mockRejectedValueOnce(new Error('offline'))
+            .mockResolvedValueOnce({} as never)
         open()
         fill()
         fireEvent.submit(screen.getByRole('form'))
@@ -80,7 +88,12 @@ describe('formulário de reporte', () => {
 
     it('impede envio duplo enquanto aguarda a resposta', async () => {
         let resolve!: () => void
-        vi.mocked(questionReportService.create).mockImplementation(() => new Promise(done => { resolve = () => done({} as never) }))
+        vi.mocked(questionReportService.create).mockImplementation(
+            () =>
+                new Promise((done) => {
+                    resolve = () => done({} as never)
+                })
+        )
         open()
         fill()
         fireEvent.submit(screen.getByRole('form'))

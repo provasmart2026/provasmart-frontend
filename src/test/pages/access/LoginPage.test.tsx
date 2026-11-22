@@ -15,7 +15,9 @@ const auth = vi.hoisted(() => ({
 vi.mock('../../../services/authService', () => ({ authService: auth }))
 vi.mock('../../../services/legalDocumentService', () => ({
     legalDocumentService: {
-        acceptanceStatus: vi.fn().mockResolvedValue({ termsAcceptanceRequired: false, privacyAcceptanceRequired: false }),
+        acceptanceStatus: vi
+            .fn()
+            .mockResolvedValue({ termsAcceptanceRequired: false, privacyAcceptanceRequired: false }),
     },
 }))
 

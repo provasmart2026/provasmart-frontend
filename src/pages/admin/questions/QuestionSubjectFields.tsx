@@ -12,10 +12,7 @@ type QuestionSubjectFieldsProps = {
 
 export function QuestionSubjectFields({ id, subjectId, options }: QuestionSubjectFieldsProps) {
     const subjectSelectDisabled =
-        options.creating ||
-        !options.disciplineId ||
-        Boolean(options.loading) ||
-        Boolean(options.error)
+        options.creating || !options.disciplineId || Boolean(options.loading) || Boolean(options.error)
     const newSubjectDisabled = subjectSelectDisabled || !options.enteringNewSubject
 
     return (

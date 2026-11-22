@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AuthRedirect } from './components/AuthRedirect'
-import { UsersPage } from './pages/admin/UsersPage'
+import { UsersPage } from './pages/admin/users/UsersPage'
 import { AuditLogsPage } from './pages/admin/audit/AuditLogsPage'
 import { ProfilePage } from './pages/profile/ProfilePage'
 import { QuestionsPage } from './pages/admin/questions/QuestionsPage'
@@ -10,16 +10,16 @@ import { QuestionReportDetailPage } from './pages/admin/reports/QuestionReportDe
 import { QuestionFormPage } from './pages/admin/questions/QuestionFormPage'
 import { MainLayout } from './layouts/MainLayout'
 import { Home } from './pages/home/Home'
-import { SimulationStartPage } from './pages/student/SimulationStartPage'
-import { SimulationPage } from './pages/student/SimulationPage'
-import { DirectedPracticeStartPage } from './pages/student/DirectedPracticeStartPage'
-import { DirectedPracticePage } from './pages/student/DirectedPracticePage'
-import { DirectedPracticeAnalysisPage } from './pages/student/DirectedPracticeAnalysisPage'
-import { SimulationPerformancePage } from './pages/student/SimulationPerformancePage'
-import { StudyPlanPage } from './pages/student/StudyPlanPage'
-import { StudentDashboardPage } from './pages/student/StudentDashboardPage'
-import { StudentHistoryPage } from './pages/student/StudentHistoryPage'
-import { StudyPlanDetailsPage } from './pages/student/StudyPlanDetailsPage'
+import { SimulationStartPage } from './pages/student/simulations/SimulationStartPage'
+import { SimulationPage } from './pages/student/simulations/SimulationPage'
+import { DirectedPracticeStartPage } from './pages/student/directed-practice/DirectedPracticeStartPage'
+import { DirectedPracticePage } from './pages/student/directed-practice/DirectedPracticePage'
+import { DirectedPracticeAnalysisPage } from './pages/student/directed-practice/DirectedPracticeAnalysisPage'
+import { SimulationPerformancePage } from './pages/student/simulations/SimulationPerformancePage'
+import { StudyPlanPage } from './pages/student/study-plan/StudyPlanPage'
+import { StudentDashboardPage } from './pages/student/dashboard/StudentDashboardPage'
+import { StudentHistoryPage } from './pages/student/history/StudentHistoryPage'
+import { StudyPlanDetailsPage } from './pages/student/study-plan/StudyPlanDetailsPage'
 import { ForgotPasswordPage } from './pages/access/ForgotPasswordPage'
 import { LoginPage } from './pages/access/LoginPage'
 import { RegisterPage } from './pages/access/RegisterPage'
@@ -50,7 +50,10 @@ export function App() {
                         <Route path="/dashboard" element={<StudentDashboardPage />} />
                         <Route path="/plano-de-estudos" element={<StudyPlanPage />} />
                         <Route path="/historico" element={<StudentHistoryPage />} />
-                        <Route path="/plano-de-estudos/historico" element={<Navigate to="/historico?aba=planos" replace />} />
+                        <Route
+                            path="/plano-de-estudos/historico"
+                            element={<Navigate to="/historico?aba=planos" replace />}
+                        />
                         <Route path="/plano-de-estudos/historico/:planId" element={<StudyPlanDetailsPage />} />
                         <Route path="/simulados" element={<SimulationStartPage />} />
                         <Route path="/simulados/:simulationId" element={<SimulationPage />} />

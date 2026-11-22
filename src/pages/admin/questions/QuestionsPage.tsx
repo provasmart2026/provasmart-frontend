@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { ApiError } from '../../../services/api'
 import { questionService } from '../../../services/questionService'
 import type { Page } from '../../../types/api'
 import type { Question } from '../../../types/question'
@@ -26,8 +27,12 @@ export function QuestionsPage() {
             if (question.active) await questionService.deactivate(question.id)
             else await questionService.activate(question.id)
             setAttempt((value) => value + 1)
-        } catch {
-            setStatusError('Não foi possível alterar o status da questão. Tente novamente.')
+        } catch (error) {
+            if (!question.active && error instanceof ApiError && error.status === 409 && error.backendMessage) {
+                setStatusError(error.backendMessage)
+            } else {
+                setStatusError('Não foi possível alterar o status da questão. Tente novamente.')
+            }
         } finally {
             setChangingStatus(false)
         }

@@ -8,14 +8,24 @@ function LegalPage({ type }: { type: LegalDocumentType }) {
     const location = useLocation()
     const { document: response, loading, error, retry } = useLegalDocument(type)
     if (loading || error || !response) {
-        return <div className="legal-page">
-            <h1>{type === 'TERMOS_DE_USO' ? 'Termos de Uso do ProvaSmart' : 'Política de Privacidade do ProvaSmart'}</h1>
-            {loading ? <p role="status">Carregando documento...</p> : <>
-                <p role="alert">Não foi possível carregar o documento. Tente novamente.</p>
-                <button type="button" onClick={retry}>Tentar novamente</button>
-            </>}
-            <Link to={getLegalReturnPath(location)}>← Voltar</Link>
-        </div>
+        return (
+            <div className="legal-page">
+                <h1>
+                    {type === 'TERMOS_DE_USO' ? 'Termos de Uso do ProvaSmart' : 'Política de Privacidade do ProvaSmart'}
+                </h1>
+                {loading ? (
+                    <p role="status">Carregando documento...</p>
+                ) : (
+                    <>
+                        <p role="alert">Não foi possível carregar o documento. Tente novamente.</p>
+                        <button type="button" onClick={retry}>
+                            Tentar novamente
+                        </button>
+                    </>
+                )}
+                <Link to={getLegalReturnPath(location)}>← Voltar</Link>
+            </div>
+        )
     }
     const document = response.content
     return (
@@ -36,7 +46,10 @@ function LegalPage({ type }: { type: LegalDocumentType }) {
                     <Link to={getLegalReturnPath(location)}>← Voltar</Link>
                 </aside>
                 <article className="legal-content">
-                    <span>Versão {response.version} · vigente desde {response.effectiveAt.slice(0, 10).split('-').reverse().join('/')}</span>
+                    <span>
+                        Versão {response.version} · vigente desde{' '}
+                        {response.effectiveAt.slice(0, 10).split('-').reverse().join('/')}
+                    </span>
                     {document.sections.map((section, sectionIndex) => (
                         <section id={`secao-${sectionIndex + 1}`} key={section.title}>
                             <h2>{section.title}</h2>

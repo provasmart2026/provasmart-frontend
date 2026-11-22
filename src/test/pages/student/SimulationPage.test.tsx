@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { simulationService } from '../../../services/simulationService'
 import type { Simulation } from '../../../types/simulation'
-import { SimulationPage } from '../../../pages/student/SimulationPage'
-import { SimulationStartPage } from '../../../pages/student/SimulationStartPage'
+import { SimulationPage } from '../../../pages/student/simulations/SimulationPage'
+import { SimulationStartPage } from '../../../pages/student/simulations/SimulationStartPage'
 import { ApiError } from '../../../services/api'
 
 function fixture(answered = false): Simulation {
@@ -83,7 +83,9 @@ describe('Execução do simulado', () => {
         const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false)
         const cancel = vi.spyOn(simulationService, 'cancel')
         fireEvent.click(screen.getByRole('button', { name: 'Cancelar simulado' }))
-        expect(confirm).toHaveBeenCalledWith('Tem certeza que deseja cancelar este simulado? Após o cancelamento, ele não poderá ser retomado.')
+        expect(confirm).toHaveBeenCalledWith(
+            'Tem certeza que deseja cancelar este simulado? Após o cancelamento, ele não poderá ser retomado.'
+        )
         expect(cancel).not.toHaveBeenCalled()
         expect(screen.getByText('Questão 1 de 40')).toBeInTheDocument()
     })
@@ -109,7 +111,9 @@ describe('Execução do simulado', () => {
     it('mantém a tela e apresenta a mensagem do backend quando o cancelamento falha', async () => {
         await open()
         vi.spyOn(window, 'confirm').mockReturnValue(true)
-        vi.spyOn(simulationService, 'cancel').mockRejectedValue(new ApiError(409, 'Conflito', 'O simulado não está em andamento.'))
+        vi.spyOn(simulationService, 'cancel').mockRejectedValue(
+            new ApiError(409, 'Conflito', 'O simulado não está em andamento.')
+        )
         fireEvent.click(screen.getByRole('button', { name: 'Cancelar simulado' }))
         expect(await screen.findByRole('alert')).toHaveTextContent('O simulado não está em andamento.')
         expect(screen.getByText('Questão 1 de 40')).toBeInTheDocument()

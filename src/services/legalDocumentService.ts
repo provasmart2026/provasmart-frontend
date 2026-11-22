@@ -1,13 +1,31 @@
 import { apiRequest } from './api'
-import type { LegalDocument, LegalDocumentContent, LegalDocumentType, LegalAcceptanceStatus, LegalAcceptanceRequest } from '../types/legalDocument'
+import type {
+    LegalDocument,
+    LegalDocumentContent,
+    LegalDocumentType,
+    LegalAcceptanceStatus,
+    LegalAcceptanceRequest,
+} from '../types/legalDocument'
 
 function parseContent(value: string): LegalDocumentContent {
     const content = JSON.parse(value)
-    if (!content || typeof content.eyebrow !== 'string' || typeof content.description !== 'string'
-        || !Array.isArray(content.sections) || !content.sections.every((section: LegalDocumentContent['sections'][number]) =>
-            section && typeof section.title === 'string' && Array.isArray(section.blocks)
-            && section.blocks.every(block => typeof block === 'string'
-                || (Array.isArray(block) && block.every(item => typeof item === 'string'))))) {
+    if (
+        !content ||
+        typeof content.eyebrow !== 'string' ||
+        typeof content.description !== 'string' ||
+        !Array.isArray(content.sections) ||
+        !content.sections.every(
+            (section: LegalDocumentContent['sections'][number]) =>
+                section &&
+                typeof section.title === 'string' &&
+                Array.isArray(section.blocks) &&
+                section.blocks.every(
+                    (block) =>
+                        typeof block === 'string' ||
+                        (Array.isArray(block) && block.every((item) => typeof item === 'string'))
+                )
+        )
+    ) {
         throw new Error('Conteúdo do documento legal inválido.')
     }
     return content
@@ -15,11 +33,11 @@ function parseContent(value: string): LegalDocumentContent {
 
 export const legalDocumentService = {
     acceptanceStatus: () => apiRequest<LegalAcceptanceStatus>('/legal-documents/acceptance-status'),
-    accept: (data: LegalAcceptanceRequest) =>
-        apiRequest<void>('/legal-documents/acceptance', { method: 'POST', data }),
+    accept: (data: LegalAcceptanceRequest) => apiRequest<void>('/legal-documents/acceptance', { method: 'POST', data }),
     async current(type: LegalDocumentType): Promise<LegalDocument> {
         const response = await apiRequest<Omit<LegalDocument, 'content'> & { content: string }>(
-            `/legal-documents/${type}/current`)
+            `/legal-documents/${type}/current`
+        )
         return { ...response, content: parseContent(response.content) }
     },
 }

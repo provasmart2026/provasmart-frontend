@@ -2,6 +2,26 @@ import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { clearSession } from '../services/sessionService'
 import { useSession } from '../hooks/useSession'
+import { usePendingQuestionReportCount } from '../hooks/usePendingQuestionReportCount'
+
+function AdminReportsLink() {
+    const count = usePendingQuestionReportCount()
+
+    return (
+        <Link
+            to="/admin/question-reports"
+            className="header-reports-link"
+            aria-label={count > 0 ? `Reportes, ${count} ${count === 1 ? 'pendente' : 'pendentes'}` : undefined}
+        >
+            Reportes
+            {count > 0 && (
+                <span className="header-reports-count" aria-hidden="true">
+                    {count > 99 ? '99+' : count}
+                </span>
+            )}
+        </Link>
+    )
+}
 
 export function Header() {
     const session = useSession()
@@ -16,12 +36,15 @@ export function Header() {
     }
 
     return (
-        <header className="site-header" onKeyDown={(event) => {
-            if (event.key === 'Escape' && menuOpen) {
-                setMenuOpen(false)
-                menuButton.current?.focus()
-            }
-        }}>
+        <header
+            className="site-header"
+            onKeyDown={(event) => {
+                if (event.key === 'Escape' && menuOpen) {
+                    setMenuOpen(false)
+                    menuButton.current?.focus()
+                }
+            }}
+        >
             <Link className="brand" to="/" aria-label="ProvaSmart — página inicial">
                 <img src="/brand/provasmart-logo-horizontal.svg" alt="" />
             </Link>
@@ -36,12 +59,17 @@ export function Header() {
             >
                 <span aria-hidden="true">{menuOpen ? '✕' : '☰'}</span>
             </button>
-            <nav id="main-navigation" className={menuOpen ? 'is-open' : undefined} aria-label="Navegação principal" onClick={() => setMenuOpen(false)}>
+            <nav
+                id="main-navigation"
+                className={menuOpen ? 'is-open' : undefined}
+                aria-label="Navegação principal"
+                onClick={() => setMenuOpen(false)}
+            >
                 <Link to="/">Início</Link>
                 {session.authenticated && session.role === 'ADMIN' && (
                     <>
                         <Link to="/admin/questions">Questões</Link>
-                        <Link to="/admin/question-reports">Reportes</Link>
+                        <AdminReportsLink />
                         <Link to="/admin/users">Usuários</Link>
                         <Link to="/admin/audit-logs">Auditoria</Link>
                     </>

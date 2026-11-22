@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { studentDashboardService } from '../../services/studentDashboardService'
-import { examAreaLabels } from '../../types/examArea'
-import type { StudentDashboard } from '../../types/studentDashboard'
+import { studentDashboardService } from '../../../services/studentDashboardService'
+import { examAreaLabels } from '../../../types/examArea'
+import type { StudentDashboard } from '../../../types/studentDashboard'
 import { DashboardEvolutionChart } from './DashboardEvolutionChart'
-import { formatPercentage } from './PerformanceSummary'
-import './SimulationsPage.css'
+import { formatPercentage } from '../components/PerformanceSummary'
+import '../simulations/SimulationsPage.css'
 import './StudentDashboardPage.css'
 
 const modalities = {
@@ -25,7 +25,7 @@ export function StudentDashboardPage() {
                 <p className="lead">Acompanhe seu desempenho nas atividades finalizadas.</p>
             </div>
             <div className="dashboard-switch" role="group" aria-label="Modalidade">
-                {(Object.keys(modalities) as Modality[]).map(item => (
+                {(Object.keys(modalities) as Modality[]).map((item) => (
                     <button key={item} type="button" aria-pressed={item === modality} onClick={() => setModality(item)}>
                         {modalities[item].label}
                     </button>
@@ -45,33 +45,56 @@ function DashboardResults({ modality }: { modality: Modality }) {
     useEffect(() => {
         let active = true
         studentDashboardService[modality]().then(
-            data => { if (active) setResult(data) },
-            () => { if (active) setError(true) },
+            (data) => {
+                if (active) setResult(data)
+            },
+            () => {
+                if (active) setError(true)
+            }
         )
-        return () => { active = false }
+        return () => {
+            active = false
+        }
     }, [modality, attempt])
 
-    if (error) return (
-        <div className="simulation-panel">
-            <p role="alert">Não foi possível carregar o desempenho.</p>
-            <button className="simulation-secondary-button" type="button" onClick={() => {
-                setError(false)
-                setAttempt(value => value + 1)
-            }}>Tentar novamente</button>
-        </div>
-    )
-    if (!result) return <div className="simulation-panel"><p role="status">Carregando desempenho...</p></div>
-    if (!result.completedActivities) return (
-        <div className="simulation-panel">
-            <p>{modality === 'simulations'
-                ? 'Você ainda não finalizou nenhum simulado geral.'
-                : 'Você ainda não finalizou nenhuma prática direcionada.'}</p>
-            <Link className="primary-button" to={options.path}>
-                Ir para {options.label.toLowerCase()}
-                <span aria-hidden="true" style={{ marginLeft: 10 }}>→</span>
-            </Link>
-        </div>
-    )
+    if (error)
+        return (
+            <div className="simulation-panel">
+                <p role="alert">Não foi possível carregar o desempenho.</p>
+                <button
+                    className="simulation-secondary-button"
+                    type="button"
+                    onClick={() => {
+                        setError(false)
+                        setAttempt((value) => value + 1)
+                    }}
+                >
+                    Tentar novamente
+                </button>
+            </div>
+        )
+    if (!result)
+        return (
+            <div className="simulation-panel">
+                <p role="status">Carregando desempenho...</p>
+            </div>
+        )
+    if (!result.completedActivities)
+        return (
+            <div className="simulation-panel">
+                <p>
+                    {modality === 'simulations'
+                        ? 'Você ainda não finalizou nenhum simulado geral.'
+                        : 'Você ainda não finalizou nenhuma prática direcionada.'}
+                </p>
+                <Link className="primary-button" to={options.path}>
+                    Ir para {options.label.toLowerCase()}
+                    <span aria-hidden="true" style={{ marginLeft: 10 }}>
+                        →
+                    </span>
+                </Link>
+            </div>
+        )
 
     const indicators = [
         [options.activity, result.completedActivities],
@@ -85,23 +108,33 @@ function DashboardResults({ modality }: { modality: Modality }) {
         <>
             <dl className="dashboard-indicators" aria-label="Resumo de desempenho">
                 {indicators.map(([label, value]) => (
-                    <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
+                    <div key={label}>
+                        <dt>{label}</dt>
+                        <dd>{value}</dd>
+                    </div>
                 ))}
             </dl>
             <section className="simulation-panel dashboard-chart" aria-labelledby="dashboard-chart-title">
                 <h2 id="dashboard-chart-title">Aproveitamento por área do ENEM</h2>
-                {result.areas.length === 0 ? <p>Não há resultados por área disponíveis.</p> : (
+                {result.areas.length === 0 ? (
+                    <p>Não há resultados por área disponíveis.</p>
+                ) : (
                     <ul>
-                        {result.areas.map(area => (
+                        {result.areas.map((area) => (
                             <li key={area.examArea}>
                                 <div className="dashboard-chart-heading">
                                     <strong>{examAreaLabels[area.examArea]}</strong>
-                                    <span>{formatPercentage(area.accuracyPercentage)} · {area.classification}</span>
+                                    <span>
+                                        {formatPercentage(area.accuracyPercentage)} · {area.classification}
+                                    </span>
                                 </div>
                                 <div className="dashboard-bar" aria-hidden="true">
                                     <span style={{ width: `${area.accuracyPercentage}%` }} />
                                 </div>
-                                <small>{area.correctAnswers} acertos · {area.incorrectAnswers} erros · {area.totalQuestions} questões</small>
+                                <small>
+                                    {area.correctAnswers} acertos · {area.incorrectAnswers} erros ·{' '}
+                                    {area.totalQuestions} questões
+                                </small>
                             </li>
                         ))}
                     </ul>

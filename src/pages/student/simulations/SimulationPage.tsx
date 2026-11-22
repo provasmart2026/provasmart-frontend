@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ApiError } from '../../services/api'
-import { simulationService } from '../../services/simulationService'
-import type { Simulation } from '../../types/simulation'
-import { QuestionMap } from './QuestionMap'
-import { QuestionReportForm } from '../../components/QuestionReportForm'
+import { ApiError } from '../../../services/api'
+import { simulationService } from '../../../services/simulationService'
+import type { Simulation } from '../../../types/simulation'
+import { QuestionMap } from '../components/QuestionMap'
+import { QuestionReportForm } from '../../../components/QuestionReportForm'
 import './SimulationsPage.css'
 
 async function saveAndConfirmAnswer(simulationId: string, questionId: string, alternativeId: string) {
@@ -64,7 +64,15 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
     const answeredCount = questions.filter((question) => question.selectedAlternativeId).length
 
     async function saveLatestSelectedAlternative(alternativeId: string) {
-        if (!simulationId || !question || simulation?.status !== 'EM_ANDAMENTO' || finishing || cancelling || selectedAlternativeId === alternativeId) return
+        if (
+            !simulationId ||
+            !question ||
+            simulation?.status !== 'EM_ANDAMENTO' ||
+            finishing ||
+            cancelling ||
+            selectedAlternativeId === alternativeId
+        )
+            return
         latestSelectedAlternativeId.current = alternativeId
         setPendingAlternativeId(alternativeId)
         setError(null)
@@ -125,7 +133,12 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
 
     async function cancel() {
         if (!simulationId || simulation?.status !== 'EM_ANDAMENTO' || mutationPending.current) return
-        if (!window.confirm('Tem certeza que deseja cancelar este simulado? Após o cancelamento, ele não poderá ser retomado.')) return
+        if (
+            !window.confirm(
+                'Tem certeza que deseja cancelar este simulado? Após o cancelamento, ele não poderá ser retomado.'
+            )
+        )
+            return
         mutationPending.current = true
         setCancelling(true)
         setError(null)
@@ -166,8 +179,11 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
                 ) : simulation?.status === 'FINALIZADO' ? (
                     <>
                         <p role="status">Simulado finalizado com sucesso.</p>
-                        <button className="primary-button" type="button"
-                            onClick={() => navigate(`/simulados/${encodeURIComponent(simulation.id)}/desempenho`)}>
+                        <button
+                            className="primary-button"
+                            type="button"
+                            onClick={() => navigate(`/simulados/${encodeURIComponent(simulation.id)}/desempenho`)}
+                        >
                             Ver análise
                         </button>
                     </>
@@ -208,9 +224,21 @@ function SimulationSession({ simulationId }: { simulationId: string | undefined 
                             <p className="supporting-copy simulation-save-status" role="status">
                                 {saving ? 'Salvando resposta...' : ''}
                             </p>
-                            {simulation?.status === 'EM_ANDAMENTO' && <QuestionReportForm key={question.id}
-                                origin="SIMULADO" activityId={simulation.id} questionId={question.id} disabled={busy} />}
-                            <QuestionMap questions={questions} currentIndex={currentIndex} disabled={busy} onSelect={goToQuestion} />
+                            {simulation?.status === 'EM_ANDAMENTO' && (
+                                <QuestionReportForm
+                                    key={question.id}
+                                    origin="SIMULADO"
+                                    activityId={simulation.id}
+                                    questionId={question.id}
+                                    disabled={busy}
+                                />
+                            )}
+                            <QuestionMap
+                                questions={questions}
+                                currentIndex={currentIndex}
+                                disabled={busy}
+                                onSelect={goToQuestion}
+                            />
                             <div className="simulation-navigation">
                                 <button
                                     className="simulation-secondary-button"
