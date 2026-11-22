@@ -1,0 +1,9 @@
+.email-reveal {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+
+.email-reveal [role='alert'] {
+  color: var(--rose-600);
+}

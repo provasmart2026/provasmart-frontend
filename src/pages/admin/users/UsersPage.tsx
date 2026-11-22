@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { EmailReveal } from '../../../components/EmailReveal'
+import { useEmailReveal } from '../../../hooks/useEmailReveal'
 import { userService } from '../../../services/userService'
-import type { UserResponse } from '../../../types/user'
+import type { UserAdminSummary } from '../../../types/user'
 import type { Page } from '../../../types/api'
 import { formatDate } from '../../../utils/date'
 import './UsersPage.css'
@@ -10,11 +12,12 @@ type UserAction = 'activate' | 'deactivate' | 'delete'
 export function UsersPage() {
     const [page, setPage] = useState(0)
     const [revision, setRevision] = useState(0)
-    const [data, setData] = useState<Page<UserResponse> | null>(null)
+    const [data, setData] = useState<Page<UserAdminSummary> | null>(null)
     const [loading, setLoading] = useState(true)
     const [loadError, setLoadError] = useState(false)
     const [actionError, setActionError] = useState<string | null>(null)
     const [busyUserId, setBusyUserId] = useState<string | null>(null)
+    const { emailAccess, hideEmail, revealEmail } = useEmailReveal(userService.revealEmail)
     const actionPending = useRef(false)
     const mounted = useRef(false)
 
@@ -50,7 +53,12 @@ export function UsersPage() {
         }
     }, [page, revision])
 
-    async function handleAction(user: UserResponse, action: UserAction) {
+    function changePage(nextPage: number) {
+        hideEmail()
+        setPage(nextPage)
+    }
+
+    async function handleAction(user: UserAdminSummary, action: UserAction) {
         if (actionPending.current || loading || user.role !== 'ESTUDANTE') return
         if (action === 'delete' && !user.deletionRequested) return
         if (action === 'deactivate' && !window.confirm('Deseja desativar este usuário?')) return
@@ -65,6 +73,7 @@ export function UsersPage() {
         try {
             await userService[action](user.id)
             if (!mounted.current) return
+            hideEmail()
             setLoading(true)
             const deletedLastUserOnPage = action === 'delete' && data?.content.length === 1 && page > 0
             if (deletedLastUserOnPage) setPage(page - 1)
@@ -129,7 +138,14 @@ export function UsersPage() {
                                 {data.content.map((user) => (
                                     <tr key={user.id}>
                                         <th scope="row">{user.name}</th>
-                                        <td>{user.email}</td>
+                                        <td>
+                                            <EmailReveal
+                                                access={emailAccess?.id === user.id ? emailAccess : null}
+                                                disabled={actionsDisabled}
+                                                onReveal={() => void revealEmail(user.id)}
+                                                onHide={hideEmail}
+                                            />
+                                        </td>
                                         <td>{user.role === 'ADMIN' ? 'Administrador' : 'Estudante'}</td>
                                         <td>
                                             <span className="users-status">{user.active ? 'Ativo' : 'Inativo'}</span>
@@ -193,7 +209,7 @@ export function UsersPage() {
                         <button
                             type="button"
                             disabled={data.first || paginationDisabled}
-                            onClick={() => setPage(data.number - 1)}
+                            onClick={() => changePage(data.number - 1)}
                         >
                             Anterior
                         </button>
@@ -203,7 +219,7 @@ export function UsersPage() {
                         <button
                             type="button"
                             disabled={data.last || paginationDisabled}
-                            onClick={() => setPage(data.number + 1)}
+                            onClick={() => changePage(data.number + 1)}
                         >
                             Próxima
                         </button>

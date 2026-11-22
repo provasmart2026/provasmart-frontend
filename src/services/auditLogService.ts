@@ -5,4 +5,5 @@ import { apiRequest } from './api'
 export const auditLogService = {
     list: (page = 0, size = 15) =>
         apiRequest<Page<AuditLog>>(`/audit-logs?page=${page}&size=${size}&sort=occurredAt,desc`, { method: 'GET' }),
+    revealEmail: (id: string) => apiRequest<{ email: string }>(`/audit-logs/${encodeURIComponent(id)}/email`),
 }

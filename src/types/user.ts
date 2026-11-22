@@ -15,3 +15,8 @@ export type UserResponse = {
     createdAt: string
     updatedAt: string | null
 }
+
+export type UserAdminSummary = Pick<
+    UserResponse,
+    'id' | 'name' | 'role' | 'active' | 'deletionRequested' | 'deletionRequestedAt' | 'createdAt'
+>
