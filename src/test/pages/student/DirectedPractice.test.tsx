@@ -1,20 +1,27 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { DirectedPracticeStartPage } from '../../../pages/student/DirectedPracticeStartPage'
-import { DirectedPracticePage } from '../../../pages/student/DirectedPracticePage'
-import { DirectedPracticeAnalysisPage } from '../../../pages/student/DirectedPracticeAnalysisPage'
+import { DirectedPracticeStartPage } from '../../../pages/student/directed-practice/DirectedPracticeStartPage'
+import { DirectedPracticePage } from '../../../pages/student/directed-practice/DirectedPracticePage'
+import { DirectedPracticeAnalysisPage } from '../../../pages/student/directed-practice/DirectedPracticeAnalysisPage'
 import { directedPracticeService } from '../../../services/directedPracticeService'
 import { ApiError } from '../../../services/api'
 import type { DirectedPractice } from '../../../types/directedPractice'
 
 function practice(answered = false): DirectedPractice {
     return {
-        id: 'practice-1', sourceSimulationId: 'simulation-1', area: 'MATEMATICA',
-        status: 'EM_ANDAMENTO', startedAt: '2026-10-16T10:00:00', finishedAt: null,
+        id: 'practice-1',
+        sourceSimulationId: 'simulation-1',
+        area: 'MATEMATICA',
+        status: 'EM_ANDAMENTO',
+        startedAt: '2026-10-16T10:00:00',
+        finishedAt: null,
         questions: Array.from({ length: 20 }, (_, index) => ({
-            id: `pq-${index + 1}`, position: index + 1, statement: `Enunciado ${index + 1}`,
-            discipline: 'Matemática', subject: 'Funções',
+            id: `pq-${index + 1}`,
+            position: index + 1,
+            statement: `Enunciado ${index + 1}`,
+            discipline: 'Matemática',
+            subject: 'Funções',
             alternatives: [{ id: `pa-${index + 1}`, letter: 'A', text: 'Opção A' }],
             selectedAlternativeId: answered ? `pa-${index + 1}` : null,
         })),
@@ -22,11 +29,15 @@ function practice(answered = false): DirectedPractice {
 }
 
 function renderRoute(route: string) {
-    render(<MemoryRouter initialEntries={[route]}><Routes>
-        <Route path="/praticas" element={<DirectedPracticeStartPage />} />
-        <Route path="/praticas/:practiceId" element={<DirectedPracticePage />} />
-        <Route path="/praticas/:practiceId/analise" element={<DirectedPracticeAnalysisPage />} />
-    </Routes></MemoryRouter>)
+    render(
+        <MemoryRouter initialEntries={[route]}>
+            <Routes>
+                <Route path="/praticas" element={<DirectedPracticeStartPage />} />
+                <Route path="/praticas/:practiceId" element={<DirectedPracticePage />} />
+                <Route path="/praticas/:practiceId/analise" element={<DirectedPracticeAnalysisPage />} />
+            </Routes>
+        </MemoryRouter>
+    )
 }
 
 describe('Prática direcionada', () => {
@@ -34,7 +45,9 @@ describe('Prática direcionada', () => {
 
     it('mostra o motivo informado quando não há questões suficientes', async () => {
         vi.spyOn(directedPracticeService, 'list').mockResolvedValue([])
-        vi.spyOn(directedPracticeService, 'create').mockRejectedValue(new ApiError(409, 'Erro', 'Não há 20 questões ativas disponíveis para a área selecionada.'))
+        vi.spyOn(directedPracticeService, 'create').mockRejectedValue(
+            new ApiError(409, 'Erro', 'Não há 20 questões ativas disponíveis para a área selecionada.')
+        )
         renderRoute('/praticas')
         fireEvent.click(await screen.findByRole('button', { name: 'Iniciar prática direcionada' }))
         expect(await screen.findByRole('alert')).toHaveTextContent('Não há 20 questões ativas')
@@ -52,7 +65,10 @@ describe('Prática direcionada', () => {
         vi.spyOn(directedPracticeService, 'list').mockResolvedValue([practice()])
         const create = vi.spyOn(directedPracticeService, 'create')
         renderRoute('/praticas')
-        expect(await screen.findByRole('link', { name: 'Continuar prática de Matemática' })).toHaveAttribute('href', '/praticas/practice-1')
+        expect(await screen.findByRole('link', { name: 'Continuar prática de Matemática' })).toHaveAttribute(
+            'href',
+            '/praticas/practice-1'
+        )
         expect(screen.queryByRole('button', { name: 'Iniciar prática direcionada' })).not.toBeInTheDocument()
         expect(create).not.toHaveBeenCalled()
     })
@@ -71,7 +87,9 @@ describe('Prática direcionada', () => {
     it('finaliza com confirmação e mostra estado concluído antes da análise', async () => {
         vi.spyOn(directedPracticeService, 'get').mockResolvedValue(practice(true))
         const finish = vi.spyOn(directedPracticeService, 'finish').mockResolvedValue({
-            ...practice(true), status: 'FINALIZADA', finishedAt: '2026-10-16T11:00:00',
+            ...practice(true),
+            status: 'FINALIZADA',
+            finishedAt: '2026-10-16T11:00:00',
         })
         const analysis = vi.spyOn(directedPracticeService, 'analysis')
         vi.spyOn(window, 'confirm').mockReturnValue(true)
@@ -81,14 +99,21 @@ describe('Prática direcionada', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Finalizar prática' }))
         await waitFor(() => expect(finish).toHaveBeenCalledExactlyOnceWith('practice-1'))
         expect(await screen.findByText('Prática finalizada.')).toBeInTheDocument()
-        expect(screen.getByRole('link', { name: 'Ver correção e análise' })).toHaveAttribute('href', '/praticas/practice-1/analise')
+        expect(screen.getByRole('link', { name: 'Ver correção e análise' })).toHaveAttribute(
+            'href',
+            '/praticas/practice-1/analise'
+        )
         expect(analysis).not.toHaveBeenCalled()
     })
 
     it('centraliza o histórico na nova tela', async () => {
-        vi.spyOn(directedPracticeService, 'list').mockResolvedValue([{
-            ...practice(), status: 'CANCELADA', finishedAt: '2026-10-16T11:00:00',
-        }])
+        vi.spyOn(directedPracticeService, 'list').mockResolvedValue([
+            {
+                ...practice(),
+                status: 'CANCELADA',
+                finishedAt: '2026-10-16T11:00:00',
+            },
+        ])
         renderRoute('/praticas')
         await screen.findByRole('button', { name: 'Iniciar prática direcionada' })
         expect(screen.queryByRole('link', { name: 'Ver histórico de práticas' })).not.toBeInTheDocument()
@@ -98,20 +123,46 @@ describe('Prática direcionada', () => {
 
     it('mostra resumo visual, mapa e correção sob demanda somente na análise final', async () => {
         vi.spyOn(directedPracticeService, 'analysis').mockResolvedValue({
-            practiceId: 'practice-1', area: 'MATEMATICA', total: 20, correct: 12, percentage: 60,
+            practiceId: 'practice-1',
+            area: 'MATEMATICA',
+            total: 20,
+            correct: 12,
+            percentage: 60,
             disciplines: [{ name: 'Matemática', discipline: null, total: 20, correct: 12, percentage: 60 }],
             subjects: [{ name: 'Funções', discipline: 'Matemática', total: 20, correct: 12, percentage: 60 }],
-            questions: [{ questionId: 'pq-1', position: 1, statement: 'Enunciado 1',
-                explanation: 'Explicação histórica', discipline: 'Matemática', subject: 'Funções',
-                selectedAlternativeId: 'pa-b', correctAlternativeId: 'pa-a', selectedLetter: 'B',
-                correctLetter: 'A', correct: false,
-                alternatives: [{ id: 'pa-a', letter: 'A', text: 'Certa' }, { id: 'pa-b', letter: 'B', text: 'Errada' }],
-            }, { questionId: 'pq-2', position: 2, statement: 'Enunciado 2',
-                explanation: 'Explicação da segunda questão', discipline: 'Matemática', subject: 'Funções',
-                selectedAlternativeId: 'pa-c', correctAlternativeId: 'pa-c', selectedLetter: 'C',
-                correctLetter: 'C', correct: true,
-                alternatives: [{ id: 'pa-c', letter: 'C', text: 'Certa' }],
-            }],
+            questions: [
+                {
+                    questionId: 'pq-1',
+                    position: 1,
+                    statement: 'Enunciado 1',
+                    explanation: 'Explicação histórica',
+                    discipline: 'Matemática',
+                    subject: 'Funções',
+                    selectedAlternativeId: 'pa-b',
+                    correctAlternativeId: 'pa-a',
+                    selectedLetter: 'B',
+                    correctLetter: 'A',
+                    correct: false,
+                    alternatives: [
+                        { id: 'pa-a', letter: 'A', text: 'Certa' },
+                        { id: 'pa-b', letter: 'B', text: 'Errada' },
+                    ],
+                },
+                {
+                    questionId: 'pq-2',
+                    position: 2,
+                    statement: 'Enunciado 2',
+                    explanation: 'Explicação da segunda questão',
+                    discipline: 'Matemática',
+                    subject: 'Funções',
+                    selectedAlternativeId: 'pa-c',
+                    correctAlternativeId: 'pa-c',
+                    selectedLetter: 'C',
+                    correctLetter: 'C',
+                    correct: true,
+                    alternatives: [{ id: 'pa-c', letter: 'C', text: 'Certa' }],
+                },
+            ],
         })
         renderRoute('/praticas/practice-1/analise')
         expect(await screen.findByRole('heading', { name: 'Análise de desempenho' })).toBeInTheDocument()

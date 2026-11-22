@@ -11,6 +11,7 @@ const catalogRequest = vi.fn<(config: AxiosRequestConfig) => Promise<{ data: unk
 function mockQuestionRequests() {
     const request = vi.fn<(config: AxiosRequestConfig) => Promise<{ data: unknown }>>()
     vi.spyOn(api, 'request').mockImplementation(async (config) => {
+        if (config.url === '/question-reports/pending-count') return { data: { count: 0 } } as never
         return (await (config.url?.startsWith('/questions') ? request(config) : catalogRequest(config))) as never
     })
     return request

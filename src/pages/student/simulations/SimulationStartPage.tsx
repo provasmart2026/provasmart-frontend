@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { simulationService } from '../../services/simulationService'
-import { ApiError } from '../../services/api'
-import type { Simulation } from '../../types/simulation'
+import { simulationService } from '../../../services/simulationService'
+import { ApiError } from '../../../services/api'
+import type { Simulation } from '../../../types/simulation'
 import './SimulationsPage.css'
 
 export function SimulationStartPage() {
     const navigate = useNavigate()
     const { state }: { state: unknown } = useLocation()
     const simulationCancelled =
-        typeof state === 'object' && state !== null && 'simulationCancelled' in state && state.simulationCancelled === true
+        typeof state === 'object' &&
+        state !== null &&
+        'simulationCancelled' in state &&
+        state.simulationCancelled === true
     const [creating, setCreating] = useState(false)
     const [currentSimulation, setCurrentSimulation] = useState<Simulation | null>(null)
     const [loading, setLoading] = useState(true)
@@ -40,8 +43,11 @@ export function SimulationStartPage() {
         } catch (error) {
             if (isActive()) {
                 setLoadFailed(true)
-                setError(error instanceof ApiError && error.backendMessage
-                    ? error.backendMessage : 'Não foi possível consultar o simulado em andamento. Tente novamente.')
+                setError(
+                    error instanceof ApiError && error.backendMessage
+                        ? error.backendMessage
+                        : 'Não foi possível consultar o simulado em andamento. Tente novamente.'
+                )
             }
         } finally {
             if (isActive()) setLoading(false)
@@ -50,7 +56,12 @@ export function SimulationStartPage() {
 
     async function cancelSimulation() {
         if (!currentSimulation || pending.current) return
-        if (!window.confirm('Tem certeza que deseja cancelar este simulado? Após o cancelamento, ele não poderá ser retomado.')) return
+        if (
+            !window.confirm(
+                'Tem certeza que deseja cancelar este simulado? Após o cancelamento, ele não poderá ser retomado.'
+            )
+        )
+            return
         pending.current = true
         setCancelling(true)
         setError(null)
@@ -63,8 +74,11 @@ export function SimulationStartPage() {
             }
         } catch (error) {
             if (mounted.current)
-                setError(error instanceof ApiError && error.backendMessage
-                    ? error.backendMessage : 'Não foi possível cancelar o simulado. Tente novamente.')
+                setError(
+                    error instanceof ApiError && error.backendMessage
+                        ? error.backendMessage
+                        : 'Não foi possível cancelar o simulado. Tente novamente.'
+                )
         } finally {
             pending.current = false
             if (mounted.current) setCancelling(false)
@@ -105,29 +119,43 @@ export function SimulationStartPage() {
                     Reserve um momento para se concentrar e dar o próximo passo na sua preparação.
                 </p>
                 {error && <p role="alert">{error}</p>}
-                {loading ? <p role="status">Consultando simulado em andamento...</p> : loadFailed ? (
+                {loading ? (
+                    <p role="status">Consultando simulado em andamento...</p>
+                ) : loadFailed ? (
                     <button className="simulation-secondary-button" type="button" onClick={() => void loadCurrent()}>
                         Tentar novamente
                     </button>
                 ) : currentSimulation ? (
                     <>
                         <p className="supporting-copy">
-                            Você possui um simulado em andamento. {currentSimulation.questions.filter(question => question.selectedAlternativeId).length} de {currentSimulation.questions.length} questões respondidas.
+                            Você possui um simulado em andamento.{' '}
+                            {currentSimulation.questions.filter((question) => question.selectedAlternativeId).length} de{' '}
+                            {currentSimulation.questions.length} questões respondidas.
                         </p>
                         <div className="simulation-navigation">
-                            <button className="primary-button" type="button" disabled={cancelling}
-                                onClick={() => navigate(`/simulados/${encodeURIComponent(currentSimulation.id)}`)}>
+                            <button
+                                className="primary-button"
+                                type="button"
+                                disabled={cancelling}
+                                onClick={() => navigate(`/simulados/${encodeURIComponent(currentSimulation.id)}`)}
+                            >
                                 Continuar simulado
                             </button>
-                            <button className="simulation-secondary-button" type="button" disabled={cancelling}
-                                onClick={() => void cancelSimulation()}>
+                            <button
+                                className="simulation-secondary-button"
+                                type="button"
+                                disabled={cancelling}
+                                onClick={() => void cancelSimulation()}
+                            >
                                 {cancelling ? 'Cancelando simulado...' : 'Cancelar simulado'}
                             </button>
                         </div>
                     </>
-                ) : <button className="primary-button" type="button" disabled={creating} onClick={startSimulation}>
-                    <span role="status">{creating ? 'Criando simulado...' : 'Iniciar simulado'}</span>
-                </button>}
+                ) : (
+                    <button className="primary-button" type="button" disabled={creating} onClick={startSimulation}>
+                        <span role="status">{creating ? 'Criando simulado...' : 'Iniciar simulado'}</span>
+                    </button>
+                )}
             </div>
         </section>
     )

@@ -9,7 +9,11 @@ import { SignUpCallout } from './SignUpCallout'
 export function Home() {
     const location = useLocation()
     const session = useSession()
-    const startPath = !session.authenticated ? '/cadastro' : session.role === 'ADMIN' ? '/admin/questions' : '/simulados'
+    const startPath = !session.authenticated
+        ? '/cadastro'
+        : session.role === 'ADMIN'
+          ? '/admin/questions'
+          : '/simulados'
 
     useEffect(() => {
         if (location.hash === '#como-funciona' || location.hash === '#recursos') {

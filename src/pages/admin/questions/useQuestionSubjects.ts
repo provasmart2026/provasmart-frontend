@@ -146,7 +146,8 @@ export function useQuestionSubjects(
     }
 
     async function createSubject() {
-        const cannotCreateSubject = !enteringNewSubject || creating || selectedSubjectId || !disciplineId || loading || error
+        const cannotCreateSubject =
+            !enteringNewSubject || creating || selectedSubjectId || !disciplineId || loading || error
         if (cannotCreateSubject) return
         const name = newSubjectName.trim()
         if (!name || name.length > SUBJECT_NAME_MAX_LENGTH) {

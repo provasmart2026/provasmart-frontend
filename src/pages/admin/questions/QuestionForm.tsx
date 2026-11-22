@@ -65,11 +65,7 @@ export function QuestionForm({
         >
             <fieldset disabled={saving}>
                 <legend>Dados da questão</legend>
-                <QuestionSubjectFields
-                    id={id}
-                    subjectId={value.subjectId}
-                    options={options}
-                />
+                <QuestionSubjectFields id={id} subjectId={value.subjectId} options={options} />
                 <label htmlFor={`${id}-statement`}>Enunciado</label>
                 <textarea
                     id={`${id}-statement`}

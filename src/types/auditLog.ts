@@ -1,7 +1,8 @@
 export type AuditLog = {
     id: string
     actorId: string | null
-    actorEmail: string | null
+    actorName: string | null
+    hasEmail: boolean
     action: string
     resource: string
     resourceId: string | null

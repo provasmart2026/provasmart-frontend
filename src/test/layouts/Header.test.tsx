@@ -74,7 +74,15 @@ describe('Header', () => {
         ).toEqual(
             role === 'ADMIN'
                 ? ['Início', 'Questões', 'Reportes', 'Usuários', 'Auditoria', 'Meu perfil']
-                : ['Início', 'Simulados', 'Prática direcionada', 'Plano de estudos', 'Meu Dashboard', 'Histórico', 'Meu perfil']
+                : [
+                      'Início',
+                      'Simulados',
+                      'Prática direcionada',
+                      'Plano de estudos',
+                      'Meu Dashboard',
+                      'Histórico',
+                      'Meu perfil',
+                  ]
         )
     })
 

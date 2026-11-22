@@ -8,7 +8,8 @@ import { AuditLogsPage } from '../../../pages/admin/audit/AuditLogsPage'
 const log: AuditLog = {
     id: 'log-uuid',
     actorId: 'actor-uuid',
-    actorEmail: 'admin@provasmart.com',
+    actorName: 'Administrador',
+    hasEmail: true,
     action: 'CREATE',
     resource: 'QUESTIONS',
     resourceId: 'question-uuid',
@@ -37,10 +38,13 @@ describe('Auditoria de logs', () => {
     afterEach(() => vi.restoreAllMocks())
 
     it('carrega e apresenta os dados de rastreabilidade', async () => {
-        const request = vi.spyOn(api, 'request').mockResolvedValue({ data: page([log]) })
+        const request = vi
+            .spyOn(api, 'request')
+            .mockResolvedValueOnce({ data: page([log]) })
+            .mockResolvedValueOnce({ data: { email: 'admin@provasmart.com' } })
         render(<AuditLogsPage />)
 
-        const row = within(await screen.findByRole('row', { name: /admin@provasmart.com/ }))
+        const row = within(await screen.findByRole('row', { name: /Administrador/ }))
         expect(request).toHaveBeenCalledWith({
             url: '/audit-logs?page=0&size=15&sort=occurredAt,desc',
             method: 'GET',
@@ -54,6 +58,10 @@ describe('Auditoria de logs', () => {
         expect(row.getByText('actor-uuid')).toBeInTheDocument()
         expect(row.getByText('question-uuid')).toBeInTheDocument()
         expect(row.getByText('log-uuid')).toBeInTheDocument()
+        expect(row.queryByText('admin@provasmart.com')).not.toBeInTheDocument()
+        fireEvent.click(row.getByRole('button', { name: 'Mostrar e-mail' }))
+        expect(await row.findByText('admin@provasmart.com')).toBeInTheDocument()
+        expect(request).toHaveBeenLastCalledWith({ url: '/audit-logs/log-uuid/email' })
     })
 
     it('navega entre as páginas', async () => {
@@ -77,9 +85,11 @@ describe('Auditoria de logs', () => {
             .mockRejectedValueOnce(new Error('falha interna'))
             .mockResolvedValueOnce({ data: page([log]) })
         render(<AuditLogsPage />)
-        expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível carregar os registros de auditoria.')
+        expect(await screen.findByRole('alert')).toHaveTextContent(
+            'Não foi possível carregar os registros de auditoria.'
+        )
         fireEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }))
-        await screen.findByText('admin@provasmart.com')
+        await screen.findByText('Administrador')
         expect(request).toHaveBeenCalledTimes(2)
     })
 })

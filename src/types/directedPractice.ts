@@ -35,7 +35,13 @@ export type DirectedPractice = {
     questions: PracticeQuestion[]
 }
 
-export type PerformanceBreakdown = { name: string; discipline: string | null; total: number; correct: number; percentage: number }
+export type PerformanceBreakdown = {
+    name: string
+    discipline: string | null
+    total: number
+    correct: number
+    percentage: number
+}
 
 export type PracticeReview = {
     questionId: string

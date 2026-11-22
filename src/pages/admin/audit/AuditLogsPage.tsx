@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { EmailReveal } from '../../../components/EmailReveal'
+import { useEmailReveal } from '../../../hooks/useEmailReveal'
 import { auditLogService } from '../../../services/auditLogService'
 import type { Page } from '../../../types/api'
 import type { AuditLog } from '../../../types/auditLog'
@@ -10,6 +12,8 @@ const actionLabels: Record<string, string> = {
     VERIFY_2FA: 'Validação do código',
     REQUEST_PASSWORD_RESET: 'Solicitação de nova senha',
     RESET_PASSWORD: 'Redefinição de senha',
+    REVEAL_EMAIL: 'Revelou e-mail',
+    REVEAL_AUDIT_EMAIL: 'Revelou e-mail da auditoria',
     CREATE: 'Criação',
     READ: 'Consulta',
     UPDATE: 'Atualização',
@@ -41,6 +45,7 @@ export function AuditLogsPage() {
     const [data, setData] = useState<Page<AuditLog> | null>(null)
     const [loading, setLoading] = useState(true)
     const [loadError, setLoadError] = useState(false)
+    const { emailAccess, hideEmail, revealEmail } = useEmailReveal(auditLogService.revealEmail)
 
     useEffect(() => {
         let cancelled = false
@@ -67,6 +72,16 @@ export function AuditLogsPage() {
         }
     }, [page, revision])
 
+    function refresh() {
+        hideEmail()
+        setRevision((value) => value + 1)
+    }
+
+    function changePage(nextPage: number) {
+        hideEmail()
+        setPage(nextPage)
+    }
+
     return (
         <section className="audit-page" aria-labelledby="audit-title">
             <div className="audit-heading">
@@ -75,7 +90,7 @@ export function AuditLogsPage() {
                     <h1 id="audit-title">Auditoria de logs</h1>
                     <p className="lead">Consulte as operações realizadas no sistema e acompanhe sua rastreabilidade.</p>
                 </div>
-                <button type="button" disabled={loading} onClick={() => setRevision((value) => value + 1)}>
+                <button type="button" disabled={loading} onClick={refresh}>
                     {loading ? 'Atualizando...' : 'Atualizar registros'}
                 </button>
             </div>
@@ -84,7 +99,7 @@ export function AuditLogsPage() {
             {loadError && (
                 <div className="audit-alert" role="alert">
                     <p>Não foi possível carregar os registros de auditoria.</p>
-                    <button type="button" disabled={loading} onClick={() => setRevision((value) => value + 1)}>
+                    <button type="button" disabled={loading} onClick={refresh}>
                         Tentar novamente
                     </button>
                 </div>
@@ -107,6 +122,7 @@ export function AuditLogsPage() {
                                 <tr>
                                     <th scope="col">Data e hora</th>
                                     <th scope="col">Usuário</th>
+                                    <th scope="col">E-mail do usuário</th>
                                     <th scope="col">Ação</th>
                                     <th scope="col">Recurso</th>
                                     <th scope="col">Método</th>
@@ -124,9 +140,21 @@ export function AuditLogsPage() {
                                         <td>
                                             <time dateTime={log.occurredAt}>{formatDate(log.occurredAt)}</time>
                                         </td>
-                                        <td>{textOrFallback(log.actorEmail, 'Não identificado')}</td>
+                                        <td>{log.actorId ? (log.actorName ?? 'Conta indisponível') : null}</td>
                                         <td>
-                                            <span className="audit-action">{actionLabels[log.action] ?? log.action}</span>
+                                            {log.hasEmail && (
+                                                <EmailReveal
+                                                    access={emailAccess?.id === log.id ? emailAccess : null}
+                                                    disabled={loading || loadError}
+                                                    onReveal={() => void revealEmail(log.id)}
+                                                    onHide={hideEmail}
+                                                />
+                                            )}
+                                        </td>
+                                        <td>
+                                            <span className="audit-action">
+                                                {actionLabels[log.action] ?? log.action}
+                                            </span>
                                             <small>{log.action}</small>
                                         </td>
                                         <td>{log.resource}</td>
@@ -137,12 +165,16 @@ export function AuditLogsPage() {
                                             <code>{log.endpoint}</code>
                                         </td>
                                         <td>
-                                            <span className={`audit-status audit-status--${log.success ? 'success' : 'error'}`}>
+                                            <span
+                                                className={`audit-status audit-status--${log.success ? 'success' : 'error'}`}
+                                            >
                                                 {log.statusCode} · {statusLabels[log.statusCode] ?? 'Resposta HTTP'}
                                             </span>
                                         </td>
                                         <td>
-                                            <span className={`audit-result audit-result--${log.success ? 'success' : 'error'}`}>
+                                            <span
+                                                className={`audit-result audit-result--${log.success ? 'success' : 'error'}`}
+                                            >
                                                 {log.success ? 'Sucesso' : 'Falha'}
                                             </span>
                                         </td>
@@ -170,14 +202,14 @@ export function AuditLogsPage() {
                             <button
                                 type="button"
                                 disabled={data.first || loading}
-                                onClick={() => setPage(data.number - 1)}
+                                onClick={() => changePage(data.number - 1)}
                             >
                                 Anterior
                             </button>
                             <button
                                 type="button"
                                 disabled={data.last || loading}
-                                onClick={() => setPage(data.number + 1)}
+                                onClick={() => changePage(data.number + 1)}
                             >
                                 Próxima
                             </button>

@@ -8,8 +8,12 @@ import { legalDocumentService } from '../../../services/legalDocumentService'
 
 vi.mock('../../../services/legalDocumentService', () => ({ legalDocumentService: { current: vi.fn() } }))
 beforeEach(() => {
-    vi.mocked(legalDocumentService.current).mockImplementation(async type => ({
-        id: type, type, version: '1.1', effectiveAt: '2026-11-11T00:00:00', createdAt: '2026-11-11T00:00:00',
+    vi.mocked(legalDocumentService.current).mockImplementation(async (type) => ({
+        id: type,
+        type,
+        version: '1.1',
+        effectiveAt: '2026-11-11T00:00:00',
+        createdAt: '2026-11-11T00:00:00',
         title: type === 'TERMOS_DE_USO' ? fixtures.terms.title : fixtures.privacy.title,
         content: type === 'TERMOS_DE_USO' ? fixtures.terms : fixtures.privacy,
     }))
@@ -18,7 +22,11 @@ beforeEach(() => {
 describe('documentos legais', () => {
     it('oferece nova tentativa após falha no carregamento', async () => {
         vi.mocked(legalDocumentService.current).mockRejectedValueOnce(new Error('indisponível'))
-        render(<MemoryRouter><TermsPage /></MemoryRouter>)
+        render(
+            <MemoryRouter>
+                <TermsPage />
+            </MemoryRouter>
+        )
         expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível carregar o documento')
         fireEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }))
         expect(await screen.findByRole('heading', { name: '6. VLibras e acessibilidade' })).toBeInTheDocument()
@@ -44,26 +52,30 @@ describe('documentos legais', () => {
     })
 })
 
-
 describe('retorno dos documentos legais', () => {
-    it.each(['/cadastro', '/profile', '/simulados?pagina=2'])('retorna à origem %s mesmo após trocar de documento', (origin) => {
-        render(
-            <MemoryRouter initialEntries={[origin]}>
-                <Routes>
-                    <Route path="/termos-de-uso" element={<TermsPage />} />
-                    <Route path="/politica-de-privacidade" element={<PrivacyPage />} />
-                    <Route path="*" element={<p>Página de origem</p>} />
-                </Routes>
-                <Footer />
-            </MemoryRouter>
-        )
-        fireEvent.click(within(screen.getByRole('contentinfo')).getByRole('link', { name: 'Termos de uso' }))
-        expect(screen.getByRole('link', { name: '← Voltar' })).toHaveAttribute('href', origin)
-        fireEvent.click(within(screen.getByRole('contentinfo')).getByRole('link', { name: 'Política de privacidade' }))
-        expect(screen.getByRole('link', { name: '← Voltar' })).toHaveAttribute('href', origin)
-        fireEvent.click(screen.getByRole('link', { name: '← Voltar' }))
-        expect(screen.getByText('Página de origem')).toBeInTheDocument()
-    })
+    it.each(['/cadastro', '/profile', '/simulados?pagina=2'])(
+        'retorna à origem %s mesmo após trocar de documento',
+        (origin) => {
+            render(
+                <MemoryRouter initialEntries={[origin]}>
+                    <Routes>
+                        <Route path="/termos-de-uso" element={<TermsPage />} />
+                        <Route path="/politica-de-privacidade" element={<PrivacyPage />} />
+                        <Route path="*" element={<p>Página de origem</p>} />
+                    </Routes>
+                    <Footer />
+                </MemoryRouter>
+            )
+            fireEvent.click(within(screen.getByRole('contentinfo')).getByRole('link', { name: 'Termos de uso' }))
+            expect(screen.getByRole('link', { name: '← Voltar' })).toHaveAttribute('href', origin)
+            fireEvent.click(
+                within(screen.getByRole('contentinfo')).getByRole('link', { name: 'Política de privacidade' })
+            )
+            expect(screen.getByRole('link', { name: '← Voltar' })).toHaveAttribute('href', origin)
+            fireEvent.click(screen.getByRole('link', { name: '← Voltar' }))
+            expect(screen.getByText('Página de origem')).toBeInTheDocument()
+        }
+    )
 
     it.each(['/termos-de-uso', '/politica-de-privacidade'])('oferece o início ao abrir %s diretamente', (path) => {
         render(
