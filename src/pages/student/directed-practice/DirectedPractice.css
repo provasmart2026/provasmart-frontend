@@ -100,10 +100,14 @@
   font-weight: 700;
 }
 .practice-table-wrap {
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
 }
 .practice-subject-table {
   width: 100%;
+  min-width: 560px;
+  overflow-wrap: normal;
   border-collapse: collapse;
   background: white;
 }

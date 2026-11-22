@@ -185,7 +185,7 @@ function PerformanceView({ simulationId }: { simulationId: string | undefined })
                                         value={discipline.accuracyPercentage}
                                         aria-label={`Aproveitamento em ${discipline.disciplineName}`}
                                     />
-                                    <div className="performance-table-scroll">
+                                    <div className="performance-table-scroll" role="region" aria-label="Desempenho por assunto" tabIndex={0}>
                                         <table>
                                             <caption>Desempenho por assunto — {discipline.disciplineName}</caption>
                                             <thead>

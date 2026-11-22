@@ -9,7 +9,7 @@ type QuestionTableProps = {
 
 export function QuestionTable({ questions, totalElements, onEdit, onToggleActive }: QuestionTableProps) {
     return (
-        <div className="questions-table-wrap">
+        <div className="questions-table-wrap" role="region" aria-label="Lista de questões" tabIndex={0}>
             <table>
                 <caption className="supporting-copy">{totalElements} questões cadastradas</caption>
                 <thead>

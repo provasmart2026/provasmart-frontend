@@ -60,6 +60,8 @@
 }
 .admin-questions table {
   width: 100%;
+  min-width: 720px;
+  overflow-wrap: normal;
   border-collapse: collapse;
   text-align: left;
 }

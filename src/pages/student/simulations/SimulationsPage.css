@@ -6,6 +6,7 @@
 }
 
 .simulation-panel {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -136,8 +137,8 @@
 }
 
 .question-map button {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   background: white;
   color: var(--text-primary);
   border: 1px solid var(--border);

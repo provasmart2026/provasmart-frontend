@@ -311,6 +311,7 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
   margin-top: 24px;
 }
 .study-plan-day-navigation button:disabled {
@@ -328,5 +329,11 @@
   }
   .study-plan-activity-heading {
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .study-plan-day-navigation button {
+    flex: 1 1 140px;
   }
 }
