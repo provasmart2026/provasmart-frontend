@@ -45,6 +45,27 @@
 .question-report-form [role='alert'] {
   color: var(--rose-600);
 }
+.question-report-form .question-report-review-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #edcf8c;
+  border-inline-start: 4px solid #b97817;
+  border-radius: 8px;
+  background: #fff5df;
+  color: #553a14;
+}
+.question-report-review-alert strong {
+  display: block;
+  margin-bottom: 2px;
+}
+.question-report-review-icon {
+  flex: none;
+  color: #8b560c;
+  font-size: 18px;
+  line-height: 1.4;
+}
 .question-report-actions {
   display: flex;
   justify-content: flex-end;

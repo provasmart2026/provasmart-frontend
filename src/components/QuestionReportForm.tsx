@@ -20,6 +20,8 @@ const reasons: { value: QuestionReportReason; label: string }[] = [
     { value: 'OUTRO', label: 'Outro' },
 ]
 
+const underReviewMessage = 'Esta questão já recebeu reportes e está em análise pela equipe.'
+
 export function QuestionReportForm({
     origin,
     activityId,
@@ -134,7 +136,22 @@ export function QuestionReportForm({
                             <span id={`${id}-count`} className="question-report-count">
                                 {description.length}/1000 caracteres
                             </span>
-                            {error && <p role="alert">{error}</p>}
+                            {error === underReviewMessage ? (
+                                <div className="question-report-review-alert" role="alert">
+                                    <span className="question-report-review-icon" aria-hidden="true">
+                                        ⚠︎
+                                    </span>
+                                    <div>
+                                        <strong>Questão em análise</strong>
+                                        <p>
+                                            A equipe já recebeu reportes sobre esta questão. Novos reportes estão
+                                            temporariamente indisponíveis.
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : (
+                                error && <p role="alert">{error}</p>
+                            )}
                             <div className="question-report-actions">
                                 <button
                                     type="button"
