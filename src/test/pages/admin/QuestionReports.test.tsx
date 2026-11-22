@@ -4,11 +4,16 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { QuestionReportsPage } from '../../../pages/admin/reports/QuestionReportsPage'
 import { QuestionReportDetailPage } from '../../../pages/admin/reports/QuestionReportDetailPage'
 import { questionReportService } from '../../../services/questionReportService'
+import { questionService } from '../../../services/questionService'
 import { ApiError } from '../../../services/api'
 import type { QuestionReportDetail } from '../../../types/questionReport'
 
 vi.mock('../../../services/questionReportService', () => ({
     questionReportService: { list: vi.fn(), get: vi.fn(), updateStatus: vi.fn() },
+}))
+
+vi.mock('../../../services/questionService', () => ({
+    questionService: { get: vi.fn() },
 }))
 
 const detail: QuestionReportDetail = {
@@ -53,6 +58,17 @@ beforeEach(() => {
     vi.resetAllMocks()
     vi.spyOn(window, 'confirm').mockReturnValue(true)
     vi.mocked(questionReportService.get).mockResolvedValue({ ...detail })
+    vi.mocked(questionService.get).mockResolvedValue({
+        id: detail.originalQuestionId,
+        statement: 'Enunciado original',
+        explanation: null,
+        subjectId: 'subject-1',
+        subjectName: 'Assunto',
+        active: true,
+        alternatives: [],
+        createdAt: detail.createdAt,
+        updatedAt: null,
+    })
     vi.mocked(questionReportService.list).mockResolvedValue({
         content: [detail],
         number: 0,
