@@ -32,14 +32,15 @@
 }
 
 .access-intro .study-card {
-  width: 520px;
+  width: min(520px, 100%);
 }
 
 .access-card {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 500px;
+  width: min(500px, 100%);
+  min-width: 0;
   margin: 0;
   padding: 36px;
   border: 1px solid var(--border);
@@ -83,6 +84,7 @@
   color: var(--text-primary);
   background: white;
   font: inherit;
+  font-size: 16px;
   font-weight: 400;
   outline: none;
 }
@@ -226,7 +228,7 @@
   }
 
   .access-intro h1 {
-    font-size: 36px;
+    font-size: clamp(28px, 8vw, 36px);
   }
 
   .access-card {

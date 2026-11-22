@@ -30,6 +30,29 @@ body {
   min-height: 100vh;
 }
 
+main,
+main > *,
+.hero-copy,
+.study-card li > span:last-child {
+  min-width: 0;
+}
+
+main {
+  overflow-wrap: anywhere;
+}
+
+input,
+select,
+textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+
+main [role='region'][tabindex='0']:focus-visible {
+  outline: 3px solid var(--violet-600);
+  outline-offset: 3px;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -52,6 +75,7 @@ a {
 
 .brand {
   display: inline-flex;
+  flex-shrink: 0;
   margin-right: auto;
 }
 
@@ -87,6 +111,11 @@ a {
   color: var(--text-secondary);
   font-size: 14px;
   font-weight: 600;
+}
+
+.site-header nav a,
+.account-actions {
+  flex-shrink: 0;
 }
 
 .site-header nav a:hover,
@@ -182,6 +211,9 @@ h1 {
   min-height: 50px;
   align-items: center;
   justify-content: center;
+  max-width: 100%;
+  text-align: center;
+  overflow-wrap: anywhere;
   padding: 14px 24px;
   border-radius: 12px;
   color: white;
@@ -541,7 +573,7 @@ a:focus-visible {
   font-size: 12px;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1200px) {
   .site-header {
     height: auto;
     min-height: 76px;
@@ -574,7 +606,9 @@ a:focus-visible {
     min-height: 44px;
     padding: 8px 12px;
   }
+}
 
+@media (max-width: 960px) {
   .hero {
     grid-template-columns: 1fr;
     padding-top: 64px;
@@ -640,7 +674,7 @@ a:focus-visible {
   }
 
   h1 {
-    font-size: 38px;
+    font-size: clamp(30px, 8vw, 38px);
   }
 
   .lead {
@@ -692,6 +726,21 @@ a:focus-visible {
   .footer-bottom {
     flex-direction: column;
     gap: 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  .site-header:has(.header-action) .account-actions {
+    flex-basis: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell input:not([type='checkbox'], [type='radio']),
+  .app-shell select,
+  .app-shell textarea {
+    font-size: 16px;
   }
 }
 

@@ -96,7 +96,7 @@ export function QuestionReportsPage() {
                             {data.content.length === 0 ? (
                                 <p role="status">Nenhum reporte encontrado para este filtro.</p>
                             ) : (
-                                <div className="reports-table-wrap">
+                                <div className="reports-table-wrap" role="region" aria-label="Lista de reportes" tabIndex={0}>
                                     <table>
                                         <caption>Reportes recebidos</caption>
                                         <thead>

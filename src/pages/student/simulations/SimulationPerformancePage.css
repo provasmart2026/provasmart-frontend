@@ -21,6 +21,7 @@
   margin: 28px 0 0;
 }
 .performance-summary > div {
+  min-width: 0;
   padding: 24px;
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -42,6 +43,7 @@
   gap: 10px;
 }
 .summary-icon {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -247,14 +249,19 @@
   background: var(--rose-600);
 }
 .performance-table-scroll {
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
 }
 .performance-discipline table {
   width: 100%;
+  min-width: 600px;
+  overflow-wrap: normal;
   border-collapse: collapse;
   text-align: left;
   font-size: 14px;
 }
+
 .performance-discipline caption {
   text-align: left;
   color: var(--text-secondary);
@@ -284,5 +291,11 @@
   .performance-summary > div,
   .performance-highlight {
     padding: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .performance-summary {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

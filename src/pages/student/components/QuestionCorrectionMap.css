@@ -52,7 +52,7 @@
 }
 .correction-question-map button {
   min-width: 0;
-  min-height: 42px;
+  min-height: 44px;
   border-radius: 8px;
   color: white;
 }
@@ -121,7 +121,7 @@
 }
 @media (max-width: 800px) {
   .correction-question-map {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
   }
 }
 .correction-legend {

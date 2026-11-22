@@ -10,6 +10,8 @@
 }
 .question-report-form {
   display: grid;
+  min-width: 0;
+  max-width: 100%;
   gap: 12px;
   margin-top: 12px;
   padding: 20px;
@@ -78,4 +80,14 @@
 .question-report button:disabled {
   opacity: 0.6;
   cursor: wait;
+}
+
+@media (max-width: 560px) {
+  .question-report-form {
+    padding: 12px;
+  }
+
+  .question-report-actions > button {
+    width: 100%;
+  }
 }
